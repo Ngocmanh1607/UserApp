@@ -1,20 +1,20 @@
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import Headerbar from "../Component/Headerbar";
-import CardSlider from "../Component/CardSlider";
-import OfferSlider from "../Component/OfferSlider";
-import Categories from "../Component/Categories";
-import FoodCard from "../Component/CardFood";
-import CardRestaurant from "../Component/CardRestaurant";
+import Headerbar from "../components/Headerbar";
+import CardSlider from "../components/CardSlider";
+import OfferSlider from "../components/OfferSlider";
+import Categories from "../components/Categories";
+import FoodCard from "../components/CardFood";
+import CardRestaurant from "../components/CardRestaurant";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
     const [search, setSearch] = useState('')
     const restaurants = [
-        { name: 'Nhà hàng pizza', rating: 3.8, distance: 2, image: require("../Images/pizza1.jpg") },
-        { name: 'Nhà hàng burger', rating: 4.2, distance: 3, image: require("../Images/pizza2.jpg") },
-        { name: 'Nhà hàng sushi', rating: 4.5, distance: 1.5, image: require("../Images/pizza3.jpg") },
+        { name: 'Nhà hàng pizza', rating: 3.8, distance: 2, image: require("../assets/Images/pizza1.jpg") },
+        { name: 'Nhà hàng burger', rating: 4.2, distance: 3, image: require("../assets/Images/pizza2.jpg") },
+        { name: 'Nhà hàng sushi', rating: 4.5, distance: 1.5, image: require("../assets/Images/pizza3.jpg") },
     ];
 
     const foodData = [
@@ -24,7 +24,7 @@ const HomeScreen = () => {
             description: "100 gr chicken + tomato + cheese + Lettuce",
             price: "20.00",
             rating: "3.8",
-            image: require('../Images/pop_2.png'),
+            image: require('../assets/Images/pop_2.png'),
             start: 5,
         },
         {
@@ -33,7 +33,7 @@ const HomeScreen = () => {
             description: "200 gr beef + lettuce + tomato + cheese",
             price: "25.00",
             rating: "4.2",
-            image: require('../Images/pop_2.png'),
+            image: require('../assets/Images/pop_2.png'),
             start: 3.5
         },
     ];

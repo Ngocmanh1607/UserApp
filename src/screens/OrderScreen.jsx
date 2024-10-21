@@ -2,7 +2,7 @@
 import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import React, { useState } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import CardOrder from '../Component/CardOrder';
+import CardOrder from '../components/CardOrder';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const OrderScreen = () => {

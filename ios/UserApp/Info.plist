@@ -47,6 +47,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!-- Icon -->
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -69,10 +70,18 @@
 		<string>Zocial.ttf</string>
 		<string>Fontisto.ttf</string>
 	</array>
+	<!-- Truy cap location -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 		<string>We need your location to show nearby restaurants.</string>
 		<key>NSLocationAlwaysUsageDescription</key>
 		<string>We need your location to show nearby restaurants.</string>
+		<!-- Truy cập thư viện ảnh -->
+	<key>NSCameraUsageDescription</key>
+		<string>We need access to your camera to take photos.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>We need access to your photo library to choose pictures.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>We need access to save photos to your library.</string>
 </dict>
 
 </plist>

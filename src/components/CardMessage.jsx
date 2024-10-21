@@ -12,7 +12,7 @@ const CardMessage = () => {
         >
             <View>
                 <Image
-                    source={require('../Images/pop_2.png')}
+                    source={require('../assets/Images/pop_2.png')}
                     style={styles.image}
                 />
             </View>

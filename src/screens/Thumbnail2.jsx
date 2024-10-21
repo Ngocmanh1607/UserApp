@@ -12,7 +12,7 @@ const ReviewScreen2 = () => {
             {/* Phần tiêu đề và hình ảnh */}
             <View style={styles.imageContainer}>
                 <Image
-                    source={require('../Images/background2.png')}
+                    source={require('../assets/Images/background2.png')}
                     style={styles.image}
                 />
             </View>

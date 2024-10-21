@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, Tex
 import React, { useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import ItemInCart from '../Component/ItemInCart'
+import ItemInCart from '../components/ItemInCart'
 import { Dropdown } from 'react-native-element-dropdown';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useNavigation, useFocusEffect } from '@react-navigation/native';

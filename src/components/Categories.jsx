@@ -14,28 +14,28 @@ const Categories = () => {
                 <TouchableOpacity
                     style={[styles.box, { backgroundColor: selectedIndex === 0 ? '#FF0000' : '#ffffff' }]}
                     onPress={() => handlePress(0)}>
-                    <Image source={require('../Images/icon_1.png')} style={styles.image} />
+                    <Image source={require('../assets/Images/icon_1.png')} style={styles.image} />
                     <Text style={[styles.text, { color: selectedIndex === 0 ? '#ffffff' : '#000000' }]}>Pizza</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={[styles.box, { backgroundColor: selectedIndex === 1 ? '#FF0000' : '#ffffff' }]}
                     onPress={() => handlePress(1)}>
-                    <Image source={require('../Images/icon_2.png')} style={styles.image} />
+                    <Image source={require('../assets/Images/icon_2.png')} style={styles.image} />
                     <Text style={[styles.text, { color: selectedIndex === 1 ? '#ffffff' : '#000000' }]}>Burger</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={[styles.box, { backgroundColor: selectedIndex === 2 ? '#FF0000' : '#ffffff' }]}
                     onPress={() => handlePress(2)}>
-                    <Image source={require('../Images/icon_3.png')} style={styles.image} />
+                    <Image source={require('../assets/Images/icon_3.png')} style={styles.image} />
                     <Text style={[styles.text, { color: selectedIndex === 2 ? '#ffffff' : '#000000' }]}>Drink</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={[styles.box, { backgroundColor: selectedIndex === 3 ? '#FF0000' : '#ffffff' }]}
                     onPress={() => handlePress(3)}>
-                    <Image source={require('../Images/icon_4.png')} style={styles.image} />
+                    <Image source={require('../assets/Images/icon_4.png')} style={styles.image} />
                     <Text style={[styles.text, { color: selectedIndex === 3 ? '#ffffff' : '#000000' }]}>Noodles</Text>
                 </TouchableOpacity>
             </ScrollView>

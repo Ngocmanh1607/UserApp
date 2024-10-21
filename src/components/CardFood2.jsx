@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useNavigation } from '@react-navigation/native';
 
 const CardFood2 = ({ food }) => {
@@ -11,7 +10,7 @@ const CardFood2 = ({ food }) => {
             <TouchableOpacity style={styles.container} onPress={() => { navigation.navigate('FoodDetail') }}>
                 <View style={styles.imageContainer}>
                     <Image
-                        source={require('../Images/pop_2.png')}
+                        source={require('../assets/Images/pop_2.png')}
                         style={styles.foodImage}
                     />
                 </View>

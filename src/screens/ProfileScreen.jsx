@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Image } from 'react-native'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import React, { useState } from 'react'
 import DatePicker from 'react-native-date-picker'
 import DropDownPicker from 'react-native-dropdown-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const ProfileScreen = () => {
     const [date, setDate] = useState(new Date());
@@ -14,14 +15,28 @@ const ProfileScreen = () => {
         { label: 'Nam', value: 'nam' },
         { label: 'Nữ', value: 'nu' },
     ]);
+    const [imageUri, setImageUri] = useState(null)
+    //Truy cập thư viện ảnh
+    const openImagePicker = () => {
+        const options = {
+            mediaType: 'photo'
+        }
+        launchImageLibrary(options, (res) => {
+            if (res.assets && res.assets.length > 0) {
+                setImageUri(res.assets[0].uri);
+            }
+        })
+    }
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text style={styles.textHeader}>Profile</Text>
                 </View>
-                <TouchableOpacity style={styles.imageContainer}>
-                    <FontAwesome name="user" size={60} color="black" style={{ paddingVertical: 6 }} />
+                <TouchableOpacity style={styles.imageContainer} onPress={openImagePicker}>
+                    {imageUri ? (
+                        <Image source={{ uri: imageUri }} style={styles.profileImage} />
+                    ) : (<FontAwesome name="user" size={60} color="black" style={{ paddingVertical: 6 }} />)}
                 </TouchableOpacity>
                 <View style={styles.loginContainer}>
                     <View style={styles.inputSignContainer}>
@@ -183,5 +198,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
         textTransform: 'uppercase', // Chữ in hoa
+    },
+    profileImage: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
     },
 });

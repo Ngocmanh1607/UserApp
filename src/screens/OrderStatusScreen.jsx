@@ -20,7 +20,7 @@ const OrderStatusScreen = () => {
 
             <View style={styles.imageContainer}>
                 <Image
-                    source={require('../Images/background2.png')}
+                    source={require('../assets/Images/background2.png')}
                     style={styles.chefImage}
                     resizeMode="contain"
                 />

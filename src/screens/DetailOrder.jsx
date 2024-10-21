@@ -67,7 +67,7 @@ const OrderDetailScreen = () => {
                     <Text style={styles.licensePlate}>{orderDetails.driver.licensePlate}</Text>
                     <Text>{orderDetails.driver.vehicle}</Text>
                     <View style={styles.driverDetails}>
-                        <Image source={require('../Images/Shipper.webp')} style={styles.driverImage} />
+                        <Image source={require('../assets/Images/Shipper.webp')} style={styles.driverImage} />
                         <View style={styles.driverInfo}>
                             <Text style={styles.driverName}>{orderDetails.driver.name}</Text>
                             <Text style={styles.driverRating}>⭐ {orderDetails.driver.rating}</Text>
@@ -79,7 +79,7 @@ const OrderDetailScreen = () => {
                 {orderDetails.items.map((item, index) => (
                     <View key={index} style={styles.orderItemContainer}>
                         <View style={styles.orderItemDetails}>
-                            <Image source={require('../Images/pizza1.jpg')} style={styles.orderItemImage} />
+                            <Image source={require('../assets/Images/pizza1.jpg')} style={styles.orderItemImage} />
                             <View style={styles.orderItemText}>
                                 <Text style={styles.orderItemName}>{item.name}</Text>
                                 {item.options.map((option, optIndex) => (

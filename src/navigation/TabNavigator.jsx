@@ -1,10 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import HomeScreen from '../MainScreen/HomeScreen';
-import ProfileScreen from '../MainScreen/ProfileScreen';
-import OrderScreen from '../MainScreen/OrderScreen';
-import ChatScreen from '../MainScreen/ChatScreen';
+import HomeScreen from '../screens/HomeScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import OrderScreen from '../screens/OrderScreen';
+import ChatScreen from '../screens/ChatScreen';
 
 const Tab = createBottomTabNavigator();
 

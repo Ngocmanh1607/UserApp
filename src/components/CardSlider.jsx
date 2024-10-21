@@ -10,7 +10,7 @@ const CardSlider = () => {
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <TouchableOpacity style={styles.card} >
                     <View>
-                        <Image source={require('../Images/pizza1.jpg')} style={styles.cardimage} />
+                        <Image source={require('../assets/Images/pizza1.jpg')} style={styles.cardimage} />
                     </View>
 
                     <View style={styles.cardin1}>
@@ -26,7 +26,7 @@ const CardSlider = () => {
 
                 <TouchableOpacity style={styles.card}>
                     <View>
-                        <Image source={require('../Images/pizza2.jpg')} style={styles.cardimage} />
+                        <Image source={require('../assets/Images/pizza2.jpg')} style={styles.cardimage} />
                     </View>
 
                     <View style={styles.cardin1}>
@@ -42,7 +42,7 @@ const CardSlider = () => {
 
                 <TouchableOpacity style={styles.card}>
                     <View>
-                        <Image source={require('../Images/pizza3.jpg')} style={styles.cardimage} />
+                        <Image source={require('../assets/Images/pizza3.jpg')} style={styles.cardimage} />
                     </View>
 
                     <View style={styles.cardin1}>
@@ -58,7 +58,7 @@ const CardSlider = () => {
 
                 <TouchableOpacity style={styles.card}>
                     <View>
-                        <Image source={require('../Images/pizza4.jpg')} style={styles.cardimage} />
+                        <Image source={require('../assets/Images/pizza4.jpg')} style={styles.cardimage} />
                     </View>
 
                     <View style={styles.cardin1}>

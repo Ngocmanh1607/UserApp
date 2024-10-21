@@ -15,13 +15,13 @@ const OfferSlider = () => {
                 prevButton={<Text style={styles.nextButton}>  </Text>}
             >
                 <View style={styles.slide}>
-                    <Image source={require('../Images/sampleImg1.jpeg')} style={styles.image} />
+                    <Image source={require('../assets/Images/sampleImg1.jpeg')} style={styles.image} />
                 </View>
                 <View style={styles.slide} >
-                    <Image source={require('../Images/sampleImg2.jpeg')} style={styles.image} />
+                    <Image source={require('../assets/Images/sampleImg2.jpeg')} style={styles.image} />
                 </View>
                 <View style={styles.slide}>
-                    <Image source={require('../Images/sampleImg3.jpeg')} style={styles.image} />
+                    <Image source={require('../assets/Images/sampleImg3.jpeg')} style={styles.image} />
                 </View>
             </Swiper>
         </View>

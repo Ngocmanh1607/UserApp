@@ -11,7 +11,7 @@ const FoodCard = ({ food }) => {
                     <Text style={styles.ratingText}>{food.start}</Text>
                 </View>
                 <Image
-                    source={require('../Images/pop_2.png')} // Replace with your image URL
+                    source={require('../assets/Images/pop_2.png')} // Replace with your image URL
                     style={styles.foodImage}
                 />
                 <Text style={styles.foodName}>{food.name}</Text>

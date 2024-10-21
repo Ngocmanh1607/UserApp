@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import CardBottom from '../Component/CardBottom';
+import CardBottom from '../components/CardBottom';
 
 const FoodDetailScreen = () => {
     const [toppings, setToppings] = useState([
@@ -22,7 +22,7 @@ const FoodDetailScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Image source={require('../Images/pizza.png')} style={styles.image} blurRadius={1} />
+            <Image source={require('../assets/Images/pizza.png')} style={styles.image} blurRadius={1} />
             <View style={styles.mainContainer}>
                 <View style={styles.headerContainer}>
                     <Text style={styles.textName}>Trà xoài đào vải</Text>

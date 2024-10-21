@@ -5,7 +5,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import CardFood2 from '../Component/CardFood2';
+import CardFood2 from '../components/CardFood2';
 import { useNavigation } from '@react-navigation/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -29,7 +29,7 @@ const RestaurantScreen = ({ route }) => {
             description: "100 gr chicken + tomato + cheese + Lettuce",
             price: "20.00",
             rating: "3.8",
-            image: require('../Images/pop_2.png'),
+            image: require('../assets/Images/pop_2.png'),
             start: 5,
         },
         {
@@ -38,7 +38,7 @@ const RestaurantScreen = ({ route }) => {
             description: "200 gr beef + lettuce + tomato + cheese",
             price: "25.00",
             rating: "4.2",
-            image: require('../Images/pop_2.png'),
+            image: require('../assets/Images/pop_2.png'),
             start: 3.5,
         },
         {
@@ -47,7 +47,7 @@ const RestaurantScreen = ({ route }) => {
             description: "200 gr beef + lettuce + tomato + cheese",
             price: "25.00",
             rating: "4.2",
-            image: require('../Images/pop_2.png'),
+            image: require('../assets/Images/pop_2.png'),
             start: 3.5,
         },
         {
@@ -56,7 +56,7 @@ const RestaurantScreen = ({ route }) => {
             description: "200 gr beef + lettuce + tomato + cheese",
             price: "25.00",
             rating: "4.2",
-            image: require('../Images/pop_2.png'),
+            image: require('../assets/Images/pop_2.png'),
             start: 3.5,
         },
         {
@@ -65,7 +65,7 @@ const RestaurantScreen = ({ route }) => {
             description: "200 gr beef + lettuce + tomato + cheese",
             price: "25.00",
             rating: "4.2",
-            image: require('../Images/pop_2.png'),
+            image: require('../assets/Images/pop_2.png'),
             start: 3.5,
         },
 

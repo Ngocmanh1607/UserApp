@@ -4,7 +4,7 @@ import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import PasswordInput from '../Component/PasswordInput';
+import PasswordInput from '../components/PasswordInput';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -110,7 +110,7 @@ const LoginRoute = () => {
 
                 <View>
                     <TouchableOpacity style={styles.googleButtonContainer}>
-                        <Image source={require("../Images/ic_google.png")} style={styles.topImage} />
+                        <Image source={require("../assets/Images/ic_google.png")} style={styles.topImage} />
                         <Text style={styles.textLoginGoogle}>Login with Google</Text>
                     </TouchableOpacity>
                 </View>

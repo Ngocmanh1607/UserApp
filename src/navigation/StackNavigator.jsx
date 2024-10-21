@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TabNavigator from './TabNavigator';
-import AuthScreen from '../Screen/AuthScreen';
-import RestaurantScreen from '../MainScreen/RestaurantScreen';
-import OrderDetailScreen from '../MainScreen/DetailOrder';
-import FoodDetailScreen from '../MainScreen/FoodDetailScreen';
+import AuthScreen from '../screens/AuthScreen';
+import RestaurantScreen from '../screens/RestaurantScreen';
+import OrderDetailScreen from '../screens/DetailOrder';
+import FoodDetailScreen from '../screens/FoodDetailScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import CartScreen from '../MainScreen/CartScreen';
-import ReviewScreen2 from '../Screen/Thumbnail2';
-import ReviewScreen1 from '../Screen/Thumbnail1';
-import CompleteOrder from '../MainScreen/CompleteOrderScreen';
-import OrderStatusScreen from '../MainScreen/OrderStatusScreen';
+import CartScreen from '../screens/CartScreen';
+import ReviewScreen2 from '../screens/Thumbnail2';
+import ReviewScreen1 from '../screens/Thumbnail1';
+import CompleteOrder from '../screens/CompleteOrderScreen';
+import OrderStatusScreen from '../screens/OrderStatusScreen';
 import { ActivityIndicator, View } from 'react-native';
 
 const Stack = createNativeStackNavigator();

@@ -22,7 +22,7 @@ const ItemInCart = () => {
         <View style={styles.foodContainer}>
             <View style={styles.imageContainer}>
                 <Image
-                    source={require('../Images/pop_2.png')}
+                    source={require('../assets/Images/pop_2.png')}
                     style={styles.foodImage}
                 />
             </View>

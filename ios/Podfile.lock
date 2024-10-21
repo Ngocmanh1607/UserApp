@@ -1277,6 +1277,29 @@ PODS:
     - React-Core
   - react-native-geolocation-service (5.3.1):
     - React
+  - react-native-image-picker (7.1.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - react-native-maps (1.18.2):
+    - React-Core
   - react-native-pager-view (6.4.1):
     - DoubleConversion
     - glog
@@ -1644,6 +1667,8 @@ DEPENDENCIES:
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
@@ -1770,6 +1795,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-date-picker"
   react-native-geolocation-service:
     :path: "../node_modules/react-native-geolocation-service"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
+  react-native-maps:
+    :path: "../node_modules/react-native-maps"
   react-native-pager-view:
     :path: "../node_modules/react-native-pager-view"
   react-native-safe-area-context:
@@ -1891,6 +1920,8 @@ SPEC CHECKSUMS:
   react-native-blur: a1bf334589f44658a58a859b1f3defe28e367fcf
   react-native-date-picker: 06a4d96ab525a163c7a90bccd68833d136b0bb13
   react-native-geolocation-service: 608e1da71a1ac31b4de64d9ef2815f697978c55b
+  react-native-image-picker: 2fbbafdae7a7c6db9d25df2f2b1db4442d2ca2ad
+  react-native-maps: d7c0974353b8a495642d7ce3b80f239fc6b87bfb
   react-native-pager-view: c476f76d54f946df5147645e902d3d7173688187
   react-native-safe-area-context: 5141f11858b033636f1788b14f32eaba92cee810
   React-nativeconfig: 8c83d992b9cc7d75b5abe262069eaeea4349f794
