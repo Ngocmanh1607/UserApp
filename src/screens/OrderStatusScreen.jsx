@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     },
 
     orderDetailsButton: {
-        marginTop: 10,
+        marginHorizontal: 10,
         alignItems: 'center',
     },
     orderDetailsText: {
