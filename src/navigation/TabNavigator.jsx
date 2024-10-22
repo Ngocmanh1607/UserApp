@@ -23,7 +23,7 @@ const TabNavigator = () => {
                         iconName = 'perm-identity';
                     } else if (route.name === 'Đơn hàng') {
                         iconName = 'list-alt';
-                    } else if (route.name === 'Chat') {
+                    } else if (route.name === 'Tin nhắn') {
                         iconName = 'chat-bubble-outline';
                     }
                     return <MaterialIcons name={iconName} size={26} color={color} />;
@@ -31,10 +31,10 @@ const TabNavigator = () => {
             })}
         >
             <Tab.Screen name="Trang chủ" component={HomeScreen} />
-            <Tab.Screen name="Thông tin" component={ProfileScreen} />
-            <Tab.Screen name="Đơn hàng" component={OrderScreen} />
-            <Tab.Screen name="Chat" component={ChatScreen} />
-        </Tab.Navigator>
+            <Tab.Screen name="Thông tin" component={ProfileScreen} options={{ headerShown: true }} />
+            <Tab.Screen name="Đơn hàng" component={OrderScreen} options={{ headerShown: true }} />
+            <Tab.Screen name="Tin nhắn" component={ChatScreen} options={{ headerShown: true }} />
+        </Tab.Navigator >
     );
 };
 

@@ -2,6 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Feather from 'react-native-vector-icons/Feather'
 import React, { useState } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const CardBottom = () => {
     // State to keep track of the quantity
@@ -61,7 +62,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        marginHorizontal: '5%'
+        marginHorizontal: '5%',
+        marginBottom: 10
     },
     textAdd: {
         color: '#FFFFFF',

@@ -5,6 +5,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Geolocation from 'react-native-geolocation-service';
 import { useDispatch, useSelector } from "react-redux";
 import { setLocation, setError } from "../store/currentLocationSlice";
+import userApi from '../api/userApi';
 
 const Headerbar = () => {
     const dispatch = useDispatch()
@@ -57,25 +58,23 @@ const Headerbar = () => {
                 { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
             );
         };
-        const fetchAddressFromCoords = (latitude, longitude) => {
-            fetch(`https://revgeocode.search.hereapi.com/v1/revgeocode?at=${latitude},${longitude}&lang=en-US&apiKey=7sef-qPLms2vVRE4COs57FGzk4LuYC20NtU6TCd13kU`)
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.items && data.items.length > 0) {
-                        dispatch(setLocation({
-                            latitude: latitude,
-                            longitude: longitude,
-                            address: data.items[0].address.label,
-                        }));
-                        console.log(data.items[0].address.label)
-                    } else {
-                        dispatch(setError("Không thể tìm thấy vị trí"));
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                    dispatch(setError("Không thể tìm thấy vị trí"));
-                });
+        const fetchAddressFromCoords = async (latitude, longitude) => {
+            try {
+                const data = await userApi.currentLocation(latitude, longitude)
+                if (data) {
+                    dispatch(setLocation({
+                        latitude, longitude, address: data.address
+                    }))
+                    console.log(data.address)
+                }
+                else {
+                    dispatch(setError('Không thể tìm thấy vị trí'))
+                }
+            }
+            catch (error) {
+                console.error(error);
+                dispatch(setError("Không thể tìm thấy vị trí"));
+            }
         };
         requestLocationPermission();
     }, [dispatch]);

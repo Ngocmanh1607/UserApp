@@ -72,7 +72,7 @@ const CardSlider = () => {
 
                 </TouchableOpacity>
             </ScrollView>
-        </View >
+        </View>
     )
 }
 export default CardSlider
@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginTop: 10,
         borderRadius: 18,
-        borderWidth: 1,
-        borderColor: 'grey'
+        elevation: 3,
+        backgroundColor: '#fff'
     },
     cardin1: {
         marginHorizontal: 3,

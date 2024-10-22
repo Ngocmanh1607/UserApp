@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -9,74 +9,84 @@ import CardFood2 from '../components/CardFood2';
 import { useNavigation } from '@react-navigation/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import { SafeAreaView } from 'react-native-safe-area-context';
+import restaurantApi from '../api/restaurantApi';
 
 const RestaurantScreen = ({ route }) => {
     const navigation = useNavigation();
     const { restaurant } = route.params;
+    const restaurantId = restaurant.restaurantId
     const [selectedCategory, setSelectedCategory] = useState('');
-
+    const [loading, setLoading] = useState(true);
     const categories = [
         { label: 'All', value: 'all' },
         { label: 'Burgers', value: 'burgers' },
         { label: 'Pizza', value: 'pizza' },
         { label: 'Drinks', value: 'drinks' },
     ];
-
-    const foodData = [
-        {
-            id: 1,
-            name: "Chicken Burger",
-            description: "100 gr chicken + tomato + cheese + Lettuce",
-            price: "20.00",
-            rating: "3.8",
-            image: require('../assets/Images/pop_2.png'),
-            start: 5,
-        },
-        {
-            id: 2,
-            name: "Beef Burger",
-            description: "200 gr beef + lettuce + tomato + cheese",
-            price: "25.00",
-            rating: "4.2",
-            image: require('../assets/Images/pop_2.png'),
-            start: 3.5,
-        },
-        {
-            id: 3,
-            name: "Beef Burger",
-            description: "200 gr beef + lettuce + tomato + cheese",
-            price: "25.00",
-            rating: "4.2",
-            image: require('../assets/Images/pop_2.png'),
-            start: 3.5,
-        },
-        {
-            id: 4,
-            name: "Beef Burger",
-            description: "200 gr beef + lettuce + tomato + cheese",
-            price: "25.00",
-            rating: "4.2",
-            image: require('../assets/Images/pop_2.png'),
-            start: 3.5,
-        },
-        {
-            id: 5,
-            name: "Beef Burger",
-            description: "200 gr beef + lettuce + tomato + cheese",
-            price: "25.00",
-            rating: "4.2",
-            image: require('../assets/Images/pop_2.png'),
-            start: 3.5,
-        },
-
-    ];
+    const [restaurantData, setRestaurantData] = useState([{
+        id: 1,
+        name: "Chicken Burger",
+        description: "100 gr chicken + tomato + cheese + Lettuce",
+        price: "20.00",
+        rating: "3.8",
+        image: require('../assets/Images/pop_2.png'),
+        start: 5,
+    },
+    {
+        id: 2,
+        name: "Beef Burger",
+        description: "200 gr beef + lettuce + tomato + cheese",
+        price: "25.00",
+        rating: "4.2",
+        image: require('../assets/Images/pop_2.png'),
+        start: 3.5,
+    },
+    {
+        id: 3,
+        name: "Beef Burger",
+        description: "200 gr beef + lettuce + tomato + cheese",
+        price: "25.00",
+        rating: "4.2",
+        image: require('../assets/Images/pop_2.png'),
+        start: 3.5,
+    },
+    {
+        id: 4,
+        name: "Beef Burger",
+        description: "200 gr beef + lettuce + tomato + cheese",
+        price: "25.00",
+        rating: "4.2",
+        image: require('../assets/Images/pop_2.png'),
+        start: 3.5,
+    },
+    {
+        id: 5,
+        name: "Beef Burger",
+        description: "200 gr beef + lettuce + tomato + cheese",
+        price: "25.00",
+        rating: "4.2",
+        image: require('../assets/Images/pop_2.png'),
+        start: 3.5,
+    }])
+    useEffect(() => {
+        const fetchRestaurantData = async () => {
+            try {
+                const data = await restaurantApi.getFoodsRestaurant(restaurantId);
+                setRestaurantData(data)
+                setLoading(false)
+            } catch (error) {
+                console.error('Error searching restaurants:', error);
+            }
+        }
+        fetchRestaurantData();
+    }, [restaurantId])
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <SafeAreaView style={styles.container}>
                 <Image source={restaurant.image} style={styles.imageContainer} />
                 <TouchableOpacity style={styles.backButton} onPress={() => { navigation.goBack() }}>
-                    <Ionicons name="arrow-back" size={24} color="#fff" />
+                    <Ionicons name="arrow-back" size={28} color="#000" />
                 </TouchableOpacity>
 
                 <View style={styles.headerContainer}>
@@ -97,10 +107,10 @@ const RestaurantScreen = ({ route }) => {
 
                 <View style={styles.mainInContainer}>
                     <View style={styles.searchbox}>
-                        <TextInput style={styles.input} placeholder="Tìm kiếm món ăn" />
                         <TouchableOpacity>
-                            <AntDesign name='search1' size={24} color="black" style={{ color: 'red', paddingRight: 10 }} />
+                            <AntDesign name='search1' size={24} color="black" style={{ color: 'red', paddingRight: 10, marginLeft: 10 }} />
                         </TouchableOpacity>
+                        <TextInput style={styles.input} placeholder="Tìm kiếm món ăn" />
                     </View>
                     <View style={styles.pickerContainer}>
                         <Picker
@@ -115,7 +125,7 @@ const RestaurantScreen = ({ route }) => {
                     </View>
                 </View>
                 <ScrollView style={styles.foodScrollView}>
-                    {foodData.map(food => (
+                    {restaurantData.map(food => (
                         <CardFood2 key={food.id} food={food} />
                     ))}
                 </ScrollView>
@@ -143,11 +153,9 @@ const styles = StyleSheet.create({
     },
     backButton: {
         position: 'absolute',
-        top: 15,
-        left: 15,
+        top: 50,
+        left: 1,
         padding: 10,
-        borderRadius: 50,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         zIndex: 1,
     },
     headerContainer: {
@@ -205,7 +213,6 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         height: '100%',
-        marginLeft: 10,
         fontSize: 16,
         color: '#333',
     },

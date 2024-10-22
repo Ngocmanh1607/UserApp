@@ -38,16 +38,13 @@ const OrderScreen = () => {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <SafeAreaView style={styles.container}>
-                <View style={styles.headerContainer}>
-                    <Text style={styles.textHeader}>Đơn hàng</Text>
-                </View>
+            <View style={styles.container}>
                 {/* Search Bar */}
                 <View style={styles.searchbox}>
-                    <TextInput style={styles.input} placeholder="Tìm kiếm theo tên nhà hàng" value={search} onChangeText={setSearch} />
                     <TouchableOpacity>
                         <AntDesign name='search1' size={24} color="black" style={{ color: 'red', marginRight: 10 }} />
                     </TouchableOpacity>
+                    <TextInput style={styles.input} placeholder="Tìm kiếm theo tên nhà hàng" value={search} onChangeText={setSearch} />
                 </View>
 
                 {/* Section for undelivered orders */}
@@ -69,7 +66,7 @@ const OrderScreen = () => {
                     keyExtractor={(item) => item.id}
                     renderItem={renderOrderItem}
                 />
-            </SafeAreaView>
+            </View>
         </TouchableWithoutFeedback>
     );
 }

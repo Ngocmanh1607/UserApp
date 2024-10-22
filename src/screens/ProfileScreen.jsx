@@ -1,21 +1,31 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Image } from 'react-native'
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import Fontisto from 'react-native-vector-icons/Fontisto'
-import React, { useState } from 'react'
-import DatePicker from 'react-native-date-picker'
-import DropDownPicker from 'react-native-dropdown-picker';
+import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
-
-const ProfileScreen = () => {
-    const [date, setDate] = useState(new Date());
-    const [openBith, setOpenBith] = useState(false);
-    const [openSex, setOpenSex] = useState(false);
-    const [gender, setGender] = useState(0);
-    const [items, setItems] = useState([
-        { label: 'Nam', value: 'nam' },
-        { label: 'Nữ', value: 'nu' },
-    ]);
+import userApi from '../api/userApi';
+const UserProfileScreen = () => {
+    const navigation = useNavigation();
+    const [userInfo, setUserInfo] = useState({
+        name: 'Nguyen Ngoc Manh',
+        email: 'manhnguyen@example.com',
+        phone: '0123456789',
+        address: '123, XYZ Street, ABC City',
+    });
+    const [isEditing, setIsEditing] = useState(false);
     const [imageUri, setImageUri] = useState(null)
+    const userId = null
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const data = await userApi.getInfoUser(userId)
+                setUserInfo(data)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchUserData()
+    }, [])
     //Truy cập thư viện ảnh
     const openImagePicker = () => {
         const options = {
@@ -27,100 +37,122 @@ const ProfileScreen = () => {
             }
         })
     }
+    const handleEditToggle = () => {
+        setIsEditing(!isEditing);
+    };
+
+    const handleSaveChanges = async () => {
+        try {
+            // Call the API to update the user info
+            const updatedData = {
+                ...userInfo,
+                avatar: imageUri, // Include image URI if you plan to update it as well
+            };
+            await userApi.updateUser(userId, updatedData);
+            Alert.alert('Thành công', 'Thông tin của bạn đã được cập nhật.');
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.');
+        }
+    };
+
+    const handleLogout = () => {
+        Alert.alert('Đăng xuất', 'Bạn có chắc chắn muốn đăng xuất không?', [
+            { text: 'Hủy', style: 'cancel' },
+            { text: 'Đăng xuất', onPress: () => navigation.navigate('Auth') },
+        ]);
+    };
+
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.container}>
-                <View style={styles.header}>
-                    <Text style={styles.textHeader}>Profile</Text>
+        <View style={styles.container}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <View style={styles.avatarContainer}>
+                    <TouchableOpacity style={styles.imageContainer} onPress={openImagePicker}>
+                        {imageUri ? (
+                            <Image source={{ uri: imageUri }} style={styles.profileImage} />
+                        ) : (<FontAwesome name="user" size={60} color="black" style={{ paddingVertical: 6 }} />)}
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.imageContainer} onPress={openImagePicker}>
-                    {imageUri ? (
-                        <Image source={{ uri: imageUri }} style={styles.profileImage} />
-                    ) : (<FontAwesome name="user" size={60} color="black" style={{ paddingVertical: 6 }} />)}
-                </TouchableOpacity>
-                <View style={styles.loginContainer}>
-                    <View style={styles.inputSignContainer}>
-                        <FontAwesome name="user" color="#9a9a9a" size={24} style={styles.inputIcon} />
-                        <TextInput style={styles.textInput} placeholder='Full Name' placeholderTextColor='#A9A9A9' />
-                    </View>
 
-                    <View style={styles.inputSignContainer}>
-                        <Fontisto name="email" color="#9a9a9a" size={22} style={styles.inputIcon} />
-                        <TextInput style={styles.textInput} placeholder='Email' placeholderTextColor='#A9A9A9' />
-                    </View>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.label}>Tên:</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={userInfo.name}
+                        onChangeText={(text) => setUserInfo({ ...userInfo, name: text })}
+                        editable={isEditing}
+                    />
 
-                    <View style={styles.infContainer}>
-                        <View style={styles.datePickerContainer}>
-                            <TouchableOpacity onPress={() => setOpenBith(true)}>
-                                <Text style={styles.dateText}>
-                                    {date.toDateString()}
-                                </Text>
-                            </TouchableOpacity>
-                            <DatePicker
-                                modal
-                                open={openBith}
-                                date={date}
-                                mode="date"
-                                onConfirm={(selectedDate) => {
-                                    setOpenBith(false);
-                                    setDate(selectedDate);
-                                }}
-                                onCancel={() => setOpenBith(false)}
-                            />
-                        </View>
+                    <Text style={styles.label}>Email:</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={userInfo.email}
+                        onChangeText={(text) => setUserInfo({ ...userInfo, email: text })}
+                        editable={isEditing}
+                    />
 
-                        <View style={styles.dropdownContainer}>
-                            <DropDownPicker
-                                open={openSex}
-                                value={gender}
-                                items={items}
-                                setOpen={setOpenSex}
-                                setValue={setGender}
-                                setItems={setItems}
-                                placeholder="Chọn giới tính"
-                                style={styles.dropdown}
-                                containerStyle={styles.dropdownContainerStyle}
-                                textStyle={styles.dropdownText}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.inputSignContainer}>
-                        <Fontisto name="phone" color="#9a9a9a" size={22} style={styles.inputIcon} />
-                        <TextInput style={styles.textInput} placeholder='Phone number' secureTextEntry placeholderTextColor='#A9A9A9' />
-                    </View>
-                    <View style={styles.loginContainer}>
-                        <TouchableOpacity style={styles.loginButtonContainer}>
-                            <Text style={styles.textLogin}>Edit</Text>
+                    <Text style={styles.label}>Số điện thoại:</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={userInfo.phone}
+                        onChangeText={(text) => setUserInfo({ ...userInfo, phone: text })}
+                        editable={isEditing}
+                    />
+
+                    <Text style={styles.label}>Địa chỉ:</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={userInfo.address}
+                        onChangeText={(text) => setUserInfo({ ...userInfo, address: text })}
+                        editable={isEditing}
+                    />
+                </View>
+
+                <View style={styles.buttonContainer}>
+                    {isEditing ? (
+                        <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+                            <Text style={styles.buttonText}>Lưu thay đổi</Text>
                         </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-        </TouchableWithoutFeedback>
-    )
-}
+                    ) : (
+                        <TouchableOpacity style={styles.editButton} onPress={handleEditToggle}>
+                            <Text style={styles.buttonText}>Chỉnh sửa</Text>
+                        </TouchableOpacity>
+                    )}
 
-export default ProfileScreen
+                    <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                        <Text style={styles.buttonText}>Đăng xuất</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </View>
+    );
+};
+
+export default UserProfileScreen;
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 30,
         flex: 1,
-        backgroundColor: '#f5f5f5', // Màu nền nhạt để các phần tử nổi bật
+        backgroundColor: '#F8F8F8',
     },
     header: {
-        height: 60,
-        justifyContent: 'center',
+        backgroundColor: '#FF6347',
+        paddingVertical: 20,
+        paddingHorizontal: 15,
+        flexDirection: 'row',
         alignItems: 'center',
     },
-    textHeader: {
-        fontSize: 26,
-        fontWeight: '700',
-        color: '#333',
+    headerText: {
+        fontSize: 20,
+        color: '#fff',
+        fontWeight: 'bold',
     },
-    imageContainer: {
+    avatarContainer: {
         backgroundColor: '#FFF',
         width: 120,
         height: 120,
+        marginTop: 10,
         justifyContent: 'center',
         alignItems: 'center',
         alignSelf: 'center',
@@ -129,75 +161,66 @@ const styles = StyleSheet.create({
         borderColor: '#FF0000',
         elevation: 5
     },
-    inputSignContainer: {
-        backgroundColor: '#FFFFFF',
-        flexDirection: 'row',
-        borderRadius: 12,
-        marginHorizontal: 20,
-        marginVertical: 10,
-        elevation: 5,
-        alignItems: 'center',
-        height: 50,
-        paddingHorizontal: 10,
+    avatar: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        borderColor: '#FF6347',
+        borderWidth: 2,
     },
-    inputIcon: {
-        marginRight: 10,
+    editAvatar: {
+        position: 'absolute',
+        bottom: 0,
+        right: 10,
+        backgroundColor: '#FF0000',
+        padding: 5,
+        borderRadius: 15,
     },
-    textInput: {
-        flex: 1,
-        color: "#333333",
-        fontSize: 16
+    infoContainer: {
+        paddingHorizontal: 20,
+        marginTop: 20,
     },
-    infContainer: {
-        flexDirection: 'row',
-        marginHorizontal: 40,
-        marginVertical: 20,
-    },
-    datePickerContainer: {
-        flex: 1,
-    },
-    dateText: {
-        color: '#333333',
+    label: {
         fontSize: 16,
-        borderWidth: 1,
-        borderColor: '#cccccc',
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    input: {
+        backgroundColor: '#fff',
         padding: 10,
-        borderRadius: 10,
-        backgroundColor: '#FFF',
+        borderRadius: 8,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#ddd',
     },
-    dropdownContainer: {
-        flex: 1,
-        marginLeft: 10
+    buttonContainer: {
+        marginTop: 20,
+        paddingHorizontal: 20,
     },
-    dropdown: {
-        height: 50,
-        borderRadius: 10,
-        position: 'absolute'
-    },
-    dropdownContainerStyle: {
-        height: 50,
-        position: 'absolute'
-    },
-    dropdownText: {
-        fontSize: 16,
-        color: '#333333',
-    },
-    loginButtonContainer: {
-        width: '70%',
-        height: 50,
-        backgroundColor: "#FF0000",
+    editButton: {
+        backgroundColor: '#FF0000',
+        paddingVertical: 12,
+        borderRadius: 8,
         alignItems: 'center',
-        justifyContent: 'center',
-        alignSelf: 'center',
-        marginVertical: 20,
-        borderRadius: 25,
-        elevation: 10,
+        marginBottom: 10,
     },
-    textLogin: {
-        color: 'white',
+    saveButton: {
+        backgroundColor: '#32CD32',
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    logoutButton: {
+        backgroundColor: '#FF0000',
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#fff',
         fontSize: 16,
-        fontWeight: '700',
-        textTransform: 'uppercase', // Chữ in hoa
+        fontWeight: 'bold',
     },
     profileImage: {
         width: 120,

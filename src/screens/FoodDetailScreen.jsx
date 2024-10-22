@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import CardBottom from '../components/CardBottom';
-
+import { TouchableOpacity } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 const FoodDetailScreen = () => {
+    const navigation = useNavigation()
     const [toppings, setToppings] = useState([
         { id: 1, name: 'Trân châu trắng', price: '6.000đ', selected: false },
         { id: 2, name: 'Hạt đác', price: '6.000đ', selected: false },
@@ -23,6 +26,9 @@ const FoodDetailScreen = () => {
     return (
         <View style={styles.container}>
             <Image source={require('../assets/Images/pizza.png')} style={styles.image} blurRadius={1} />
+            <TouchableOpacity style={styles.backButton} onPress={() => { navigation.goBack() }}>
+                <Ionicons name="arrow-back" size={28} color="#000" />
+            </TouchableOpacity>
             <View style={styles.mainContainer}>
                 <View style={styles.headerContainer}>
                     <Text style={styles.textName}>Trà xoài đào vải</Text>
@@ -123,7 +129,14 @@ const styles = StyleSheet.create({
         width: '100%',
         height: "30%",
         position: 'absolute',
-        bottom: 40,
+        bottom: 70,
         backgroundColor: '#FFFFFF'
-    }
+    },
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 1,
+        padding: 10,
+        zIndex: 1,
+    },
 });

@@ -5,10 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 const ChatScreen = () => {
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.textHeader}>Messages</Text>
-            </View>
+        <View style={styles.container}>
             <ScrollView>
                 <CardMessage />
                 <CardMessage />
@@ -17,7 +14,7 @@ const ChatScreen = () => {
                 <CardMessage />
                 <CardMessage />
             </ScrollView>
-        </SafeAreaView>
+        </View>
     )
 }
 
@@ -27,12 +24,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         //backgroundColor: '#FFF'
-    }, header: {
-        //backgroundColor: '#fff',
-        height: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 20
+        marginTop: 10
     },
     textHeader: {
         fontSize: 22,
