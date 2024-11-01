@@ -18,18 +18,18 @@ const Headerbar = () => {
                     const granted = await PermissionsAndroid.request(
                         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
                         {
-                            title: 'Location Permission',
-                            message: 'We need access to your location to show nearby restaurants.',
-                            buttonNeutral: 'Ask Me Later',
-                            buttonNegative: 'Cancel',
-                            buttonPositive: 'OK',
+                            title: 'Quyền Truy Cập Vị Trí',
+                            message: 'Chúng tôi cần quyền truy cập vị trí của bạn để hiển thị các nhà hàng gần đây.',
+                            buttonNeutral: 'Hỏi Sau',
+                            buttonNegative: 'Hủy',
+                            buttonPositive: 'Đồng Ý',
                         }
                     );
                     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                        console.log('Location permission granted');
+                        console.log('Quyền truy cập vị trí đã được cấp');
                         getLocation();
                     } else {
-                        console.log('Location permission denied');
+                        console.log('Quyền truy cập vị trí bị từ chối');
                         dispatch(setError("Quyền truy cập vị trí bị từ chối"));
                     }
                 } catch (err) {
@@ -40,7 +40,7 @@ const Headerbar = () => {
                 if (auth === 'granted') {
                     getLocation();
                 } else {
-                    console.log('Location permission denied');
+                    console.log('Quyền truy cập vị trí bị từ chối');
                     dispatch(setError("Quyền truy cập vị trí bị từ chối"));
                 }
             }

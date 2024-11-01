@@ -28,7 +28,6 @@ const AuthScreen = () => {
 export default AuthScreen;
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "#FFFFFF",
         flex: 1,
         zIndex: 0,
     },

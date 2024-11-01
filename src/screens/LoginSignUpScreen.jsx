@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { useWindowDimensions, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { useWindowDimensions, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Alert, TouchableWithoutFeedback, Keyboard, LogBox } from 'react-native';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import PasswordInput from '../components/PasswordInput';
 import { useNavigation } from '@react-navigation/native';
-
+import userApi from '../api/userApi';
 
 //Screen login
 const LoginRoute = () => {
@@ -46,10 +46,13 @@ const LoginRoute = () => {
         return valid;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (validate()) {
-            Alert.alert('Login Successful', `Welcome, ${email}!`);
-            navigation.navigate('Main');
+            const data = await userApi.loginApi(email, password);
+            if (data == true) {
+                Alert.alert('Login Successful', `Welcome, ${email}!`);
+                navigation.navigate('Main');
+            }
         } else {
             Alert.alert('Validation Error', 'Please check your input.');
         }
@@ -100,7 +103,7 @@ const LoginRoute = () => {
                     <TouchableOpacity
                         style={styles.loginButtonContainer}
                         onPress={() => {
-                            handleSubmit();
+                            handleSubmit(email, password);
                         }}>
                         <Text style={styles.textLogin}>Login</Text>
                     </TouchableOpacity>
@@ -123,14 +126,12 @@ const LoginRoute = () => {
 
 //Screen Signup
 const SignUpRoute = () => {
-    // State variables
-    const [fullName, setFullName] = useState('');
+    const navigation = useNavigation()
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [gender, setGender] = useState(0);
     const [errors, setErrors] = useState({});
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
     const validate = () => {
         let valid = true;
@@ -145,7 +146,6 @@ const SignUpRoute = () => {
             errors.email = 'Email address is invalid';
         }
 
-        // Validate password
         if (!password) {
             valid = false;
             errors.password = 'Password is required';
@@ -166,38 +166,28 @@ const SignUpRoute = () => {
         setErrors(errors);
         return valid;
     };
-
-    const handleSignUp = () => {
-
-        // Basic validation for the rest of the fields
-        if (!fullName || !phoneNumber || !gender) {
-            Alert.alert('Error', 'Please fill all the fields');
-            return;
-        }
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible(prevState => !prevState);
+    };
+    const handleSignUp = async () => {
         if (!validate()) {
             return;
         }
+        try {
+            const data = await userApi.signupApi(email, password)
+            if (data == true) {
+                Alert.alert('Success', `Sign Up successful for ${email}!`);
+                navigation.navigate('Main')
+            }
+        } catch (error) {
 
-        // Success: Replace this with sign-up logic
-        Alert.alert('Success', `Sign Up successful for ${fullName}!`);
+        }
     };
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
                 <View style={styles.loginContainer}>
-                    <View style={styles.inputSignContainer}>
-                        <FontAwesome name="user" color="#9a9a9a" size={24} style={styles.inputIcon} />
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Full Name"
-                            placeholderTextColor="#A9A9A9"
-                            value={fullName}
-                            onChangeText={setFullName}
-                        />
-                    </View>
-                    {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
-
                     <View style={styles.inputSignContainer}>
                         <Fontisto name="email" color="#9a9a9a" size={22} style={styles.inputIcon} />
                         <TextInput
@@ -210,31 +200,47 @@ const SignUpRoute = () => {
                     </View>
                     {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
-                    <PasswordInput
-                        value={password}
-                        onChangePassword={setPassword}
-                        placeholderText="Password"
-                    />
-                    {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-
-                    <PasswordInput
-                        value={confirmPassword}
-                        onChangePassword={setConfirmPassword}
-                        placeholderText="Confirm Password"
-                    />
-                    {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
-
                     <View style={styles.inputSignContainer}>
-                        <Fontisto name="phone" color="#9a9a9a" size={22} style={styles.inputIcon} />
+                        <Fontisto name="locked" color="#9a9a9a" size={24} style={styles.inputIcon} />
                         <TextInput
                             style={styles.textInput}
-                            placeholder="Phone number"
-                            placeholderTextColor="#A9A9A9"
-                            keyboardType="numeric"
-                            value={phoneNumber}
-                            onChangeText={setPhoneNumber}
+                            placeholder='Password'
+                            secureTextEntry={!isPasswordVisible}
+                            value={password}
+                            onChangeText={(text) => setPassword(text)}
+                            placeholderTextColor='#A9A9A9'
                         />
+                        <TouchableOpacity onPress={togglePasswordVisibility}>
+                            <Ionicons
+                                name={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
+                                color="#9a9a9a"
+                                size={24}
+                                style={styles.inputPassIcon}
+                            />
+                        </TouchableOpacity>
                     </View>
+                    {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+
+                    <View style={styles.inputSignContainer}>
+                        <Fontisto name="locked" color="#9a9a9a" size={24} style={styles.inputIcon} />
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder='Confirm Password'
+                            secureTextEntry={!isPasswordVisible}
+                            value={confirmPassword}
+                            onChangeText={(text) => setConfirmPassword(text)}
+                            placeholderTextColor='#A9A9A9'
+                        />
+                        <TouchableOpacity onPress={togglePasswordVisibility}>
+                            <Ionicons
+                                name={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
+                                color="#9a9a9a"
+                                size={24}
+                                style={styles.inputPassIcon}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
                     <View style={styles.loginContainer}>
                         <TouchableOpacity style={styles.loginButtonContainer} onPress={handleSignUp}>
                             <Text style={styles.textLogin}>Sign Up</Text>
@@ -252,6 +258,10 @@ const renderScene = SceneMap({
 });
 
 const LoginSignUpScreen = () => {
+    // Tắt cảnh báo liên quan đến key
+    LogBox.ignoreLogs([
+        'A props object containing a "key" prop is being spread into JSX'
+    ]);
     const layout = useWindowDimensions();
     const [index, setIndex] = useState(0);
     const [routes] = useState([
@@ -259,17 +269,21 @@ const LoginSignUpScreen = () => {
         { key: 'signup', title: 'Sign Up' },
     ]);
 
-    const renderTabBar = props => (
-        <TabBar
-            {...props}
-            indicatorStyle={styles.indicator}
-            style={styles.tabBar}
-            renderLabel={({ route, focused }) => (
-                <Text style={[styles.label, { color: focused ? '#FF0000' : 'black' }]}>
-                    {route.title}
-                </Text>
-            )} />
-    );
+    const renderTabBar = props => {
+        const { key, ...restProps } = props;
+        return (
+            <TabBar
+                {...restProps}
+                indicatorStyle={styles.indicator}
+                style={styles.tabBar}
+                renderLabel={({ route, focused }) => (
+                    <Text style={[styles.label, { color: focused ? '#FF0000' : 'black' }]}>
+                        {route.title}
+                    </Text>
+                )}
+            />
+        )
+    };
 
     return (
         <TabView
@@ -303,12 +317,10 @@ const styles = StyleSheet.create({
     },
     loginContainer: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+
     },
     container: {
         flex: 1,
-        backgroundColor: '#fff'
     },
     inputContainer: {
         backgroundColor: '#FFFFFF',

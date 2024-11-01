@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from '@react-navigation/native';
 
 const CardFood2 = ({ food }) => {
     const navigation = useNavigation()
     return (
-        <View>
+        <SafeAreaView>
             <TouchableOpacity style={styles.container} onPress={() => { navigation.navigate('FoodDetail') }}>
                 <View style={styles.imageContainer}>
                     <Image
@@ -14,12 +14,12 @@ const CardFood2 = ({ food }) => {
                         style={styles.foodImage}
                     />
                 </View>
-                <View >
+                <SafeAreaView >
                     <View style={styles.foodNameContainer}>
                         <Text style={styles.foodName}>{food.name}</Text>
                     </View>
                     <View style={styles.foodDesContainer}>
-                        <Text style={styles.foodDescription}>
+                        <Text style={styles.foodDescription} numberOfLines={2}>
                             {food.description}
                         </Text>
                     </View>
@@ -29,9 +29,9 @@ const CardFood2 = ({ food }) => {
                             <MaterialIcons name="add" size={16} color="white" />
                         </TouchableOpacity>
                     </View>
-                </View>
+                </SafeAreaView>
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -42,9 +42,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffffff",
         borderRadius: 15,
         elevation: 5,
-        width: "95%",
-        height: 120,
-        margin: 10,
+        width: "100%",
+        height: 100,
+        marginHorizontal: 10,
+        marginVertical: 5,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row'
@@ -73,20 +74,20 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     price: {
-        fontSize: 20,
+        fontSize: 18,
         color: '#FF0000',
         fontWeight: 'bold',
     },
     addButton: {
         backgroundColor: '#FF0000',
         borderRadius: 50,
-        padding: 8,
+        padding: 7,
         marginBottom: 10
     },
     imageContainer: {
         marginRight: 10
     },
     foodNameContainer: {
-        marginTop: 10
+        marginTop: 5
     }
 });

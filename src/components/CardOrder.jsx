@@ -15,7 +15,16 @@ const CardOrder = ({ order }) => {
 
             {/* Order content with image and details */}
             <View style={styles.orderContent}>
-                <Image source={{ uri: order.image }} style={styles.orderImage} />
+                {console.log(order.image)}
+                {/* <Image
+                    source={order.image ? { uri: order.image } : require('../assets/Images/pizza.png')}
+                    style={styles.orderImage}
+                /> */}
+                <Image
+                    source={require('../assets/Images/pizza.png')}
+                    style={styles.orderImage}
+                />
+
                 <View style={styles.orderDetails}>
                     <Text style={styles.orderRestaurant}>{order.restaurant}</Text>
                     <Text style={styles.orderInfo}>{order.quantity} • {order.price}</Text>

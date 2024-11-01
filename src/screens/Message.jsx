@@ -1,23 +1,17 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React from 'react';
-import { useNavigation } from '@react-navigation/native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState } from 'react';
 
 const MessageScreen = ({ route }) => {
-    const { orderName } = route.params;
-    const navigation = useNavigation();
+    const [message, setMessage] = useState('');
+
+    const sendMessage = () => {
+        // Xử lý logic gửi tin nhắn
+        console.log("Tin nhắn đã gửi:", message);
+        setMessage(''); // Xóa tin nhắn sau khi gửi
+    };
 
     return (
-        <SafeAreaView style={styles.container}>
-            {/* Header */}
-            <View style={styles.headContainer}>
-                <TouchableOpacity>
-                    <AntDesign name='arrowleft' size={24} color='black' />
-                </TouchableOpacity>
-                <Text style={styles.textHeader}>Message</Text>
-            </View>
-
+        <View style={styles.container}>
             {/* Messages */}
             <View style={styles.chatContainer}>
                 {/* User Message */}
@@ -39,9 +33,22 @@ const MessageScreen = ({ route }) => {
                     <Text style={styles.messageText}>Sure, I’m on my way!</Text>
                 </View>
             </View>
-        </SafeAreaView>
+
+            {/* Chat Input */}
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Nhập tin nhắn..."
+                    value={message}
+                    onChangeText={setMessage}
+                />
+                <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+                    <Text style={styles.sendButtonText}>Gửi</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     );
-}
+};
 
 export default MessageScreen;
 
@@ -50,30 +57,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f0f0f0',
     },
-    backButton: {
-        position: 'absolute',
-        left: 5,
-        zIndex: 1,
-        padding: 10,
-    },
-    headContainer: {
-        flexDirection: 'row',
-        backgroundColor: '#FFFFFF',
-        width: '100%',
-        height: 50,
-        marginVertical: 20,
-        paddingLeft: 10,
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0',
-    },
-    textHeader: {
-        marginLeft: 10,
-        fontSize: 20,
-        fontWeight: '600',
-        color: 'black',
-    },
     chatContainer: {
+        flex: 1,
         padding: 10,
     },
     messageBubble: {
@@ -94,7 +79,31 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
     },
-    driverMessageText: {
-        color: '#000',
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        borderTopWidth: 1,
+        borderColor: '#ddd',
+    },
+    input: {
+        flex: 1,
+        height: 40,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 20,
+        paddingHorizontal: 15,
+        backgroundColor: '#fff',
+    },
+    sendButton: {
+        marginLeft: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        backgroundColor: '#0084FF',
+        borderRadius: 20,
+    },
+    sendButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
     },
 });

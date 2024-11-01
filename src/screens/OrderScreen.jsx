@@ -15,7 +15,7 @@ const OrderScreen = () => {
             restaurant: 'Mì Cay Sasin - 2 Lê Lợi',
             quantity: '2 phần',
             price: '93.000₫',
-            image: 'https://link-to-your-image.com/mi-cay.jpg',
+            image: '../assets/Images/pizza.png',
             status: 'Giao thành công',
         },
         {
@@ -24,7 +24,7 @@ const OrderScreen = () => {
             restaurant: 'Gà Nướng Cái Bang - Hồ Biểu Chánh',
             quantity: '2 phần',
             price: '109.000₫',
-            image: 'https://link-to-your-image.com/ga-nuong.jpg',
+            image: '../assets/Images/pizza.png',
             status: 'Giao thành công',
         },
     ]);
