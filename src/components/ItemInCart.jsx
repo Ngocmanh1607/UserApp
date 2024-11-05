@@ -1,46 +1,75 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Feather from 'react-native-vector-icons/Feather'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import formatPrice from '../utils/formatPrice'
+import { useDispatch } from 'react-redux'
+import { removeItem, updateQuantity } from '../store/cartSlice'
 
-const ItemInCart = () => {
-    // State to keep track of the quantity
-    const [quantity, setQuantity] = useState(1);
-
-    // Function to handle increment
+const ItemInCart = ({ food, restaurantId }) => {
+    const dispatch = useDispatch();
+    const toppingName = food.toppings.map((item) => item.name)
+    const [quantity, setQuantity] = useState(food.quantity);
     const handleIncrement = () => {
         setQuantity(prevQuantity => prevQuantity + 1);
     };
-
+    useEffect(() => {
+        dispatch(updateQuantity({ restaurantId: restaurantId, uniqueId: food.uniqueId, quantity: quantity }));
+    }, [quantity]);
     // Function to handle decrement
     const handleDecrement = () => {
         if (quantity > 1) {
             setQuantity(prevQuantity => prevQuantity - 1);
+        }
+        else {
+            Alert.alert(
+                "Xoá sản phẩm",
+                "Bạn muốn xoá sản phẩm này khỏi giỏ hàng?",
+                [
+                    {
+                        text: "Huỷ",
+                        onPress: () => console.log("Người dùng đã huỷ xoá"),
+                        style: "cancel"
+                    },
+                    {
+                        text: "Đồng ý",
+                        onPress: () => {
+                            dispatch(removeItem({ restaurantId: restaurantId, uniqueId: food.uniqueId }))
+                        },
+                        style: "destructive"
+                    }
+                ]
+            );
         }
     };
     return (
         <View style={styles.foodContainer}>
             <View style={styles.imageContainer}>
                 <Image
-                    source={require('../assets/Images/pop_2.png')}
+                    source={{ uri: food.image }}
                     style={styles.foodImage}
                 />
             </View>
             <View style={styles.infContainer}>
                 <View style={styles.foodNameContainer}>
-                    <Text style={styles.foodName}>Pizza</Text>
+                    <Text style={styles.foodName}>{food.name}</Text>
+                </View>
+                <View style={styles.foodToppingContainer}>
+                    {toppingName.map((name) => {
+                        return <Text style={{ fontSize: 12 }}>{name} </Text>
+                    })}
                 </View>
                 <View style={styles.handleContainer}>
                     <View style={styles.priceContainer}>
-                        <Text style={styles.price}>20.000đ</Text>
+                        <Text style={styles.price}>{formatPrice(food.price)}</Text>
                     </View>
                     <View style={styles.numberContainer}>
                         <TouchableOpacity style={styles.addButton} onPress={handleDecrement}>
-                            <Feather name="minus" size={16} color="white" />
+                            <Feather name="minus" size={14} color="white" />
                         </TouchableOpacity>
                         <Text style={styles.text}>{quantity}</Text>
                         <TouchableOpacity style={styles.addButton} onPress={handleIncrement}>
-                            <MaterialIcons name="add" size={16} color="white" />
+                            <MaterialIcons name="add" size={14} color="white" />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -58,17 +87,19 @@ const styles = StyleSheet.create({
         elevation: 5,
         width: "95%",
         height: 120,
-        margin: 10,
+        margin: 5,
         alignItems: 'center',
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        borderWidth: 1
     },
     foodImage: {
         width: 80,
         height: 80,
+        borderRadius: 10
     },
     foodName: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: '600',
         color: '#000000',
         textAlign: 'left',
@@ -79,7 +110,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     price: {
-        fontSize: 20,
+        fontSize: 16,
         color: '#FF0000',
         fontWeight: 'bold',
     },

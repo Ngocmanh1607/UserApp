@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Headerbar from "../components/Headerbar";
 import CardSlider from "../components/CardSlider";
@@ -14,22 +14,33 @@ import debounce from 'lodash.debounce'
 const HomeScreen = () => {
     const [search, setSearch] = useState('')
     const [restaurants, setRestaurants] = useState([
-        { name: 'Nhà hàng pizza', rating: 3.8, distance: 2, image: require("../assets/Images/pizza1.jpg") },
-        { name: 'Nhà hàng burger', rating: 4.2, distance: 3, image: require("../assets/Images/pizza2.jpg") },
-        { name: 'Nhà hàng sushi', rating: 4.5, distance: 1.5, image: require("../assets/Images/pizza3.jpg") }
     ]);
     const [isSearch, setIsSearch] = useState(false)
-    // Hàm tìm kiếm nhà hàng
+    useEffect(() => {
+        const fetchRestaurantData = async () => {
+            const data = await restaurantApi.getAllRestaurant();
+            const filterData = data.map(restaurant => ({
+                id: restaurant.id,
+                name: restaurant.name,
+                image: restaurant.image,
+                address: restaurant.address,
+                rating: restaurant.rating,
+                description: restaurant.description,
+            }))
+            setRestaurants(filterData);
+        };
+        fetchRestaurantData();
+    }, [])
     const handleSearch = async (query) => {
         setSearch(query);
         if (query.length > 0) {
             setIsSearch(true);
             try {
                 const data = await restaurantApi.searchRestaurants(query);
-                setRestaurants(data); // Cập nhật danh sách nhà hàng
+                setRestaurants(data);
             } catch (error) {
                 console.error('Error searching restaurants:', error);
-                setRestaurants([]); // Reset danh sách nếu có lỗi
+                setRestaurants([]);
             }
         } else {
             setIsSearch(false);
@@ -38,38 +49,20 @@ const HomeScreen = () => {
         }
     };
 
-    // Sử dụng debounce để giảm tần suất gọi API
     const debouncedSearch = useCallback(debounce(handleSearch, 300), []) // 300ms delay
 
     const handleChangeText = (query) => {
         debouncedSearch(query);
     };
 
-    const foodData = [
-        {
-            id: 1,
-            name: "Chicken Burger",
-            description: "100 gr chicken + tomato + cheese + Lettuce",
-            price: "20.00",
-            rating: "3.8",
-            image: require('../assets/Images/pop_2.png'),
-            start: 5,
-        },
-        {
-            id: 2,
-            name: "Beef Burger",
-            description: "200 gr beef + lettuce + tomato + cheese",
-            price: "25.00",
-            rating: "4.2",
-            image: require('../assets/Images/pop_2.png'),
-            start: 3.5
-        },
-    ];
+
 
     return (
         <SafeAreaView style={styles.mainContainer}>
-            <Headerbar />
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <View style={styles.headContainer}>
+                <Headerbar />
+            </View>
+            <View style={styles.scrollContainer}>
                 {/* Search box */}
                 <View style={styles.searchbox}>
                     <TouchableOpacity>
@@ -80,19 +73,9 @@ const HomeScreen = () => {
                 {
                     !isSearch ? (
                         <ScrollView>
-                            {/* Sliders */}
-                            < OfferSlider />
                             <Categories />
-
-                            {/* Food cards */}
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.foodScrollView}>
-                                {foodData.map(food => (
-                                    <FoodCard key={food.id} food={food} />
-                                ))}
-                            </ScrollView>
-
+                            <OfferSlider />
                             <CardSlider />
-
                             {/* Restaurant cards */}
                             {restaurants.map((restaurant, index) => (
                                 <CardRestaurant key={index} restaurant={restaurant} />
@@ -109,9 +92,8 @@ const HomeScreen = () => {
                                 )}
                             </ScrollView>
                         )
-
                 }
-            </ScrollView>
+            </View>
         </SafeAreaView>
     );
 }
@@ -122,8 +104,8 @@ const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
     },
-    scrollContainer: {
-        paddingHorizontal: 5,
+    headContainer: {
+        marginHorizontal: 5
     },
     searchbox: {
         flexDirection: 'row',
@@ -142,4 +124,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'black',
     },
+    scrollContainer: {
+        marginBottom: 100
+    }
 });

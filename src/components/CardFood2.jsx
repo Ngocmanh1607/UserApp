@@ -2,36 +2,37 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from '@react-navigation/native';
+import formatPrice from '../utils/formatPrice';
 
 const CardFood2 = ({ food }) => {
     const navigation = useNavigation()
     return (
-        <SafeAreaView>
-            <TouchableOpacity style={styles.container} onPress={() => { navigation.navigate('FoodDetail') }}>
-                <View style={styles.imageContainer}>
-                    <Image
-                        source={require('../assets/Images/pop_2.png')}
-                        style={styles.foodImage}
-                    />
+        <TouchableOpacity style={styles.container} onPress={() => {
+            navigation.navigate('FoodDetail', { food })
+        }}>
+            <View style={styles.imageContainer}>
+                <Image
+                    source={{ uri: food.image }}
+                    style={styles.foodImage}
+                />
+            </View>
+            <View style={styles.mainContainer} >
+                <View style={styles.foodNameContainer}>
+                    <Text style={styles.foodName}>{food.name}</Text>
                 </View>
-                <SafeAreaView >
-                    <View style={styles.foodNameContainer}>
-                        <Text style={styles.foodName}>{food.name}</Text>
+                <View style={styles.foodDesContainer}>
+                    <Text style={styles.foodDescription} numberOfLines={2}>
+                        {food.descriptions}
+                    </Text>
+                </View>
+                <View style={styles.priceContainer}>
+                    <Text style={styles.price}>{formatPrice(food.price)}</Text>
+                    <View style={styles.addButton}>
+                        <MaterialIcons name="add" size={16} color="white" />
                     </View>
-                    <View style={styles.foodDesContainer}>
-                        <Text style={styles.foodDescription} numberOfLines={2}>
-                            {food.description}
-                        </Text>
-                    </View>
-                    <View style={styles.priceContainer}>
-                        <Text style={styles.price}>$ {food.price}</Text>
-                        <TouchableOpacity style={styles.addButton}>
-                            <MaterialIcons name="add" size={16} color="white" />
-                        </TouchableOpacity>
-                    </View>
-                </SafeAreaView>
-            </TouchableOpacity>
-        </SafeAreaView>
+                </View>
+            </View>
+        </TouchableOpacity>
     );
 };
 
@@ -40,54 +41,55 @@ export default CardFood2;
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "#ffffff",
-        borderRadius: 15,
+        borderRadius: 10,
         elevation: 5,
-        width: "100%",
-        height: 100,
-        marginHorizontal: 10,
-        marginVertical: 5,
+        height: 120,
+        padding: 10,
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row'
+        marginBottom: 10
+    },
+    mainContainer: {
+        width: "70 %"
+    },
+    imageContainer: {
+        marginRight: 10,
     },
     foodImage: {
-        width: 80,
-        height: 80,
+        width: 90,
+        height: 90,
+        borderRadius: 10,
+    },
+    foodNameContainer: {
+        marginBottom: 4,
     },
     foodName: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: '600',
-        color: '#000000',
-        textAlign: 'left',
+        color: '#333333',
     },
     foodDesContainer: {
-        marginBottom: 16,
+        marginBottom: 10,
+        width: '80%',
     },
     foodDescription: {
-        fontSize: 14,
-        color: '#888',
-        textAlign: 'center',
+        fontSize: 13,
+        color: '#666666',
     },
     priceContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        marginTop: 10,
     },
     price: {
-        fontSize: 18,
+        fontSize: 16,
         color: '#FF0000',
         fontWeight: 'bold',
     },
     addButton: {
         backgroundColor: '#FF0000',
         borderRadius: 50,
-        padding: 7,
-        marginBottom: 10
-    },
-    imageContainer: {
-        marginRight: 10
-    },
-    foodNameContainer: {
-        marginTop: 5
+        padding: 6,
     }
 });

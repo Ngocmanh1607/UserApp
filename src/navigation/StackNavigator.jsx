@@ -13,22 +13,23 @@ import CompleteOrder from '../screens/CompleteOrderScreen';
 import OrderStatusScreen from '../screens/OrderStatusScreen';
 import { ActivityIndicator, View } from 'react-native';
 import MessageScreen from '../screens/Message';
+import MapScreen from '../screens/MapScreen';
 
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
     const [isFirstLaunch, setIsFirstLaunch] = useState(null);
+    const [accessToken, setAccessToken] = useState(null);
 
-    // Kiểm tra xem ứng dụng có được mở lần đầu không
     useEffect(() => {
         const checkFirstLaunch = async () => {
             const value = await AsyncStorage.getItem('hasLaunched');
+            const token = await AsyncStorage.getItem('accessToken');
+            setAccessToken(token);
             if (value === null) {
-                // Nếu chưa mở lần nào, thiết lập trạng thái lần đầu
                 await AsyncStorage.setItem('hasLaunched', 'true');
                 setIsFirstLaunch(true);
             } else {
-                // Ứng dụng đã được mở trước đó
                 setIsFirstLaunch(false);
             }
         };
@@ -45,26 +46,22 @@ const StackNavigator = () => {
     }
 
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {isFirstLaunch ? (
-                <>
-                    <Stack.Screen name="thumbnail1" component={ReviewScreen1} />
-                    <Stack.Screen name="thumbnail2" component={ReviewScreen2} />
-                    <Stack.Screen name="Auth" component={AuthScreen} />
-                </>
-            ) : (
-                <>
-                    <Stack.Screen name="Auth" component={AuthScreen} />
-                    <Stack.Screen name="Main" component={TabNavigator} />
-                    <Stack.Screen name="RestaurantDetail" component={RestaurantScreen} />
-                    <Stack.Screen name="DetailOrder" component={OrderDetailScreen} />
-                    <Stack.Screen name="FoodDetail" component={FoodDetailScreen} />
-                    <Stack.Screen name="CartScreen" component={CartScreen} />
-                    <Stack.Screen name="Message" component={MessageScreen} options={{ headerShown: true, }} />
-                    <Stack.Screen name="CompleteOrder" component={CompleteOrder} />
-                    <Stack.Screen name="OrderStatus" component={OrderStatusScreen} />
-                </>
-            )}
+        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={
+            isFirstLaunch
+                ? 'thumbnail1'
+                : (accessToken ? 'Main' : 'Auth')}>
+            <Stack.Screen name="thumbnail1" component={ReviewScreen1} />
+            <Stack.Screen name="thumbnail2" component={ReviewScreen2} />
+            <Stack.Screen name="Auth" component={AuthScreen} />
+            <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen name="MapScreen" component={MapScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true }} />
+            <Stack.Screen name="RestaurantDetail" component={RestaurantScreen} />
+            <Stack.Screen name="DetailOrder" component={OrderDetailScreen} />
+            <Stack.Screen name="FoodDetail" component={FoodDetailScreen} />
+            <Stack.Screen name="CartScreen" component={CartScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Giỏ hàng', headerBackTitle: 'Quay lại' }} />
+            <Stack.Screen name="Message" component={MessageScreen} options={{ headerShown: true }} />
+            <Stack.Screen name="CompleteOrder" component={CompleteOrder} />
+            <Stack.Screen name="OrderStatus" component={OrderStatusScreen} />
         </Stack.Navigator>
     );
 };

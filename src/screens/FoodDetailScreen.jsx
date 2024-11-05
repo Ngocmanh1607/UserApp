@@ -1,38 +1,86 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import CardBottom from '../components/CardBottom';
-import { TouchableOpacity } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItem } from '../store/cartSlice';
+import formatPrice from '../utils/formatPrice';
+
+
 const FoodDetailScreen = () => {
-    const navigation = useNavigation()
+    const route = useRoute();
+    console.log(route.params);
+    const { food } = route.params;
+    const navigation = useNavigation();
+    const dispatch = useDispatch();
+    const [foodDetails, setFoodDetails] = useState({ ...food, quantity: 1 });
+    const [sum, setSum] = useState(food.price);
     const [toppings, setToppings] = useState([
-        { id: 1, name: 'Trân châu trắng', price: '6.000đ', selected: false },
-        { id: 2, name: 'Hạt đác', price: '6.000đ', selected: false },
-        { id: 3, name: 'Thạch phô mai cafe', price: '6.000đ', selected: false },
-        { id: 4, name: 'Hạt chia', price: '6.000đ', selected: false },
-        { id: 5, name: 'Sương sáo', price: '6.000đ', selected: false },
-        { id: 6, name: 'Thạch trà xanh', price: '6.000đ', selected: false },
-        { id: 7, name: 'Nha đam', price: '6.000đ', selected: false },
+        { id: 1, name: 'Trân châu trắng', price: 6000, selected: false },
+        { id: 2, name: 'Hạt đác', price: 6000, selected: false },
+        { id: 3, name: 'Thạch phô mai cafe', price: 6000, selected: false },
+        { id: 4, name: 'Hạt chia', price: 6000, selected: false },
+        { id: 5, name: 'Sương sáo', price: 6000, selected: false },
+        { id: 6, name: 'Thạch trà xanh', price: 6000, selected: false },
+        { id: 7, name: 'Nha đam', price: 6000, selected: false },
     ]);
 
-    const toggleTopping = (id) => {
-        setToppings(toppings.map(topping =>
-            topping.id === id ? { ...topping, selected: !topping.selected } : topping
-        ));
+    const handleIncrement = () => {
+        setFoodDetails(prevDetails => {
+            const newQuantity = prevDetails.quantity + 1;
+            calculateTotal(toppings, newQuantity);
+            return { ...prevDetails, quantity: newQuantity };
+        });
     };
 
+    const handleDecrement = () => {
+        if (foodDetails.quantity > 1) {
+            setFoodDetails(prevDetails => {
+                const newQuantity = prevDetails.quantity - 1;
+                calculateTotal(toppings, newQuantity);
+                return { ...prevDetails, quantity: newQuantity };
+            });
+        }
+    };
+
+    const toggleTopping = (id) => {
+        setToppings(prevToppings => {
+            const updatedToppings = prevToppings.map(topping =>
+                topping.id === id ? { ...topping, selected: !topping.selected } : topping
+            );
+            calculateTotal(updatedToppings, foodDetails.quantity);
+            return updatedToppings;
+        });
+    };
+
+    const calculateTotal = (updatedToppings, quantity) => {
+        const selectedToppingsPrice = updatedToppings
+            .filter(topping => topping.selected)
+            .reduce((total, topping) => total + topping.price, 0);
+        const totalSum = (food.price + selectedToppingsPrice) * quantity;
+        setSum(totalSum);
+    };
+    const handleAddtoCart = () => {
+        const selectedToppings = toppings.filter(topping => topping.selected)
+        const selectedToppingsPrice = selectedToppings.reduce((total, topping) => total + topping.price, 0);
+        const totalPrice = food.price + selectedToppingsPrice;
+        console.log(foodDetails, selectedToppings)
+        dispatch(addItem({ food: { ...foodDetails, price: totalPrice }, toppings: selectedToppings }))
+
+    }
     return (
         <View style={styles.container}>
-            <Image source={require('../assets/Images/pizza.png')} style={styles.image} blurRadius={1} />
-            <TouchableOpacity style={styles.backButton} onPress={() => { navigation.goBack() }}>
-                <Ionicons name="arrow-back" size={28} color="#000" />
+            <Image source={{ uri: food.image }} style={styles.image} blurRadius={1} />
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={28} color="#fff" />
             </TouchableOpacity>
             <View style={styles.mainContainer}>
                 <View style={styles.headerContainer}>
-                    <Text style={styles.textName}>Trà xoài đào vải</Text>
-                    <Text style={styles.textPrice}>30.000 đ</Text>
+                    <Text style={styles.textName}>{food.name}</Text>
+                    <Text style={styles.textPrice}>{formatPrice(food.price)}</Text>
                 </View>
 
                 <ScrollView style={styles.toppingContainer}>
@@ -40,7 +88,7 @@ const FoodDetailScreen = () => {
                     {toppings.map(topping => (
                         <View key={topping.id} style={styles.toppingItem}>
                             <Text style={styles.toppingName}>{topping.name}</Text>
-                            <Text style={styles.toppingPrice}>{topping.price}</Text>
+                            <Text style={styles.toppingPrice}>{topping.price}đ</Text>
                             <CheckBox
                                 value={topping.selected}
                                 onValueChange={() => toggleTopping(topping.id)}
@@ -48,13 +96,31 @@ const FoodDetailScreen = () => {
                         </View>
                     ))}
                 </ScrollView>
+
                 <View style={styles.cardBottom}>
-                    <CardBottom />
+                    <View style={styles.bottomContainer}>
+                        <View style={styles.mainBContainer}>
+                            <Text style={styles.text}>{formatPrice(sum)}</Text>
+                            <View style={styles.numberContainer}>
+                                <TouchableOpacity style={styles.addButton} onPress={handleDecrement}>
+                                    <Feather name="minus" size={16} color="white" />
+                                </TouchableOpacity>
+                                <Text style={styles.text}>{foodDetails.quantity}</Text>
+                                <TouchableOpacity style={styles.addButton} onPress={handleIncrement}>
+                                    <MaterialIcons name="add" size={16} color="white" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={handleAddtoCart}>
+                            <Text style={styles.textAdd}>Thêm vào giỏ hàng</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </View>
     );
 };
+
 
 export default FoodDetailScreen;
 
@@ -138,5 +204,47 @@ const styles = StyleSheet.create({
         left: 1,
         padding: 10,
         zIndex: 1,
+    },
+    bottomContainer: {
+        flex: 1,
+        width: '100%',
+        margin: 20,
+        flexDirection: 'column',
+    },
+    mainBContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '90%'
+    },
+    buttonContainer: {
+        backgroundColor: "#FF0000",
+        width: '80%',
+        height: 40,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: '5%',
+        marginBottom: 10
+    },
+    textAdd: {
+        color: '#FFFFFF',
+        fontSize: 18
+    },
+    addButton: {
+        backgroundColor: '#FF0000',
+        borderRadius: 10,
+        padding: 8,
+        margin: 10
+    },
+    numberContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    text: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#000000'
     },
 });

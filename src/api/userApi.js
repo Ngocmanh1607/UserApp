@@ -1,6 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './apiClient';
+import { Alert } from 'react-native';
 
 const userApi = {
     // API đăng ký người dùng
@@ -51,19 +52,8 @@ const userApi = {
                     }
                 }
             );
-
-            const { message, metadata } = response.data;
-
-            // Kiểm tra nếu không có thông tin cần thiết trong phản hồi
-            if (!message || !metadata) {
-                console.error('Thiếu dữ liệu từ phản hồi đăng nhập:', { message, metadata });
-                return false; // Trả về false nếu có lỗi
-            }
-
-            const { accessToken, refreshToken } = metadata.tokens;
-            const { email: userEmail, id: userId } = metadata.user;
-
-            // Lưu trữ thông tin người dùng vào AsyncStorage
+            const { accessToken, refreshToken } = response.data.metadata.tokens;
+            const { email: userEmail, id: userId } = response.data.metadata.user;
             await AsyncStorage.multiSet([
                 ['accessToken', accessToken],
                 ['refreshToken', refreshToken],
@@ -71,44 +61,16 @@ const userApi = {
                 ['userId', userId.toString()]
             ]);
 
-            console.log('Đăng nhập thành công và lưu trữ dữ liệu thành công');
-            return true; // Trả về true nếu thành công
+            return true;
         } catch (error) {
-            console.error("Đăng nhập thất bại:", error.response ? error.response.data : error.message);
-            return false; // Trả về false nếu có lỗi
+            Alert.alert("Vui lòng kiểm tra lại tài khoản mật khẩu. Đăng nhập thất bại")
+            return false;
         }
     },
-
-    // API lấy vị trí hiện tại
-    currentLocation: async (latitude, longitude) => {
-        try {
-            const response = await axios.get(`https://revgeocode.search.hereapi.com/v1/revgeocode`, {
-                params: {
-                    at: `${latitude},${longitude}`,
-                    lang: 'en-US',
-                    apiKey: '7sef-qPLms2vVRE4COs57FGzk4LuYC20NtU6TCd13kU',
-                },
-            });
-            const data = response.data;
-            if (data.items && data.items.length > 0) {
-                return {
-                    latitude,
-                    longitude,
-                    address: data.items[0].address.label,
-                };
-            } else {
-                throw new Error("Không thể tìm thấy vị trí");
-            }
-        } catch (error) {
-            console.error(error);
-            throw new Error("Không thể tìm thấy vị trí");
-        }
-    },
-
     // API lấy thông tin người dùng
     getInfoUser: async (userId) => {
         try {
-            const response = await apiClient.get(`/user/${userId}`);
+            const response = await apiClient.get(`/ user / ${userId}`);
             return response.data;
         } catch (error) {
             console.error(error);
@@ -119,7 +81,7 @@ const userApi = {
     // API cập nhật thông tin người dùng
     updateUser: async (userId, userData) => {
         try {
-            const response = await apiClient.put(`/users/${userId}`, userData);
+            const response = await apiClient.put(`/ users / ${userId}`, userData);
             return response.data;
         } catch (error) {
             console.error('Update failed:', error);

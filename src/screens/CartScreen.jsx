@@ -4,19 +4,36 @@ import { BlurView } from '@react-native-community/blur';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import ItemInCart from '../components/ItemInCart'
 import { Dropdown } from 'react-native-element-dropdown';
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+
+import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
 import CompleteOrder from './CompleteOrderScreen';
+import Headerbar from '../components/Headerbar';
+import { useSelector } from 'react-redux';
+import formatPrice from '../utils/formatPrice';
 
 const CartScreen = () => {
-    // Separate state for each dropdown
+    console.log('render')
+    const route = useRoute();
+    const { restaurantId } = route.params;
     const [paymentMethod, setPaymentMethod] = useState(null);
     const [discount, setDiscount] = useState(null);
     const [showCompleteOrder, setShowCompleteOrder] = useState(false);
-
+    const items = useSelector(state => state.cart.carts[restaurantId]);
     const navigation = useNavigation();
     const slideAnim = useRef(new Animated.Value(500)).current;
-
+    const [foodData, setFoodData] = useState(() => {
+        if (items !== undefined)
+            return items.map(item => ({
+                id: item.id,
+                name: item.name,
+                image: item.image,
+                quantity: item.quantity,
+                price: item.price,
+                toppings: item.toppings,
+                uniqueId: item.uniqueId
+            }));
+    });
+    const sum = useSelector(state => state.cart.totalAmount[restaurantId]);
     useEffect(() => {
         const animation = Animated.timing(slideAnim, {
             toValue: 0,
@@ -40,7 +57,6 @@ const CartScreen = () => {
         { label: 'Item 7', value: '7' },
         { label: 'Item 8', value: '8' },
     ];
-    // Lắng nghe sự kiện khi màn hình bị blur (mất tiêu điểm)
     useEffect(() => {
         const unsubscribe = navigation.addListener('blur', () => {
             setShowCompleteOrder(false);
@@ -49,7 +65,6 @@ const CartScreen = () => {
         return unsubscribe; // Clean up listener khi component bị unmount
     }, [navigation]);
 
-    // Render CompleteOrder screen with animation
     const CompleteOrderDisplay = () => (
         <Animated.View style={[styles.card, { transform: [{ translateY: slideAnim }] }]}>
             <CompleteOrder onComplete={() => setShowCompleteOrder(false)} />
@@ -59,29 +74,18 @@ const CartScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.headContainer}>
-                <TouchableOpacity onPress={navigation.goBack}>
-                    <AntDesign name='arrowleft' size={24} color='black' />
-                </TouchableOpacity>
-                <View style={styles.headerTextContainer}>
-                    <Text style={styles.textHeader}>Thanh toán</Text>
-                </View>
-            </View>
-            <View style={styles.locationContainer}>
-                <TouchableOpacity style={{ flexDirection: 'row' }}>
-                    <Ionicons name="location" size={25} color="#FF0000" style={{ paddingVertical: 6 }} />
-                    <View>
-                        <View>
-                            <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700' }}>Location</Text>
-                        </View>
-                        <Text>Nguyễn Thái Sơn , P3, Gò Vấp, HCM</Text>
-                    </View>
-                </TouchableOpacity>
+                <Headerbar />
             </View>
             <View style={styles.mainContainer}>
-                <ScrollView>
-                    <ItemInCart />
-                    <ItemInCart />
-                </ScrollView>
+                {items && items.length > 0 ? (
+                    <ScrollView style={styles.scrollContainer}>
+                        {foodData.map((food) => {
+                            return <ItemInCart food={food} key={food.uniqueId} restaurantId={restaurantId} />
+                        })}
+                    </ScrollView>
+                ) : (
+                    <Text style={{ textAlign: 'center', marginTop: 20 }}>Your cart is empty</Text>
+                )}
                 <View style={styles.noteContainer}>
                     <TextInput placeholder='Ghi chú' style={styles.rowfdsds}></TextInput>
                 </View>
@@ -89,22 +93,22 @@ const CartScreen = () => {
                     <Text style={styles.textBold}>Chi tiết thanh toán</Text>
                     <View style={styles.row}>
                         <Text style={styles.label}>Tạm tính</Text>
-                        <Text style={styles.value}>100.000đ</Text>
+                        <Text style={styles.value}>{formatPrice(sum)}</Text>
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.label}>Phí áp dụng</Text>
-                        <Text style={styles.value}>10.000đ</Text>
+                        <Text style={styles.value}>{formatPrice(sum * 0.1)}</Text>
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.label}>Giảm giá</Text>
-                        <Text style={styles.value}>10.000đ</Text>
+                        <Text style={styles.value}>{formatPrice(0)}</Text>
                     </View>
                 </View>
             </View>
             <View style={styles.footerContainer}>
                 <View style={[styles.row, { borderBlockColor: '#FFFFFF', borderBottomWidth: 1 }]}>
                     <Text style={[styles.label, styles.totalLabel]}>Tổng số tiền</Text>
-                    <Text style={[styles.value, styles.totalValue]}>100.000đ</Text>
+                    <Text style={[styles.value, styles.totalValue]}>{formatPrice(sum)}</Text>
                 </View>
                 <View style={styles.methodPaymentContainer}>
                     <View style={styles.payment}>
@@ -156,7 +160,7 @@ const CartScreen = () => {
                     <Text style={styles.buttonText}>Đặt món</Text>
                 </TouchableOpacity>
             </View>
-            {/* Render CompleteOrder if showCompleteOrder is true */}
+
             {showCompleteOrder && (
                 <>
                     <BlurView
@@ -180,14 +184,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
     },
     headContainer: {
-        flexDirection: 'row',
-        backgroundColor: '#FFFFFF',
-        width: '100%',
-        height: 50,
-        paddingLeft: 10,
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0',
+        margin: 5
     },
     textHeader: {
         marginLeft: 10,
@@ -199,6 +196,9 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 15,
         marginTop: 10,
+    },
+    scrollContainer: {
+        height: 200
     },
     footerContainer: {
         backgroundColor: '#FF0000',
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     textBold: {
-        fontSize: 22,
+        fontSize: 18,
         fontWeight: '600',
         color: '#000'
     },

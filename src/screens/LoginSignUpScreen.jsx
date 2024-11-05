@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { useWindowDimensions, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Alert, TouchableWithoutFeedback, Keyboard, LogBox } from 'react-native';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import PasswordInput from '../components/PasswordInput';
 import { useNavigation } from '@react-navigation/native';
 import userApi from '../api/userApi';
 
@@ -111,12 +109,12 @@ const LoginRoute = () => {
 
                 <View style={styles.horizontalLine} />
 
-                <View>
+                {/* <View>
                     <TouchableOpacity style={styles.googleButtonContainer}>
                         <Image source={require("../assets/Images/ic_google.png")} style={styles.topImage} />
                         <Text style={styles.textLoginGoogle}>Login with Google</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
             </View>
         </TouchableWithoutFeedback>
 

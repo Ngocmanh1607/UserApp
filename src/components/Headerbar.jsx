@@ -5,9 +5,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Geolocation from 'react-native-geolocation-service';
 import { useDispatch, useSelector } from "react-redux";
 import { setLocation, setError } from "../store/currentLocationSlice";
-import userApi from '../api/userApi';
+import { useNavigation } from "@react-navigation/native";
+import apiService from "../api/apiService";
 
 const Headerbar = () => {
+    const navigation = useNavigation()
     const dispatch = useDispatch()
     const address = useSelector(state => state.currentLocation.address);
     const error = useSelector(state => state.currentLocation.error);
@@ -60,12 +62,11 @@ const Headerbar = () => {
         };
         const fetchAddressFromCoords = async (latitude, longitude) => {
             try {
-                const data = await userApi.currentLocation(latitude, longitude)
+                const data = await apiService.currentLocation(latitude, longitude)
                 if (data) {
                     dispatch(setLocation({
                         latitude, longitude, address: data.address
                     }))
-                    console.log(data.address)
                 }
                 else {
                     dispatch(setError('Không thể tìm thấy vị trí'))
@@ -77,27 +78,26 @@ const Headerbar = () => {
             }
         };
         requestLocationPermission();
-    }, [dispatch]);
+    }, []);
 
-
+    const handlePress = () => {
+        navigation.navigate('MapScreen')
+    }
     return (
         <View style={styles.container}>
             <View style={styles.locationContainer}>
-                <TouchableOpacity style={{ flexDirection: 'row' }}>
+                <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handlePress}>
                     <Ionicons name="location" size={25} color="#FF0000" style={{ paddingVertical: 6 }} />
                     <View>
                         <View>
-                            <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700' }}>Location</Text>
+                            <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700' }}>Giao tới</Text>
                         </View>
-                        <Text>{
+                        <Text style={styles.text}>{
                             error ? error : address
                         }</Text>
                     </View>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.notificationContainer}>
-                <MaterialIcons name="notifications" size={25} />
-            </TouchableOpacity>
         </View>
     );
 }
@@ -109,17 +109,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         height: 60,
-        paddingVertical: 10,
-        width: '80%',
+        padding: 10,
     },
     container: {
         backgroundColor: '#FFFFFF',
         flexDirection: 'row',
         paddingBottom: 10,
-        justifyContent: 'space-around',
+        justifyContent: 'center',
         alignItems: 'center',
+        borderRadius: 10,
+        margin: 5
     },
-    notificationContainer: {
-        justifyContent: 'flex-end',
-    },
+    text: {
+        paddingRight: 10
+    }
 });

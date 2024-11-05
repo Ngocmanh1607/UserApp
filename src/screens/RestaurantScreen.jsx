@@ -1,90 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
-import AntDesign from 'react-native-vector-icons/AntDesign'
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import CardFood2 from '../components/CardFood2';
 import { useNavigation } from '@react-navigation/native';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import restaurantApi from '../api/restaurantApi';
 
 const RestaurantScreen = ({ route }) => {
     const navigation = useNavigation();
     const { restaurant } = route.params;
-    const restaurantId = restaurant.restaurantId
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const restaurantId = restaurant.id;
     const [loading, setLoading] = useState(true);
-    const categories = [
-        { label: 'All', value: 'all' },
-        { label: 'Burgers', value: 'burgers' },
-        { label: 'Pizza', value: 'pizza' },
-        { label: 'Drinks', value: 'drinks' },
-    ];
-    const [restaurantData, setRestaurantData] = useState([{
-        id: 1,
-        name: "Chicken Burger",
-        description: "100 gr chicken + tomato + cheese + Lettuce",
-        price: "20.00",
-        rating: "3.8",
-        image: require('../assets/Images/pop_2.png'),
-        start: 5,
-    },
-    {
-        id: 2,
-        name: "Beef Burger",
-        description: "200 gr beef + lettuce + tomato + cheese",
-        price: "25.00",
-        rating: "4.2",
-        image: require('../assets/Images/pop_2.png'),
-        start: 3.5,
-    },
-    {
-        id: 3,
-        name: "Beef Burger",
-        description: "200 gr beef + lettuce + tomato + cheese",
-        price: "25.00",
-        rating: "4.2",
-        image: require('../assets/Images/pop_2.png'),
-        start: 3.5,
-    },
-    {
-        id: 4,
-        name: "Beef Burger",
-        description: "200 gr beef + lettuce + tomato + cheese",
-        price: "25.00",
-        rating: "4.2",
-        image: require('../assets/Images/pop_2.png'),
-        start: 3.5,
-    },
-    {
-        id: 5,
-        name: "Beef Burger",
-        description: "200 gr beef + lettuce + tomato + cheese",
-        price: "25.00",
-        rating: "4.2",
-        image: require('../assets/Images/pop_2.png'),
-        start: 3.5,
-    }])
+    const [restaurantData, setRestaurantData] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
+
     useEffect(() => {
         const fetchRestaurantData = async () => {
             try {
                 const data = await restaurantApi.getFoodsRestaurant(restaurantId);
-                setRestaurantData(data)
-                setLoading(false)
+                setRestaurantData(data);
+                setFilteredData(data);
+                setLoading(false);
             } catch (error) {
-                console.error('Error searching restaurants:', error);
+                console.log('Error searching restaurants:', error);
             }
         }
         fetchRestaurantData();
-    }, [restaurantId])
-
+    }, [restaurantId]);
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        if (query === '') {
+            setFilteredData(restaurantData);
+        }
+        else {
+            const filtered = restaurantData.filter(food =>
+                food.name.toLowerCase().includes(query.toLowerCase()));
+            setFilteredData(filtered);
+        }
+    }
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <SafeAreaView style={styles.container}>
-                <Image source={restaurant.image} style={styles.imageContainer} />
+                <Image source={{ uri: restaurant.image }} style={styles.imageContainer} />
                 <TouchableOpacity style={styles.backButton} onPress={() => { navigation.goBack() }}>
                     <Ionicons name="arrow-back" size={28} color="#000" />
                 </TouchableOpacity>
@@ -110,26 +72,18 @@ const RestaurantScreen = ({ route }) => {
                         <TouchableOpacity>
                             <AntDesign name='search1' size={24} color="black" style={{ color: 'red', paddingRight: 10, marginLeft: 10 }} />
                         </TouchableOpacity>
-                        <TextInput style={styles.input} placeholder="Tìm kiếm món ăn" />
-                    </View>
-                    <View style={styles.pickerContainer}>
-                        <Picker
-                            selectedValue={selectedCategory}
-                            onValueChange={(itemValue) => setSelectedCategory(itemValue)}
-                            style={styles.picker}
-                        >
-                            {categories.map(category => (
-                                <Picker.Item label={category.label} value={category.value} key={category.value} />
-                            ))}
-                        </Picker>
+                        <TextInput style={styles.input} placeholder="Tìm kiếm món ăn"
+                            value={searchQuery}
+                            onChangeText={handleSearch}
+                        />
                     </View>
                 </View>
                 <ScrollView style={styles.foodScrollView}>
-                    {restaurantData.map(food => (
+                    {filteredData.map(food => (
                         <CardFood2 key={food.id} food={food} />
                     ))}
                 </ScrollView>
-                <TouchableOpacity style={styles.cartContainer} onPress={() => { navigation.navigate('CartScreen') }}>
+                <TouchableOpacity style={styles.cartContainer} onPress={() => { navigation.navigate('CartScreen', { restaurantId }) }}>
                     <SimpleLineIcons name="handbag" size={35} color='black' />
                 </TouchableOpacity>
             </SafeAreaView>
@@ -144,12 +98,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F8F8F8',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     imageContainer: {
         width: '100%',
         height: 180,
-        resizeMode: 'cover', // Đảm bảo hình ảnh chiếm toàn bộ diện tích
+        resizeMode: 'cover',
     },
     backButton: {
         position: 'absolute',
@@ -172,7 +126,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 22,
         fontWeight: '600',
-        color: "#000000",
+        color: "#000",
     },
     bottomContainer: {
         flexDirection: 'row',
@@ -200,8 +154,8 @@ const styles = StyleSheet.create({
         marginLeft: 20,
     },
     searchbox: {
+        flex: 1,
         flexDirection: 'row',
-        width: '70%',
         backgroundColor: '#FFF',
         alignItems: 'center',
         marginVertical: 10,
@@ -209,6 +163,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         borderRadius: 10,
         height: 45,
+        margin: 10
     },
     input: {
         flex: 1,
@@ -216,26 +171,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333',
     },
-    pickerContainer: {
-        width: '30%',
-        borderRadius: 10,
-        height: 45,
-        backgroundColor: '#FFF',
-        margin: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 3
-    },
-    picker: {
-        height: '100%',
-        width: '100%',
-        color: 'red',
-        borderRadius: 10,
-
-    },
     mainInContainer: {
         flexDirection: 'row',
-        width: '90%',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -250,6 +187,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
-        elevation: 5
-    }
+        elevation: 5,
+    },
+    foodScrollView: {
+        flex: 1,
+        marginHorizontal: 10,
+    },
 });
