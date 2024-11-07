@@ -1,7 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View, PermissionsAndroid, Platform } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Geolocation from 'react-native-geolocation-service';
 import { useDispatch, useSelector } from "react-redux";
 import { setLocation, setError } from "../store/currentLocationSlice";
@@ -9,11 +8,15 @@ import { useNavigation } from "@react-navigation/native";
 import apiService from "../api/apiService";
 
 const Headerbar = () => {
-    const navigation = useNavigation()
-    const dispatch = useDispatch()
+    const navigation = useNavigation();
+    const dispatch = useDispatch();
     const address = useSelector(state => state.currentLocation.address);
     const error = useSelector(state => state.currentLocation.error);
+    const hasFetchedLocation = useRef(false); // Dùng useRef để đánh dấu đã lấy vị trí
+
     useEffect(() => {
+        if (hasFetchedLocation.current) return; // Chỉ lấy vị trí nếu chưa lấy
+
         const requestLocationPermission = async () => {
             if (Platform.OS === 'android') {
                 try {
@@ -52,6 +55,7 @@ const Headerbar = () => {
             Geolocation.getCurrentPosition(
                 (position) => {
                     fetchAddressFromCoords(position.coords.latitude, position.coords.longitude);
+                    hasFetchedLocation.current = true; // Đánh dấu đã lấy vị trí
                 },
                 (error) => {
                     console.error(error.code, error.message);
@@ -60,29 +64,30 @@ const Headerbar = () => {
                 { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
             );
         };
+
         const fetchAddressFromCoords = async (latitude, longitude) => {
             try {
-                const data = await apiService.currentLocation(latitude, longitude)
+                const data = await apiService.currentLocation(latitude, longitude);
                 if (data) {
                     dispatch(setLocation({
                         latitude, longitude, address: data.address
-                    }))
+                    }));
+                } else {
+                    dispatch(setError('Không thể tìm thấy vị trí'));
                 }
-                else {
-                    dispatch(setError('Không thể tìm thấy vị trí'))
-                }
-            }
-            catch (error) {
+            } catch (error) {
                 console.error(error);
                 dispatch(setError("Không thể tìm thấy vị trí"));
             }
         };
+
         requestLocationPermission();
     }, []);
 
     const handlePress = () => {
-        navigation.navigate('MapScreen')
-    }
+        navigation.navigate('MapScreen');
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.locationContainer}>
@@ -92,15 +97,15 @@ const Headerbar = () => {
                         <View>
                             <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700' }}>Giao tới</Text>
                         </View>
-                        <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{
-                            error ? error : address
-                        }</Text>
+                        <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">
+                            {error ? error : address}
+                        </Text>
                     </View>
                 </TouchableOpacity>
             </View>
         </View>
     );
-}
+};
 
 export default Headerbar;
 
@@ -118,7 +123,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
-        margin: 5
+        margin: 5,
     },
     text: {
         paddingRight: 10,

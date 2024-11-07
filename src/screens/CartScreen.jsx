@@ -4,11 +4,10 @@ import { BlurView } from '@react-native-community/blur';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import ItemInCart from '../components/ItemInCart'
 import { Dropdown } from 'react-native-element-dropdown';
-
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
 import CompleteOrder from './CompleteOrderScreen';
-import Headerbar from '../components/Headerbar';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import formatPrice from '../utils/formatPrice';
 
 const CartScreen = () => {
@@ -19,6 +18,9 @@ const CartScreen = () => {
     const [showCompleteOrder, setShowCompleteOrder] = useState(false);
     const items = useSelector(state => state.cart.carts[restaurantId]);
     const navigation = useNavigation();
+    const dispatch = useDispatch()
+    const address = useSelector(state => state.currentLocation.address);
+    const error = useSelector(state => state.currentLocation.error);
     const slideAnim = useRef(new Animated.Value(500)).current;
     const [foodData, setFoodData] = useState(() => {
         if (items)
@@ -76,7 +78,9 @@ const CartScreen = () => {
 
         return unsubscribe; // Clean up listener khi component bị unmount
     }, [navigation]);
-
+    const handlePress = () => {
+        navigation.navigate('MapScreen')
+    }
     const CompleteOrderDisplay = () => (
         <Animated.View style={[styles.card, { transform: [{ translateY: slideAnim }] }]}>
             <CompleteOrder onComplete={() => setShowCompleteOrder(false)} />
@@ -86,7 +90,19 @@ const CartScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.headContainer}>
-                <Headerbar />
+                <View style={styles.locationContainer}>
+                    <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handlePress}>
+                        <Ionicons name="location" size={25} color="#FF0000" style={{ paddingVertical: 6 }} />
+                        <View>
+                            <View>
+                                <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700' }}>Giao tới</Text>
+                            </View>
+                            <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{
+                                error ? error : address
+                            }</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
             </View>
             <View style={styles.mainContainer}>
                 {items && items.length > 0 ? (
@@ -278,16 +294,10 @@ const styles = StyleSheet.create({
         width: '50%'
     },
     locationContainer: {
-        elevation: 5,
-        backgroundColor: '#FFF',
         flexDirection: 'row',
         justifyContent: 'flex-start',
-        height: 60,
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        width: '90%',
-        marginHorizontal: '5%',
-        borderRadius: 10
+        height: 50,
+        padding: 10,
     },
     noteContainer: {
         backgroundColor: '#FFFF',
@@ -335,4 +345,8 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
     },
+    text: {
+        paddingRight: 10,
+        width: 340,
+    }
 })

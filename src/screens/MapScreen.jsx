@@ -1,16 +1,18 @@
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { useDispatch, useSelector } from 'react-redux';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import apiService from '../api/apiService';
 import { setLocation } from '../store/currentLocationSlice';
+import { useNavigation } from '@react-navigation/native';
+import { debounce } from 'lodash';
 
 const MapScreen = () => {
+    const navigation = useNavigation();
     const saveLocation = useSelector(state => state.currentLocation);
-    console.log(saveLocation)
     const [search, setSearch] = useState('');
+    const [results, setResults] = useState([]);
     const [region, setRegion] = useState({
         latitude: saveLocation.latitude,
         longitude: saveLocation.longitude,
@@ -19,60 +21,79 @@ const MapScreen = () => {
     });
     const [address, setAddress] = useState('');
     const dispatch = useDispatch();
+
     useEffect(() => {
         setAddress(saveLocation.address);
     }, [saveLocation]);
 
-    const handleSearch = async () => {
-        if (!search.trim()) {
-            Alert.alert('Thông báo', 'Vui lòng nhập địa chỉ.');
-            return;
-        }
-        try {
-            const response = await apiService.searchAddress(search);
-            if (response && response.length > 0) {
-                const location = response[0];
-                console.log("Locaiton", location)
-                setRegion({
-                    latitude: location.latitude,
-                    longitude: location.longitude,
-                    latitudeDelta: 0.01,
-                    longitudeDelta: 0.01,
-                });
-                dispatch(setLocation({
-                    latitude: location.latitude,
-                    longitude: location.longitude,
-                    address: location.address
-                }))
-                console.log("address", response[0].address)
-            } else {
-                Alert.alert('Thông báo', 'Không tìm thấy địa chỉ nào.');
+    const handleSearch = useCallback(
+        debounce(async (query) => {
+            if (!query.trim()) {
+                setResults([]);
+                return;
             }
+            try {
+                const response = await apiService.searchAddress(query);
+                setResults(response || []);
+            } catch (error) {
+                console.log(error);
+                Alert.alert('Lỗi', 'Có lỗi xảy ra khi tìm kiếm địa chỉ.');
+            }
+        }, 500),
+        []
+    );
+
+    const handleChangeText = (value) => {
+        setSearch(value);
+        handleSearch(value);
+    };
+
+    const handlePress = (location) => {
+        try {
+            setRegion({
+                latitude: location.latitude,
+                longitude: location.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+            });
+            dispatch(setLocation({
+                latitude: location.latitude,
+                longitude: location.longitude,
+                address: location.address,
+            }));
+            navigation.goBack();
         } catch (error) {
-            console.log(error)
-            // Alert.alert('Lỗi', 'Có lỗi xảy ra khi tìm kiếm địa chỉ.');
+            console.log(error);
+            Alert.alert('Lỗi', 'Có lỗi xảy ra khi chọn địa chỉ.');
         }
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.searchbox}>
+                <TouchableOpacity>
+                    <AntDesign name='search1' size={24} color="red" />
+                </TouchableOpacity>
                 <TextInput
                     style={styles.input}
                     placeholder="Tìm kiếm địa chỉ"
                     value={search}
-                    onChangeText={setSearch}
+                    onChangeText={handleChangeText}
                 />
-                <TouchableOpacity onPress={handleSearch}>
-                    <AntDesign name='search1' size={24} color="red" style={{ paddingEnd: 10 }} />
-                </TouchableOpacity>
             </View>
-            <MapView
-                style={styles.map}
-                region={region}
-            >
-                <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} />
-            </MapView>
+            <FlatList
+                data={results}
+                keyExtractor={(item) => `${item.latitude}-${item.longitude}`}
+                renderItem={({ item }) => (
+                    <TouchableOpacity
+                        style={styles.textContainer}
+                        onPress={() => handlePress(item)}
+                    >
+                        <Text>{item.address}</Text>
+                    </TouchableOpacity>
+                )}
+                ListEmptyComponent={<Text style={styles.noResultsText}>Không tìm thấy địa chỉ nào</Text>}
+            />
         </View>
     );
 };
@@ -81,9 +102,6 @@ export default MapScreen;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-    },
-    map: {
         flex: 1,
     },
     searchbox: {
@@ -101,5 +119,17 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: 'black',
         marginLeft: 10,
+    },
+    textContainer: {
+        backgroundColor: '#fff',
+        marginHorizontal: 10,
+        marginBottom: 10,
+        padding: 10,
+        borderRadius: 10,
+    },
+    noResultsText: {
+        textAlign: 'center',
+        color: 'gray',
+        marginTop: 10,
     },
 });
