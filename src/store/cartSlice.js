@@ -1,28 +1,38 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+    userId: null,
     carts: {}, // { restaurantId: [{ foodId, price, quantity, toppings: [{ id, price, name }], uniqueId, ...foodDetails }] }
-    totalAmount: {}, // { restaurantId: totalAmount }
-}
+    totalAmount: {}, // { restaurantId: { amount: totalAmount, name: "Restaurant Name", image: "image.jpg" } }
+};
 
 const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
+        setUserId: (state, action) => {
+            state.userId = action.payload;
+            loadCartFromStorage(state.userId);
+            saveCartToStorage(state);
+        },
+
         addItem: (state, action) => {
-            const { food, toppings } = action.payload;
+            const { food, toppings, restaurantInfo } = action.payload;
             const quantity = food.quantity || 1;
 
             if (!state.carts[food.restaurant_id]) {
                 state.carts[food.restaurant_id] = [];
-                state.totalAmount[food.restaurant_id] = 0;
+                state.totalAmount[food.restaurant_id] = {
+                    amount: 0,
+                    name: restaurantInfo.name,
+                    image: restaurantInfo.image
+                };
+                console.log(state.totalAmount[food.restaurant_id]);
             }
 
             const uniqueId = `${food.id}-${toppings.map(t => t.id).sort().join('-')}`;
             const existingItem = state.carts[food.restaurant_id].find(item => item.uniqueId === uniqueId);
-            const totalToppingsPrice = toppings.reduce((sum, topping) => sum + topping.price, 0);
-            const pricePerUnit = food.price + totalToppingsPrice;
-
             if (existingItem) {
                 existingItem.quantity += quantity;
             } else {
@@ -34,8 +44,8 @@ const cartSlice = createSlice({
                 });
             }
 
-            state.totalAmount[food.restaurant_id] += pricePerUnit * quantity;
-            console.log('cart : ', state.carts[food.restaurant_id])
+            state.totalAmount[food.restaurant_id].amount += food.price * quantity;
+            saveCartToStorage(state);
         },
 
         removeItem: (state, action) => {
@@ -44,35 +54,67 @@ const cartSlice = createSlice({
             const itemIndex = cart.findIndex(item => item.uniqueId === uniqueId);
             if (itemIndex !== -1) {
                 const item = cart[itemIndex];
-                const totalToppingsPrice = item.toppings.reduce((sum, topping) => sum + topping.price, 0);
-                state.totalAmount[restaurantId] -= (item.price + totalToppingsPrice) * item.quantity;
+                state.totalAmount[restaurantId].amount -= (item.price) * item.quantity;
                 cart.splice(itemIndex, 1);
 
                 if (cart.length === 0) {
                     delete state.carts[restaurantId];
                     delete state.totalAmount[restaurantId];
                 }
+                saveCartToStorage(state);
             }
         },
 
         updateQuantity: (state, action) => {
             const { restaurantId, uniqueId, quantity } = action.payload;
-            console.log(action.payload);
             const cart = state.carts[restaurantId];
             const item = cart.find(item => item.uniqueId === uniqueId);
 
             if (item) {
-                const totalToppingsPrice = item.toppings.reduce((sum, topping) => sum + topping.price, 0);
-                const pricePerUnit = item.price + totalToppingsPrice;
+                const pricePerUnit = item.price;
                 const quantityChange = quantity - item.quantity;
 
-                state.totalAmount[restaurantId] += quantityChange * pricePerUnit;
+                state.totalAmount[restaurantId].amount += quantityChange * pricePerUnit;
                 item.quantity = quantity;
             }
+            saveCartToStorage(state);
         },
+
+        loadCart: (state, action) => {
+            return action.payload;
+        }
     }
 });
 
-export const { addItem, removeItem, updateQuantity } = cartSlice.actions;
+const saveCartToStorage = async (state) => {
+    try {
+        if (state.userId) {
+            const userCartKey = `cart-${state.userId}`;
+
+            await AsyncStorage.setItem(userCartKey, JSON.stringify(state));
+        }
+    } catch (error) {
+        console.error("Failed to save cart:", error);
+    }
+};
+
+export const loadCartFromStorage = () => async (dispatch) => {
+    try {
+        const userId = await AsyncStorage.getItem('userId');
+        if (!userId) {
+            console.log("User not logged in or userId missing.");
+            return;
+        }
+
+        const cartData = await AsyncStorage.getItem(`cart-${userId}`);
+        if (cartData) {
+            dispatch(cartSlice.actions.loadCart(JSON.parse(cartData)));
+        }
+    } catch (error) {
+        console.error("Failed to load cart:", error);
+    }
+};
+
+export const { addItem, removeItem, updateQuantity, setUserId } = cartSlice.actions;
 
 export default cartSlice.reducer;

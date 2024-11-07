@@ -80,7 +80,7 @@ const RestaurantScreen = ({ route }) => {
                 </View>
                 <ScrollView style={styles.foodScrollView}>
                     {filteredData.map(food => (
-                        <CardFood2 key={food.id} food={food} />
+                        <CardFood2 key={food.id} food={food} restaurant={restaurant} />
                     ))}
                 </ScrollView>
                 <TouchableOpacity style={styles.cartContainer} onPress={() => { navigation.navigate('CartScreen', { restaurantId }) }}>

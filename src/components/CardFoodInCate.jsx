@@ -4,30 +4,29 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from '@react-navigation/native';
 import formatPrice from '../utils/formatPrice';
 
-const CardFood2 = ({ food, restaurant }) => {
-    console.log(food, restaurant);
+const CardFood2 = ({ food }) => {
     const navigation = useNavigation()
     return (
         <TouchableOpacity style={styles.container} onPress={() => {
-            navigation.navigate('FoodDetail', { food, restaurant })
+            navigation.navigate('FoodDetail', { food })
         }}>
             <View style={styles.imageContainer}>
                 <Image
-                    source={{ uri: food.image }}
+                    // source={{ uri: food.productImage }}
                     style={styles.foodImage}
                 />
             </View>
             <View style={styles.mainContainer} >
                 <View style={styles.foodNameContainer}>
-                    <Text style={styles.foodName}>{food.name}</Text>
+                    <Text style={styles.foodName}>{food.productName}</Text>
                 </View>
                 <View style={styles.foodDesContainer}>
                     <Text style={styles.foodDescription} numberOfLines={2}>
-                        {food.descriptions}
+                        {food.productDescription}
                     </Text>
                 </View>
                 <View style={styles.priceContainer}>
-                    <Text style={styles.price}>{formatPrice(food.price)}</Text>
+                    <Text style={styles.price}>{formatPrice(food.productPrice)}</Text>
                     <View style={styles.addButton}>
                         <MaterialIcons name="add" size={16} color="white" />
                     </View>
@@ -48,7 +47,7 @@ const styles = StyleSheet.create({
         padding: 10,
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10
+        margin: 5
     },
     mainContainer: {
         width: "70 %"

@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux';
 import formatPrice from '../utils/formatPrice';
 
 const CartScreen = () => {
-    console.log('render')
     const route = useRoute();
     const { restaurantId } = route.params;
     const [paymentMethod, setPaymentMethod] = useState(null);
@@ -22,7 +21,7 @@ const CartScreen = () => {
     const navigation = useNavigation();
     const slideAnim = useRef(new Animated.Value(500)).current;
     const [foodData, setFoodData] = useState(() => {
-        if (items !== undefined)
+        if (items)
             return items.map(item => ({
                 id: item.id,
                 name: item.name,
@@ -33,7 +32,20 @@ const CartScreen = () => {
                 uniqueId: item.uniqueId
             }));
     });
-    const sum = useSelector(state => state.cart.totalAmount[restaurantId]);
+    useEffect(() => {
+        if (items) {
+            setFoodData(items.map(item => ({
+                id: item.id,
+                name: item.name,
+                image: item.image,
+                quantity: item.quantity,
+                price: item.price,
+                toppings: item.toppings,
+                uniqueId: item.uniqueId
+            })));
+        }
+    }, [items]);
+    const sum = useSelector(state => state.cart.totalAmount[restaurantId].amount);
     useEffect(() => {
         const animation = Animated.timing(slideAnim, {
             toValue: 0,

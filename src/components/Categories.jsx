@@ -2,13 +2,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, ActivityIndicator } from "react-native";
 import { foodApi } from '../api/foodApi';
 import FoodCard from './CardFood';
+import { useNavigation } from '@react-navigation/native';
 
 const Categories = () => {
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    const [isNull, setIsNull] = useState(false);
+    const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedIndex, setSelectedIndex] = useState();
     const [categories, setCategories] = useState([]);
-    const [foodData, setFoodData] = useState([]);
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -20,10 +21,6 @@ const Categories = () => {
                         name: category.name
                     }));
                     setCategories(filteredCategories);
-
-                    if (filteredCategories.length > 0) {
-                        await fetchFoodInCategory(filteredCategories[0].id);
-                    }
                 } else {
                 }
             } catch (error) {
@@ -36,31 +33,12 @@ const Categories = () => {
         fetchCategories();
     }, []);
 
-    const fetchFoodInCategory = async (categoryId) => {
-        try {
-            setIsLoading(true);
-            const data = await foodApi.getFoodInCate(categoryId);
-            console.log(data)
-            if (data && Array.isArray(data) && data.length > 0) {
-                setFoodData(data);
-                setIsNull(data.length === 0);
-            }
-            else {
-                setIsNull(true)
-            }
-        } catch (error) {
-            setFoodData([]);
-            setIsNull(true);
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
-    const handleCategoryPress = useCallback((index, categoryId) => {
+    const handleCategoryPress = ((index, categoryId) => {
         console.log("Category pressed:", { index, categoryId });
         setSelectedIndex(index);
-        fetchFoodInCategory(categoryId);
-    }, []);
+        navigation.navigate('FoodCategory', { categoryId })
+    });
     const LoadingSpinner = () => (
         <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#FF0000" />
@@ -78,28 +56,23 @@ const Categories = () => {
                     <TouchableOpacity
                         key={category.id}
                         style={[
-                            styles.box,
-                            { backgroundColor: selectedIndex === index ? '#FF0000' : '#ffffff' }
+                            styles.box
                         ]}
                         onPress={() => handleCategoryPress(index, category.id)}
                     >
                         <Image
-                            source={require('../assets/Images/icon_2.png')}
+                            source={require('../assets/Images/Trasua.jpg')}
                             style={styles.image}
                         />
                         <Text
-                            style={[
-                                styles.text,
-                                { color: selectedIndex === index ? '#ffffff' : '#000000' }
-                            ]}
-                        >
+                            style={styles.text}>
                             {category.name}
                         </Text>
                     </TouchableOpacity>
                 ))}
             </ScrollView>
 
-            {isLoading ? (
+            {/* {isLoading ? (
                 <LoadingSpinner />
             ) : !isNull ? (
                 <ScrollView
@@ -115,7 +88,7 @@ const Categories = () => {
                 <Text style={styles.noDataText}>
                     Chưa có món ăn nào trong category này
                 </Text>
-            )}
+            )} */}
         </View>
     );
 };
@@ -144,8 +117,8 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     image: {
-        width: 25,
-        height: 25,
+        width: 50,
+        height: 50,
         marginBottom: 5
     },
     box: {

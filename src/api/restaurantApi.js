@@ -41,12 +41,12 @@ const restaurantApi = {
     },
     async getFoodsRestaurant(restaurantId) {
         try {
-            console.log(restaurantId)
             const response = await apiClient.get(`/products/${restaurantId}/restaurantId`, {
                 headers: {
                     "x-api-key": apiKey,
                 }
             })
+            console.log('metadat', response.data.metadata)
             return response.data.metadata
         } catch (error) {
             console.log('Error foods restaurants:', error);

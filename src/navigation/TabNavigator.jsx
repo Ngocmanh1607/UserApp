@@ -5,10 +5,21 @@ import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import OrderScreen from '../screens/OrderScreen';
 import ChatScreen from '../screens/ChatScreen';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = () => {
+const TabNavigator = ({ handleLogout }) => {
+    const renderHeader = () => {
+        return (
+            <TouchableOpacity
+                style={styles.logoutButton}
+                onPress={handleLogout}
+            >
+                <Text style={styles.logoutText}>Đăng xuất</Text>
+            </TouchableOpacity>
+        )
+    }
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -31,11 +42,27 @@ const TabNavigator = () => {
             })}
         >
             <Tab.Screen name="Trang chủ" component={HomeScreen} />
-            <Tab.Screen name="Thông tin" component={ProfileScreen} options={{ headerShown: true }} />
             <Tab.Screen name="Đơn hàng" component={OrderScreen} options={{ headerShown: true }} />
             <Tab.Screen name="Tin nhắn" component={ChatScreen} options={{ headerShown: true }} />
-        </Tab.Navigator >
+            <Tab.Screen name="Thông tin" component={ProfileScreen} options={() => ({
+                headerShown: true,
+                headerRight: () => (
+                    renderHeader()
+                ),
+            })} />
+        </Tab.Navigator>
     );
 };
 
 export default TabNavigator;
+
+const styles = StyleSheet.create({
+    logoutButton: {
+        marginRight: 15,
+    },
+    logoutText: {
+        color: 'red',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+});

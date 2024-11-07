@@ -5,6 +5,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useNavigation } from '@react-navigation/native';
 import userApi from '../api/userApi';
+import { useDispatch } from 'react-redux';
 
 //Screen login
 const LoginRoute = () => {
@@ -13,7 +14,7 @@ const LoginRoute = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
-
+    const dispatch = useDispatch();
     const togglePasswordVisibility = () => {
         setIsPasswordVisible(prevState => !prevState);
     };
@@ -46,7 +47,7 @@ const LoginRoute = () => {
 
     const handleSubmit = async () => {
         if (validate()) {
-            const data = await userApi.loginApi(email, password);
+            const data = await userApi.loginApi(dispatch, email, password);
             if (data == true) {
                 Alert.alert('Login Successful', `Welcome, ${email}!`);
                 navigation.navigate('Main');
@@ -130,7 +131,7 @@ const SignUpRoute = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errors, setErrors] = useState({});
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
+    const dispatch = useDispatch();
     const validate = () => {
         let valid = true;
         let errors = {};
@@ -172,7 +173,7 @@ const SignUpRoute = () => {
             return;
         }
         try {
-            const data = await userApi.signupApi(email, password)
+            const data = await userApi.signupApi(dispatch, email, password)
             if (data == true) {
                 Alert.alert('Success', `Sign Up successful for ${email}!`);
                 navigation.navigate('Main')

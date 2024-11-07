@@ -4,29 +4,31 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import userApi from '../api/userApi';
+import { uploadUserImage } from '../utils/firebaseUtils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const UserProfileScreen = () => {
     const navigation = useNavigation();
     const [userInfo, setUserInfo] = useState({
-        name: 'Nguyen Ngoc Manh',
-        email: 'manhnguyen@example.com',
-        phone: '0123456789',
-        address: '123, XYZ Street, ABC City',
+        name: '',
+        image: '',
+        email: '',
+        phone_number: '',
+        address: '',
     });
     const [isEditing, setIsEditing] = useState(false);
     const [imageUri, setImageUri] = useState(null)
-    const userId = null
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const data = await userApi.getInfoUser(userId)
-                setUserInfo(data)
+                const data = await userApi.getInfoUser()
+                console.log(data)
+                if (data) { setUserInfo(data) }
             } catch (error) {
                 console.error(error);
             }
         }
         fetchUserData()
     }, [])
-    //Truy cập thư viện ảnh
     const openImagePicker = () => {
         const options = {
             mediaType: 'photo'
@@ -37,18 +39,33 @@ const UserProfileScreen = () => {
             }
         })
     }
+    const uploadFirebase = async (image) => {
+        try {
+            const userId = await AsyncStorage.getItem('userId');
+            const imageUrl = await uploadUserImage(userId, image);
+            return imageUrl;
+        } catch (error) {
+            console.error("Error uploading image:", error);
+            return null;
+        }
+    };
     const handleEditToggle = () => {
         setIsEditing(!isEditing);
     };
 
     const handleSaveChanges = async () => {
         try {
-            // Call the API to update the user info
+            const url = await uploadFirebase(imageUri);  // Await the returned URL
+            if (!url) {
+                Alert.alert("Lỗi", "Không thể tải ảnh lên. Vui lòng thử lại.");
+                return;
+            }
             const updatedData = {
                 ...userInfo,
-                avatar: imageUri, // Include image URI if you plan to update it as well
+                image: url,
             };
-            await userApi.updateUser(userId, updatedData);
+            console.log(url);
+            await userApi.updateUser(updatedData);
             Alert.alert('Thành công', 'Thông tin của bạn đã được cập nhật.');
             setIsEditing(false);
         } catch (error) {
@@ -95,8 +112,8 @@ const UserProfileScreen = () => {
                     <Text style={styles.label}>Số điện thoại:</Text>
                     <TextInput
                         style={styles.input}
-                        value={userInfo.phone}
-                        onChangeText={(text) => setUserInfo({ ...userInfo, phone: text })}
+                        value={userInfo.phone_number}
+                        onChangeText={(text) => setUserInfo({ ...userInfo, phone_number: text })}
                         editable={isEditing}
                     />
 

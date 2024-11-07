@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -7,27 +7,36 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../store/cartSlice';
+import Snackbar from 'react-native-snackbar';
 import formatPrice from '../utils/formatPrice';
-
+import userApi from '../api/userApi';
+import { foodApi } from '../api/foodApi';
 
 const FoodDetailScreen = () => {
     const route = useRoute();
-    console.log(route.params);
-    const { food } = route.params;
+    const { food, restaurant } = route.params;
     const navigation = useNavigation();
+    const restaurantInfo = {
+        name: restaurant.name,
+        image: restaurant.image
+    };
     const dispatch = useDispatch();
     const [foodDetails, setFoodDetails] = useState({ ...food, quantity: 1 });
     const [sum, setSum] = useState(food.price);
-    const [toppings, setToppings] = useState([
-        { id: 1, name: 'Trân châu trắng', price: 6000, selected: false },
-        { id: 2, name: 'Hạt đác', price: 6000, selected: false },
-        { id: 3, name: 'Thạch phô mai cafe', price: 6000, selected: false },
-        { id: 4, name: 'Hạt chia', price: 6000, selected: false },
-        { id: 5, name: 'Sương sáo', price: 6000, selected: false },
-        { id: 6, name: 'Thạch trà xanh', price: 6000, selected: false },
-        { id: 7, name: 'Nha đam', price: 6000, selected: false },
-    ]);
+    const [toppings, setToppings] = useState([]);
+    useEffect(() => {
+        const fetchTopping = async () => {
+            try {
 
+                const data = await foodApi.getFoodTopping(food.id)
+                console.log(data)
+                setToppings(data)
+            } catch (error) {
+
+            }
+        }
+        fetchTopping();
+    }, [])
     const handleIncrement = () => {
         setFoodDetails(prevDetails => {
             const newQuantity = prevDetails.quantity + 1;
@@ -64,15 +73,24 @@ const FoodDetailScreen = () => {
         setSum(totalSum);
     };
     const handleAddtoCart = () => {
-        const selectedToppings = toppings.filter(topping => topping.selected)
-        const selectedToppingsPrice = selectedToppings.reduce((total, topping) => total + topping.price, 0);
-        const totalPrice = food.price + selectedToppingsPrice;
-        console.log(foodDetails, selectedToppings)
-        dispatch(addItem({ food: { ...foodDetails, price: totalPrice }, toppings: selectedToppings }))
+        try {
+            const selectedToppings = toppings.filter(topping => topping.selected)
+            const selectedToppingsPrice = selectedToppings.reduce((total, topping) => total + topping.price, 0);
+            const totalPrice = food.price + selectedToppingsPrice;
+            dispatch(addItem({ food: { ...foodDetails, price: totalPrice }, toppings: selectedToppings, restaurantInfo }))
+            Snackbar.show(
+                {
+                    text: 'Thêm vào giỏ hàng thành công !',
+                    duration: Snackbar.LENGTH_SHORT
+                }
+            )
+            navigation.goBack();
+        } catch (error) {
 
+        }
     }
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Image source={{ uri: food.image }} style={styles.image} blurRadius={1} />
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                 <Ionicons name="arrow-back" size={28} color="#fff" />
@@ -87,8 +105,8 @@ const FoodDetailScreen = () => {
                     <Text style={styles.toppingTitle}>Topping</Text>
                     {toppings.map(topping => (
                         <View key={topping.id} style={styles.toppingItem}>
-                            <Text style={styles.toppingName}>{topping.name}</Text>
-                            <Text style={styles.toppingPrice}>{topping.price}đ</Text>
+                            <Text style={styles.toppingName}>{topping.topping_name}</Text>
+                            <Text style={styles.toppingPrice}>{formatPrice(topping.price)}</Text>
                             <CheckBox
                                 value={topping.selected}
                                 onValueChange={() => toggleTopping(topping.id)}
@@ -117,7 +135,7 @@ const FoodDetailScreen = () => {
                     </View>
                 </View>
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -154,12 +172,12 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
     },
     textName: {
-        fontSize: 22,
+        fontSize: 18,
         fontWeight: '500',
         color: '#000000',
     },
     textPrice: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: '500',
         color: '#000000',
     },
@@ -195,7 +213,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: "30%",
         position: 'absolute',
-        bottom: 70,
+        bottom: 50,
         backgroundColor: '#FFFFFF'
     },
     backButton: {
@@ -215,7 +233,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: '90%'
+        width: '90%',
+        marginVertical: 10
     },
     buttonContainer: {
         backgroundColor: "#FF0000",

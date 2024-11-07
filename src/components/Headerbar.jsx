@@ -92,7 +92,7 @@ const Headerbar = () => {
                         <View>
                             <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700' }}>Giao tới</Text>
                         </View>
-                        <Text style={styles.text}>{
+                        <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{
                             error ? error : address
                         }</Text>
                     </View>
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     locationContainer: {
         flexDirection: 'row',
         justifyContent: 'flex-start',
-        height: 60,
+        height: 50,
         padding: 10,
     },
     container: {
@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
         margin: 5
     },
     text: {
-        paddingRight: 10
+        paddingRight: 10,
+        width: 340,
     }
 });

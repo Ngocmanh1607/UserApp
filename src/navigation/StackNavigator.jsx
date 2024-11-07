@@ -14,6 +14,8 @@ import OrderStatusScreen from '../screens/OrderStatusScreen';
 import { ActivityIndicator, View } from 'react-native';
 import MessageScreen from '../screens/Message';
 import MapScreen from '../screens/MapScreen';
+import FoodCategory from '../screens/FoodCategory';
+import CartResScreen from '../screens/CartResScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +56,8 @@ const StackNavigator = () => {
             <Stack.Screen name="thumbnail2" component={ReviewScreen2} />
             <Stack.Screen name="Auth" component={AuthScreen} />
             <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen name="FoodCategory" component={FoodCategory} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Category', headerBackTitle: 'Trang chủ' }} />
+            <Stack.Screen name="CartResScreen" component={CartResScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Giỏ hàng', headerBackTitle: 'Quay lại' }} />
             <Stack.Screen name="MapScreen" component={MapScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true }} />
             <Stack.Screen name="RestaurantDetail" component={RestaurantScreen} />
             <Stack.Screen name="DetailOrder" component={OrderDetailScreen} />

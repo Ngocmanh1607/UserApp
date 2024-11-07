@@ -2,17 +2,17 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './apiClient';
 import { Alert } from 'react-native';
-
+import { setUserId } from '../store/cartSlice';
+const apiKey = "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de"
 const userApi = {
-    // API đăng ký người dùng
-    signupApi: async (email, password) => {
+    signupApi: async (dispatch, email, password) => {
         try {
             const response = await apiClient.post(
                 "/user/signup",
                 { email, password },
                 {
                     headers: {
-                        "x-api-key": "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de"
+                        "x-api-key": apiKey
                     }
                 }
             );
@@ -25,13 +25,13 @@ const userApi = {
             const { accessToken, refreshToken } = metadata.tokens;
             const { email: userEmail, id: userId } = metadata.user;
 
-            // Lưu trữ dữ liệu đăng ký vào AsyncStorage
             await AsyncStorage.multiSet([
                 ['accessToken', accessToken],
                 ['refreshToken', refreshToken],
                 ['userEmail', userEmail],
                 ['userId', userId.toString()]
             ]);
+            dispatch(setUserId(userId));
 
             console.log('Đăng ký thành công và lưu trữ dữ liệu thành công');
             return true;
@@ -41,14 +41,14 @@ const userApi = {
         }
     },
 
-    loginApi: async (email, password) => {
+    loginApi: async (dispatch, email, password) => {
         try {
             const response = await apiClient.post(
                 "/user/login",
                 { email, password },
                 {
                     headers: {
-                        "x-api-key": "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de",
+                        "x-api-key": apiKey,
                     }
                 }
             );
@@ -60,31 +60,63 @@ const userApi = {
                 ['userEmail', userEmail],
                 ['userId', userId.toString()]
             ]);
-
+            dispatch(setUserId(userId));
             return true;
         } catch (error) {
             Alert.alert("Vui lòng kiểm tra lại tài khoản mật khẩu. Đăng nhập thất bại")
             return false;
         }
     },
-    // API lấy thông tin người dùng
-    getInfoUser: async (userId) => {
+    getInfoUser: async () => {
+        const userId = await AsyncStorage.getItem('userId');
+        const accessToken = await AsyncStorage.getItem('accessToken');
+
+        if (!userId || !accessToken) {
+            throw new Error("User not logged in");
+        }
         try {
-            const response = await apiClient.get(`/ user / ${userId}`);
-            return response.data;
+            const response = await apiClient.get(`/profile`,
+                {
+                    headers: {
+                        "x-api-key": apiKey,
+                        "authorization": accessToken,
+                        "x-client-id": userId,
+                    }
+                }
+            );
+            return response.data.metadata;
         } catch (error) {
             console.error(error);
             throw error;
         }
     },
 
-    // API cập nhật thông tin người dùng
-    updateUser: async (userId, userData) => {
+    updateUser: async (userData) => {
+        const userId = await AsyncStorage.getItem('userId');
+        const accessToken = await AsyncStorage.getItem('accessToken');
+
+        if (!userId || !accessToken) {
+            throw new Error("User not logged in");
+        }
         try {
-            const response = await apiClient.put(`/ users / ${userId}`, userData);
-            return response.data;
+            const response = await apiClient.put(`/profile`,
+                {
+                    name: userData.name,
+                    image: userData.image,
+                    phone_number: userData.phone_number,
+                    mail: userData.email,
+                },
+                {
+                    headers: {
+                        "x-api-key": apiKey,
+                        "authorization": accessToken,
+                        "x-client-id": userId,
+                    }
+                }
+            );
+            return response.data.metadata;
         } catch (error) {
-            console.error('Update failed:', error);
+            console.error(error);
             throw error;
         }
     }
