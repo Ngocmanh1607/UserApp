@@ -91,20 +91,28 @@ const userApi = {
         }
     },
 
-    updateUser: async (userData) => {
+    updateUser: async (userData, location) => {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
-
+        console.log(accessToken)
         if (!userId || !accessToken) {
             throw new Error("User not logged in");
         }
         try {
             const response = await apiClient.put(`/profile`,
                 {
-                    name: userData.name,
-                    image: userData.image,
-                    phone_number: userData.phone_number,
-                    mail: userData.email,
+                    profile: {
+                        name: userData.name,
+                        image: userData.image,
+                        phone_number: userData.phone_number,
+                        mail: userData.email,
+                    },
+                    address: {
+                        address_name: location.address,
+                        address_x: location.latitude,
+                        address_y: location.longitude,
+                        is_default: true
+                    }
                 },
                 {
                     headers: {

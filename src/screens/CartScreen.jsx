@@ -76,7 +76,7 @@ const CartScreen = () => {
             setShowCompleteOrder(false);
         });
 
-        return unsubscribe; // Clean up listener khi component bị unmount
+        return unsubscribe;
     }, [navigation]);
     const handlePress = () => {
         navigation.navigate('MapScreen')
@@ -112,10 +112,10 @@ const CartScreen = () => {
                         })}
                     </ScrollView>
                 ) : (
-                    <Text style={{ textAlign: 'center', marginTop: 20 }}>Your cart is empty</Text>
+                    <Text style={{ textAlign: 'center', marginTop: 20 }}>Chưa có món ăn trong giỏ hàng</Text>
                 )}
                 <View style={styles.noteContainer}>
-                    <TextInput placeholder='Ghi chú' style={styles.rowfdsds}></TextInput>
+                    <TextInput placeholder='Ghi chú' style={styles.row}></TextInput>
                 </View>
                 <View style={styles.summaryContainer}>
                     <Text style={styles.textBold}>Chi tiết thanh toán</Text>
@@ -134,32 +134,19 @@ const CartScreen = () => {
                 </View>
             </View>
             <View style={styles.footerContainer}>
-                <View style={[styles.row, { borderBlockColor: '#FFFFFF', borderBottomWidth: 1 }]}>
-                    <Text style={[styles.label, styles.totalLabel]}>Tổng số tiền</Text>
-                    <Text style={[styles.value, styles.totalValue]}>{formatPrice(sum)}</Text>
-                </View>
                 <View style={styles.methodPaymentContainer}>
                     <View style={styles.payment}>
                         <Dropdown
                             style={styles.dropdown}
                             placeholderStyle={styles.placeholderStyle}
                             selectedTextStyle={styles.selectedTextStyle}
-                            inputSearchStyle={styles.inputSearchStyle}
-                            iconStyle={styles.iconStyle}
                             data={data}
-                            search
-                            maxHeight={300}
                             labelField="label"
-                            valueField="value"
-                            placeholder="Select payment method"
-                            searchPlaceholder="Search..."
+                            placeholder="COD"
                             value={paymentMethod}
                             onChange={item => {
                                 setPaymentMethod(item.value);
                             }}
-                            renderLeftIcon={() => (
-                                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-                            )}
                         />
                     </View>
                     <View style={styles.discount}>
@@ -167,22 +154,19 @@ const CartScreen = () => {
                             style={styles.dropdown}
                             placeholderStyle={styles.placeholderStyle}
                             selectedTextStyle={styles.selectedTextStyle}
-                            inputSearchStyle={styles.inputSearchStyle}
-                            iconStyle={styles.iconStyle}
                             data={data}
-                            maxHeight={300}
                             labelField="label"
-                            valueField="value"
                             placeholder="Select discount"
                             value={discount}
                             onChange={item => {
                                 setDiscount(item.value);
                             }}
-                            renderLeftIcon={() => (
-                                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-                            )}
                         />
                     </View>
+                </View>
+                <View style={[styles.row, { borderBlockColor: '#FFFFFF', borderBottomWidth: 1 }]}>
+                    <Text style={[styles.label, styles.totalLabel]}>Tổng số tiền</Text>
+                    <Text style={[styles.value, styles.totalValue]}>{formatPrice(sum)}</Text>
                 </View>
                 <TouchableOpacity style={styles.button} onPress={() => setShowCompleteOrder(true)}>
                     <Text style={styles.buttonText}>Đặt món</Text>
@@ -209,10 +193,12 @@ export default CartScreen
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFF',
+        // backgroundColor: '#FFF',
     },
     headContainer: {
-        margin: 5
+        margin: 5,
+        backgroundColor: '#FFF',
+        borderRadius: 10,
     },
     textHeader: {
         marginLeft: 10,
@@ -231,7 +217,7 @@ const styles = StyleSheet.create({
     footerContainer: {
         backgroundColor: '#FF0000',
         borderRadius: 20,
-        padding: 20,
+        padding: 10,
         margin: 10,
     },
     summaryContainer: {
@@ -239,12 +225,14 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 10,
         margin: 10,
+        marginTop: 5,
         elevation: 10,
     },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingVertical: 5,
+        // height: 40
     },
     label: {
         fontWeight: '300',
@@ -305,31 +293,27 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         margin: 10,
         elevation: 10,
+        height: 40
     },
 
     dropdown: {
-        margin: 10,
+        margin: 5,
         height: 40,
-        borderBottomColor: 'gray',
+        borderBottomColor: '#fff',
         borderBottomWidth: 0.5,
-        backgroundColor: '#FFF'
     },
     icon: {
         marginRight: 5,
     },
     placeholderStyle: {
         fontSize: 16,
+        color: '#fff',
+        fontWeight: '500'
     },
     selectedTextStyle: {
         fontSize: 16,
-    },
-    iconStyle: {
-        width: 20,
-        height: 20,
-    },
-    inputSearchStyle: {
-        height: 40,
-        fontSize: 16,
+        color: '#FFF',
+        fontWeight: '500'
     },
     card: {
         flex: 1,

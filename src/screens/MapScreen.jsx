@@ -7,9 +7,11 @@ import apiService from '../api/apiService';
 import { setLocation } from '../store/currentLocationSlice';
 import { useNavigation } from '@react-navigation/native';
 import { debounce } from 'lodash';
-
+import { useRoute } from '@react-navigation/native';
+import { setDefaultLocation } from '../store/defaultLocationSlice';
 const MapScreen = () => {
     const navigation = useNavigation();
+    const route = useRoute();
     const saveLocation = useSelector(state => state.currentLocation);
     const [search, setSearch] = useState('');
     const [results, setResults] = useState([]);
@@ -56,11 +58,21 @@ const MapScreen = () => {
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01,
             });
-            dispatch(setLocation({
-                latitude: location.latitude,
-                longitude: location.longitude,
-                address: location.address,
-            }));
+            const tempt = route.params?.tempt ?? true;
+            if (tempt) {
+                dispatch(setLocation({
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    address: location.address,
+                }));
+            }
+            else {
+                dispatch(setDefaultLocation({
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    address: location.address,
+                }))
+            }
             navigation.goBack();
         } catch (error) {
             console.log(error);

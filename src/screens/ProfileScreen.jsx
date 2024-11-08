@@ -6,6 +6,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import userApi from '../api/userApi';
 import { uploadUserImage } from '../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
 const UserProfileScreen = () => {
     const navigation = useNavigation();
     const [userInfo, setUserInfo] = useState({
@@ -13,8 +14,14 @@ const UserProfileScreen = () => {
         image: '',
         email: '',
         phone_number: '',
-        address: '',
     });
+    const [address, setAddress] = useState({
+        address_name: '',
+        address_x: '',
+        address_y: '',
+    });
+    const location = useSelector(state => state.defaultLocation)
+    console.log(address)
     const [isEditing, setIsEditing] = useState(false);
     const [imageUri, setImageUri] = useState(null)
     useEffect(() => {
@@ -30,14 +37,16 @@ const UserProfileScreen = () => {
         fetchUserData()
     }, [])
     const openImagePicker = () => {
-        const options = {
-            mediaType: 'photo'
-        }
-        launchImageLibrary(options, (res) => {
-            if (res.assets && res.assets.length > 0) {
-                setImageUri(res.assets[0].uri);
+        if (isEditing) {
+            const options = {
+                mediaType: 'photo'
             }
-        })
+            launchImageLibrary(options, (res) => {
+                if (res.assets && res.assets.length > 0) {
+                    setImageUri(res.assets[0].uri);
+                }
+            })
+        }
     }
     const uploadFirebase = async (image) => {
         try {
@@ -55,17 +64,17 @@ const UserProfileScreen = () => {
 
     const handleSaveChanges = async () => {
         try {
-            const url = await uploadFirebase(imageUri);  // Await the returned URL
+            const url = await uploadFirebase(imageUri);
             if (!url) {
                 Alert.alert("Lỗi", "Không thể tải ảnh lên. Vui lòng thử lại.");
                 return;
             }
-            const updatedData = {
+            const profile = {
                 ...userInfo,
                 image: url,
             };
             console.log(url);
-            await userApi.updateUser(updatedData);
+            await userApi.updateUser(profile, location);
             Alert.alert('Thành công', 'Thông tin của bạn đã được cập nhật.');
             setIsEditing(false);
         } catch (error) {
@@ -73,12 +82,14 @@ const UserProfileScreen = () => {
             Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.');
         }
     };
-
+    const handlePressAddress = () => {
+        navigation.navigate('MapScreen', { tempt: false })
+    };
     const handleLogout = () => {
         Alert.alert('Đăng xuất', 'Bạn có chắc chắn muốn đăng xuất không?', [
             { text: 'Hủy', style: 'cancel' },
             { text: 'Đăng xuất', onPress: () => navigation.navigate('Auth') },
-        ]);
+        ])
     };
 
     return (
@@ -118,12 +129,13 @@ const UserProfileScreen = () => {
                     />
 
                     <Text style={styles.label}>Địa chỉ:</Text>
-                    <TextInput
+                    <TouchableOpacity
                         style={styles.input}
                         value={userInfo.address}
-                        onChangeText={(text) => setUserInfo({ ...userInfo, address: text })}
-                        editable={isEditing}
-                    />
+                        onPress={() => handlePressAddress()}
+                    >
+                        <Text>{address.address_name}</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <View style={styles.buttonContainer}>
