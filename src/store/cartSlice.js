@@ -82,6 +82,14 @@ const cartSlice = createSlice({
 
         loadCart: (state, action) => {
             return action.payload;
+        },
+        clearCart: (state, action) => {
+            const { restaurantId } = action.payload;
+            if (restaurantId) {
+                delete state.carts[restaurantId];
+                delete state.totalAmount[restaurantId];
+            }
+            saveCartToStorage(state);
         }
     }
 });
@@ -115,6 +123,6 @@ export const loadCartFromStorage = () => async (dispatch) => {
     }
 };
 
-export const { addItem, removeItem, updateQuantity, setUserId } = cartSlice.actions;
+export const { addItem, removeItem, updateQuantity, setUserId, clearCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

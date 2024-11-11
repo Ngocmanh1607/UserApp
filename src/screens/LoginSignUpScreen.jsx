@@ -47,7 +47,7 @@ const LoginRoute = () => {
 
     const handleSubmit = async () => {
         if (validate()) {
-            const data = await userApi.loginApi(dispatch, email, password);
+            const data = await userApi.loginApi(email, password, dispatch);
             if (data == true) {
                 Alert.alert('Login Successful', `Welcome, ${email}!`);
                 navigation.navigate('Main');

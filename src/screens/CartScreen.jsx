@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated, Alert, Button, Image } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -9,18 +9,24 @@ import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/nativ
 import CompleteOrder from './CompleteOrderScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import formatPrice from '../utils/formatPrice';
+import { orderApi } from '../api/orderApi';
+import { clearCart, removeItem } from '../store/cartSlice';
+import userApi from '../api/userApi';
 
 const CartScreen = () => {
     const route = useRoute();
+    const navigation = useNavigation();
     const { restaurantId } = route.params;
-    const [paymentMethod, setPaymentMethod] = useState(null);
+    const selectedPaymentMethod = route.params?.selectedPaymentMethod || 'Tiền mặt';
+    const dispatch = useDispatch();
     const [discount, setDiscount] = useState(null);
     const [showCompleteOrder, setShowCompleteOrder] = useState(false);
     const items = useSelector(state => state.cart.carts[restaurantId]);
-    const navigation = useNavigation();
-    const dispatch = useDispatch()
+    const userInfo = useSelector(state => state.user.userInfo);
     const address = useSelector(state => state.currentLocation.address);
     const error = useSelector(state => state.currentLocation.error);
+    const sum = useSelector(state => state.cart.totalAmount[restaurantId].amount);
+    const [note, setNote] = useState('');
     const slideAnim = useRef(new Animated.Value(500)).current;
     const [foodData, setFoodData] = useState(() => {
         if (items)
@@ -47,7 +53,6 @@ const CartScreen = () => {
             })));
         }
     }, [items]);
-    const sum = useSelector(state => state.cart.totalAmount[restaurantId].amount);
     useEffect(() => {
         const animation = Animated.timing(slideAnim, {
             toValue: 0,
@@ -80,6 +85,28 @@ const CartScreen = () => {
     }, [navigation]);
     const handlePress = () => {
         navigation.navigate('MapScreen')
+    };
+    const handleOrder = () => {
+        const fetchOder = async (userInfo, address, item, selectedPaymentMethod, sum, note) => {
+            const response = await orderApi.orderApi(userInfo, address, item, selectedPaymentMethod, sum, note, sum * 0.1);
+        }
+        const fetchUserInfo = async () => {
+            const response = await userApi.getInfoUser(dispatch)
+        }
+        fetchUserInfo()
+        if (userInfo.name == '' || userInfo.phone_number == '') {
+            Alert.alert('Cập nhật thông tin ', 'Vui lòng cập nhật thông tin để có thể đặt hàng', [
+                { text: 'Huỷ', style: 'cancel' },
+                { text: 'Ok', onPress: () => navigation.navigate('Thông tin') },
+            ]);
+        }
+        else {
+            fetchOder(userInfo, address, items);
+            dispatch(clearCart(restaurantId));
+        }
+    }
+    const handlePayment = () => {
+        navigation.navigate('PaymentMethod', { restaurantId: restaurantId })
     }
     const CompleteOrderDisplay = () => (
         <Animated.View style={[styles.card, { transform: [{ translateY: slideAnim }] }]}>
@@ -115,7 +142,7 @@ const CartScreen = () => {
                     <Text style={{ textAlign: 'center', marginTop: 20 }}>Chưa có món ăn trong giỏ hàng</Text>
                 )}
                 <View style={styles.noteContainer}>
-                    <TextInput placeholder='Ghi chú' style={styles.row}></TextInput>
+                    <TextInput placeholder='Ghi chú' style={styles.row} value={note} onChangeText={setNote}></TextInput>
                 </View>
                 <View style={styles.summaryContainer}>
                     <Text style={styles.textBold}>Chi tiết thanh toán</Text>
@@ -135,20 +162,9 @@ const CartScreen = () => {
             </View>
             <View style={styles.footerContainer}>
                 <View style={styles.methodPaymentContainer}>
-                    <View style={styles.payment}>
-                        <Dropdown
-                            style={styles.dropdown}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            data={data}
-                            labelField="label"
-                            placeholder="COD"
-                            value={paymentMethod}
-                            onChange={item => {
-                                setPaymentMethod(item.value);
-                            }}
-                        />
-                    </View>
+                    <TouchableOpacity style={styles.payment} onPress={handlePayment}>
+                        <Text style={styles.paymentText}> {selectedPaymentMethod}</Text>
+                    </TouchableOpacity>
                     <View style={styles.discount}>
                         <Dropdown
                             style={styles.dropdown}
@@ -168,23 +184,25 @@ const CartScreen = () => {
                     <Text style={[styles.label, styles.totalLabel]}>Tổng số tiền</Text>
                     <Text style={[styles.value, styles.totalValue]}>{formatPrice(sum)}</Text>
                 </View>
-                <TouchableOpacity style={styles.button} onPress={() => setShowCompleteOrder(true)}>
+                <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
                     <Text style={styles.buttonText}>Đặt món</Text>
                 </TouchableOpacity>
             </View>
 
-            {showCompleteOrder && (
-                <>
-                    <BlurView
-                        style={styles.absolute}
-                        blurType="light"
-                        blurAmount={1}
-                        reducedTransparencyFallbackColor="white"
-                    />
-                    <CompleteOrderDisplay />
-                </>
-            )}
-        </SafeAreaView>
+            {
+                showCompleteOrder && (
+                    <>
+                        <BlurView
+                            style={styles.absolute}
+                            blurType="light"
+                            blurAmount={1}
+                            reducedTransparencyFallbackColor="white"
+                        />
+                        <CompleteOrderDisplay />
+                    </>
+                )
+            }
+        </SafeAreaView >
     )
 }
 
@@ -224,7 +242,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFF',
         borderRadius: 10,
         padding: 10,
-        margin: 10,
         marginTop: 5,
         elevation: 10,
     },
@@ -276,7 +293,9 @@ const styles = StyleSheet.create({
     },
     payment: {
         width: '50%',
-        borderRightWidth: 1
+        borderRightWidth: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     discount: {
         width: '50%'
@@ -291,7 +310,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFF',
         borderRadius: 10,
         paddingLeft: 10,
-        margin: 10,
         elevation: 10,
         height: 40
     },
@@ -332,5 +350,15 @@ const styles = StyleSheet.create({
     text: {
         paddingRight: 10,
         width: 340,
-    }
+    },
+    paymentText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#fff'
+    },
+    image: {
+        width: 24,
+        height: 24,
+        marginRight: 8,
+    },
 })

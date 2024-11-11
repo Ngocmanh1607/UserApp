@@ -16,7 +16,7 @@
     "@react-native-community/cli": "^14.1.1",
     "@react-native-community/cli-platform-android": "^14.0.0",
     "@react-native-community/datetimepicker": "^8.2.0",
-    "@react-native-firebase/app": "^21.3.0",
+    "@react-native-firebase/app": "^21.4.0",
     "@react-native-google-signin/google-signin": "^13.0.2",
     "@react-native-picker/picker": "^2.7.7",
     "@react-navigation/bottom-tabs": "^6.6.1",

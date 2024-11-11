@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const HERE_API_KEY = '7sef-qPLms2vVRE4COs57FGzk4LuYC20NtU6TCd13kU'; // Nên dùng biến môi trường để bảo mật API Key
+const HERE_API_KEY = '7sef-qPLms2vVRE4COs57FGzk4LuYC20NtU6TCd13kU';
 
 const apiService = {
     currentLocation: async (latitude, longitude) => {

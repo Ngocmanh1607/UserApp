@@ -10,16 +10,16 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = ({ handleLogout }) => {
-    const renderHeader = () => {
-        return (
-            <TouchableOpacity
-                style={styles.logoutButton}
-                onPress={handleLogout}
-            >
-                <Text style={styles.logoutText}>Đăng xuất</Text>
-            </TouchableOpacity>
-        )
-    }
+    // const renderHeader = () => {
+    //     return (
+    //         <TouchableOpacity
+    //             style={styles.logoutButton}
+    //             onPress={handleLogout}
+    //         >
+    //             <Text style={styles.logoutText}>Đăng xuất</Text>
+    //         </TouchableOpacity>
+    //     )
+    // }
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -46,9 +46,9 @@ const TabNavigator = ({ handleLogout }) => {
             <Tab.Screen name="Tin nhắn" component={ChatScreen} options={{ headerShown: true }} />
             <Tab.Screen name="Thông tin" component={ProfileScreen} options={() => ({
                 headerShown: true,
-                headerRight: () => (
-                    renderHeader()
-                ),
+                // headerRight: () => (
+                //     renderHeader()
+                // ),
             })} />
         </Tab.Navigator>
     );

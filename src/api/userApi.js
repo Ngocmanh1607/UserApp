@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './apiClient';
 import { Alert } from 'react-native';
 import { setUserId } from '../store/cartSlice';
+import { setUserInfo } from '../store/userSlice';
 const apiKey = "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de"
 const userApi = {
     signupApi: async (dispatch, email, password) => {
@@ -29,11 +30,11 @@ const userApi = {
                 ['accessToken', accessToken],
                 ['refreshToken', refreshToken],
                 ['userEmail', userEmail],
-                ['userId', userId.toString()]
+                ['userId', userId.toString()],
             ]);
             dispatch(setUserId(userId));
-
-            console.log('Đăng ký thành công và lưu trữ dữ liệu thành công');
+            const userInfo = await userApi.getInfoUser();
+            dispatch(setUserInfo(userInfo));
             return true;
         } catch (error) {
             console.error("Đăng ký thất bại:", error.response ? error.response.data : error.message);
@@ -41,7 +42,7 @@ const userApi = {
         }
     },
 
-    loginApi: async (dispatch, email, password) => {
+    loginApi: async (email, password, dispatch) => {
         try {
             const response = await apiClient.post(
                 "/user/login",
@@ -58,19 +59,49 @@ const userApi = {
                 ['accessToken', accessToken],
                 ['refreshToken', refreshToken],
                 ['userEmail', userEmail],
-                ['userId', userId.toString()]
+                ['userId', userId.toString()],
             ]);
             dispatch(setUserId(userId));
+            const userInfo = await userApi.getInfoUser(dispatch);
+            dispatch(setUserInfo(userInfo));
             return true;
         } catch (error) {
             Alert.alert("Vui lòng kiểm tra lại tài khoản mật khẩu. Đăng nhập thất bại")
             return false;
         }
     },
-    getInfoUser: async () => {
+    logoutApi: async () => {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
+        console.log(accessToken)
+        if (!userId || !accessToken) {
+            throw new Error("User not logged in");
+        }
+        try {
+            const response = await apiClient.post(
+                "/user/logout",
+                {},
+                {
+                    headers: {
+                        "x-api-key": apiKey,
+                        "authorization": accessToken,
+                        "x-client-id": userId,
+                    }
+                }
+            );
+            AsyncStorage.removeItem('userId');
+            AsyncStorage.removeItem('accessToken');
+            AsyncStorage.removeItem('refreshToken');
+            AsyncStorage.removeItem('userEmail');
+            return true;
+        } catch (error) {
+            return false;
+        }
+    },
 
+    getInfoUser: async (dispatch) => {
+        const userId = await AsyncStorage.getItem('userId');
+        const accessToken = await AsyncStorage.getItem('accessToken');
         if (!userId || !accessToken) {
             throw new Error("User not logged in");
         }
@@ -84,14 +115,15 @@ const userApi = {
                     }
                 }
             );
+            dispatch(setUserInfo(response.data.metadata));
             return response.data.metadata;
         } catch (error) {
-            console.error(error);
-            throw error;
+            console.error('Error fetching user info:', error);
+            throw new Error('Failed to fetch user info');
         }
     },
 
-    updateUser: async (userData, location) => {
+    updateUser: async (dispatch, userData, location) => {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
         console.log(accessToken)
@@ -122,6 +154,8 @@ const userApi = {
                     }
                 }
             );
+            const userInfo = await userApi.getInfoUser();
+            dispatch(setUserInfo(userInfo));
             return response.data.metadata;
         } catch (error) {
             console.error(error);

@@ -16,6 +16,7 @@ import MessageScreen from '../screens/Message';
 import MapScreen from '../screens/MapScreen';
 import FoodCategory from '../screens/FoodCategory';
 import CartResScreen from '../screens/CartResScreen';
+import PaymentMethodScreen from '../screens/PaymentMethodScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -66,6 +67,7 @@ const StackNavigator = () => {
             <Stack.Screen name="Message" component={MessageScreen} options={{ headerShown: true }} />
             <Stack.Screen name="CompleteOrder" component={CompleteOrder} />
             <Stack.Screen name="OrderStatus" component={OrderStatusScreen} />
+            <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen} />
         </Stack.Navigator>
     );
 };

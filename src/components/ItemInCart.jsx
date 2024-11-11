@@ -5,8 +5,10 @@ import React, { useEffect, useState } from 'react'
 import formatPrice from '../utils/formatPrice'
 import { useDispatch } from 'react-redux'
 import { removeItem, updateQuantity } from '../store/cartSlice'
+import { useNavigation } from '@react-navigation/native'
 
 const ItemInCart = ({ food, restaurantId }) => {
+    const navigation = useNavigation();
     const dispatch = useDispatch();
     const toppingName = food.toppings.map((item) => item.name)
     const [quantity, setQuantity] = useState(food.quantity);
@@ -16,7 +18,6 @@ const ItemInCart = ({ food, restaurantId }) => {
     useEffect(() => {
         dispatch(updateQuantity({ restaurantId: restaurantId, uniqueId: food.uniqueId, quantity: quantity }));
     }, [quantity]);
-    // Function to handle decrement
     const handleDecrement = () => {
         if (quantity > 1) {
             setQuantity(prevQuantity => prevQuantity - 1);
@@ -42,8 +43,11 @@ const ItemInCart = ({ food, restaurantId }) => {
             );
         }
     };
+    const handlePress = () => {
+        navigation.navigate('FoodDetail',)
+    }
     return (
-        <View style={styles.foodContainer}>
+        <TouchableOpacity style={styles.foodContainer}>
             <View style={styles.imageContainer}>
                 <Image
                     source={{ uri: food.image }}
@@ -74,7 +78,7 @@ const ItemInCart = ({ food, restaurantId }) => {
                     </View>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 

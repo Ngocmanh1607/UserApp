@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Headerbar from "../components/Headerbar";
 import CardSlider from "../components/CardSlider";
@@ -10,38 +10,48 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import restaurantApi from "../api/restaurantApi";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
 const HomeScreen = () => {
     const [search, setSearch] = useState('');
     const [restaurants, setRestaurants] = useState([]);
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
     const [isSearch, setIsSearch] = useState(false);
+    const [loading, setLoading] = useState(true); // Thêm biến loading
     const navigation = useNavigation();
+    const address = useSelector(state => state.currentLocation);
     useEffect(() => {
         const fetchRestaurantData = async () => {
-            const data = await restaurantApi.getAllRestaurant();
+            setLoading(true);
+            const data = await restaurantApi.getAllRestaurant(address);
             setRestaurants(data);
-            setFilteredRestaurants(data); // Initialize filtered list
+            setFilteredRestaurants(data);
+            setLoading(false);
         };
-        fetchRestaurantData();
-    }, []);
+
+        if (address) {
+            fetchRestaurantData();
+        }
+    }, [address]);
 
     const handleSearch = (query) => {
         setSearch(query);
         if (query.length > 0) {
-            setIsSearch(true)
+            setIsSearch(true);
             const results = restaurants.filter(restaurant =>
                 restaurant.name.toLowerCase().includes(query.toLowerCase())
             );
             setFilteredRestaurants(results);
         } else {
-            setIsSearch(false)
+            setIsSearch(false);
             setFilteredRestaurants(restaurants);
         }
     };
+
     const handelPress = () => {
         navigation.navigate('CartResScreen');
-    }
+    };
+
     return (
         <SafeAreaView style={styles.mainContainer}>
             <View style={styles.headContainer}>
@@ -60,16 +70,22 @@ const HomeScreen = () => {
                         onChangeText={handleSearch}
                     />
                 </View>
-                {
-                    isSearch ? (<ScrollView>
-                        {filteredRestaurants.length > 0 ? (
-                            filteredRestaurants.map((restaurant) => (
-                                <CardRestaurant key={restaurant.id} restaurant={restaurant} />
-                            ))
-                        ) : (
-                            <Text style={styles.textErrol}>No results found</Text>
-                        )}
-                    </ScrollView>) : (
+
+                {/* Loading Indicator */}
+                {loading ? (
+                    <ActivityIndicator size="large" color="red" style={{ marginTop: 20 }} />
+                ) : (
+                    isSearch ? (
+                        <ScrollView>
+                            {filteredRestaurants.length > 0 ? (
+                                filteredRestaurants.map((restaurant) => (
+                                    <CardRestaurant key={restaurant.id} restaurant={restaurant} />
+                                ))
+                            ) : (
+                                <Text style={styles.textErrol}>Không tìm thấy kết quả</Text>
+                            )}
+                        </ScrollView>
+                    ) : (
                         <ScrollView>
                             <Categories />
                             <OfferSlider />
@@ -79,11 +95,11 @@ const HomeScreen = () => {
                                     <CardRestaurant key={restaurant.id} restaurant={restaurant} />
                                 ))
                             ) : (
-                                <Text>No results found</Text>
+                                <Text style={styles.textErrol}>Không có nhà hàng nào</Text>
                             )}
                         </ScrollView>
                     )
-                }
+                )}
             </View>
             <View style={styles.cartContainer}>
                 <TouchableOpacity onPress={handelPress}>

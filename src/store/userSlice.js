@@ -3,7 +3,12 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
     isLoggedIn: false,
-    userInfo: null,
+    userInfo: {
+        name: '',
+        image: '',
+        email: '',
+        phone_number: '',
+    },
     addresses: [],
 };
 const userSlice = createSlice({
@@ -11,12 +16,16 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         setUserLocation: (state, action) => {
-            state.location = action.payload
+            state.location = action.payload;
         },
         setUserId: (state, action) => {
-            state.userId = action.payload
-        }
+            state.userId = action.payload;
+        },
+        setUserInfo: (state, action) => {
+            state.userInfo = action.payload;
+            console.log(state.userInfo)
+        },
     }
 })
-export const { setUserLocation, setUserId } = userSlice.actions;
+export const { setUserLocation, setUserId, setUserInfo } = userSlice.actions;
 export default userSlice.reducer;
