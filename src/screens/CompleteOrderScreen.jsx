@@ -2,15 +2,17 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-const CompleteOrder = ({ onComplete }) => {
+import { useDispatch } from 'react-redux';
+import { clearCart } from '../store/cartSlice';
+const CompleteOrder = ({ onComplete, restaurantId }) => {
     const navigation = useNavigation();
-
+    const dispatch = useDispatch();
     const handleOrderComplete = () => {
         // Gọi callback onComplete để tắt BlurView trước khi điều hướng
         if (onComplete) {
             onComplete();
         }
-        // Điều hướng tới màn hình OrderStatus
+        // dispatch(clearCart({ restaurantId }));
         navigation.navigate('OrderStatus');
     };
     return (

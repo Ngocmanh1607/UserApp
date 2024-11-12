@@ -44,16 +44,8 @@ const OrderDetailScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <ScrollView >
-                <View style={styles.headerContainer}>
-                    <TouchableOpacity onPress={() => { navigation.goBack() }}>
-                        <AntDesign name='arrowleft' size={24} color='black' />
-                    </TouchableOpacity>
-                    <View style={styles.headerTextContainer}>
-                        <Text style={styles.headerText}>Chi tiết đơn hàng</Text>
-                    </View>
-                </View>
                 {/* Order completion message */}
                 <View style={styles.orderCompleteContainer}>
                     <Text style={styles.orderCompleteText}>Đơn hàng của bạn đã hoàn tất</Text>
@@ -108,7 +100,7 @@ const OrderDetailScreen = () => {
                     <Text style={styles.reorderButtonText}>Đặt lại món</Text>
                 </TouchableOpacity>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 };
 

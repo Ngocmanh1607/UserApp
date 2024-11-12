@@ -1,4 +1,4 @@
-import { Alert } from "react-native";
+import { Alert, Linking } from "react-native";
 import apiClient from "./apiClient";
 import axios from 'axios'
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,22 +19,26 @@ const orderApi = {
         const listCartItem = convertCartToListCartItem(cart);
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
-        console.log(accessToken)
         if (!userId || !accessToken) {
             Alert.alert('')
         }
         try {
-            const response = await apiClient.post('/',
+            const response = await apiClient.post('/payment',
                 {
-                    listCartItem,
-                    receiver_name: userInfo.profile.name,
-                    address: address,
-                    price: sum,
-                    phone_number: userInfo.profile.phone_number,
-                    order_pay: payMethod,
-                    note: note,
-                    delivery_fee: delivery_fee,
-                    user_id: userId
+                    order:
+                    {
+                        listCartItem,
+                        receiver_name: userInfo.profile.name,
+                        address: address.address,
+                        userLatitude: address.latitude,
+                        userLongitude: address.longitude,
+                        price: sum,
+                        phone_number: userInfo.profile.phone_number,
+                        order_pay: payMethod,
+                        note: note,
+                        delivery_fee: delivery_fee,
+                        order_date: new Date().toString(),
+                    }
                 },
                 {
                     headers: {
@@ -43,9 +47,23 @@ const orderApi = {
                         "x-client-id": userId,
                     }
                 })
-            return response.data.metadata;
+            const url = response.data.metadata;
+            console.log(url);
+
+            if (url) {
+                const supported = await Linking.openURL(url);
+                if (supported) {
+                    await Linking.openURL(url);
+                } else {
+                    Alert.alert('Lỗi', 'Không thể mở liên kết');
+                }
+            }
+
+            return url;
+
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            Alert.alert('Lỗi', 'Đã xảy ra lỗi khi gửi đơn hàng');
         }
     },
 }

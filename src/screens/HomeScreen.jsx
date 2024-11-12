@@ -10,15 +10,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import restaurantApi from "../api/restaurantApi";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import userApi from "../api/userApi";
 
 const HomeScreen = () => {
     const [search, setSearch] = useState('');
     const [restaurants, setRestaurants] = useState([]);
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
     const [isSearch, setIsSearch] = useState(false);
-    const [loading, setLoading] = useState(true); // Thêm biến loading
+    const [loading, setLoading] = useState(true);
     const navigation = useNavigation();
+    const dispatch = useDispatch();
     const address = useSelector(state => state.currentLocation);
     useEffect(() => {
         const fetchRestaurantData = async () => {
@@ -26,10 +28,11 @@ const HomeScreen = () => {
             const data = await restaurantApi.getAllRestaurant(address);
             setRestaurants(data);
             setFilteredRestaurants(data);
+            await userApi.getInfoUser(dispatch);
             setLoading(false);
         };
 
-        if (address) {
+        if (address.address && address.address != 'Đang lấy vị trí...') {
             fetchRestaurantData();
         }
     }, [address]);

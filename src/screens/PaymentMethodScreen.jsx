@@ -16,7 +16,7 @@ const PaymentMethodScreen = () => {
             <Text style={styles.title}>Phương thức thanh toán</Text>
 
             <Text style={styles.sectionTitle}>Ví điện tử</Text>
-            <TouchableOpacity style={styles.paymentOption} onPress={() => handleSelectPaymentMethod('Zalopay')}>
+            <TouchableOpacity style={styles.paymentOption} onPress={() => handleSelectPaymentMethod('ZALOPAY')}>
                 <Image source={require('../assets/Images/zalo.png')} style={styles.image} />
                 <Text>Zalopay</Text>
             </TouchableOpacity>

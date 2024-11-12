@@ -61,7 +61,7 @@ const StackNavigator = () => {
             <Stack.Screen name="CartResScreen" component={CartResScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Giỏ hàng', headerBackTitle: 'Quay lại' }} />
             <Stack.Screen name="MapScreen" component={MapScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true }} />
             <Stack.Screen name="RestaurantDetail" component={RestaurantScreen} />
-            <Stack.Screen name="DetailOrder" component={OrderDetailScreen} />
+            <Stack.Screen name="DetailOrder" component={OrderDetailScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Chi tiết đơn hàng', headerBackTitle: 'Quay lại' }} />
             <Stack.Screen name="FoodDetail" component={FoodDetailScreen} />
             <Stack.Screen name="CartScreen" component={CartScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Giỏ hàng', headerBackTitle: 'Quay lại' }} />
             <Stack.Screen name="Message" component={MessageScreen} options={{ headerShown: true }} />

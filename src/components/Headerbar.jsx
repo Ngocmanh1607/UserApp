@@ -12,10 +12,10 @@ const Headerbar = () => {
     const dispatch = useDispatch();
     const address = useSelector(state => state.currentLocation.address);
     const error = useSelector(state => state.currentLocation.error);
-    const hasFetchedLocation = useRef(false); // Dùng useRef để đánh dấu đã lấy vị trí
+    const hasFetchedLocation = useRef(false);
 
     useEffect(() => {
-        if (hasFetchedLocation.current) return; // Chỉ lấy vị trí nếu chưa lấy
+        if (hasFetchedLocation.current) return;
 
         const requestLocationPermission = async () => {
             if (Platform.OS === 'android') {
@@ -76,7 +76,7 @@ const Headerbar = () => {
                     dispatch(setError('Không thể tìm thấy vị trí'));
                 }
             } catch (error) {
-                console.error(error);
+
                 dispatch(setError("Không thể tìm thấy vị trí"));
             }
         };

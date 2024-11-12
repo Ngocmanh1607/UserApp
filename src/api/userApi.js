@@ -4,6 +4,7 @@ import apiClient from './apiClient';
 import { Alert } from 'react-native';
 import { setUserId } from '../store/cartSlice';
 import { setUserInfo } from '../store/userSlice';
+import { useDispatch } from 'react-redux';
 const apiKey = "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de"
 const userApi = {
     signupApi: async (dispatch, email, password) => {
@@ -154,8 +155,7 @@ const userApi = {
                     }
                 }
             );
-            const userInfo = await userApi.getInfoUser();
-            dispatch(setUserInfo(userInfo));
+            const userInfo = await userApi.getInfoUser(dispatch);
             return response.data.metadata;
         } catch (error) {
             console.error(error);

@@ -23,7 +23,7 @@ const CardRestaurant = ({ restaurant }) => {
                             <Text style={styles.ratingText}>{restaurant.rating}</Text>
                         </View>
                         <View style={styles.disContainer}>
-                            <Text style={styles.textDis}>Khoảng cách: {restaurant.distance}Km</Text>
+                            <Text style={styles.textDis}>Khoảng cách: {(restaurant.distance * 0.001).toFixed(2)}Km</Text>
                         </View>
                     </View>
                 </View>

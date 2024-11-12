@@ -28,7 +28,6 @@ const cartSlice = createSlice({
                     name: restaurantInfo.name,
                     image: restaurantInfo.image
                 };
-                console.log(state.totalAmount[food.restaurant_id]);
             }
 
             const uniqueId = `${food.id}-${toppings.map(t => t.id).sort().join('-')}`;

@@ -23,7 +23,7 @@ const CartScreen = () => {
     const [showCompleteOrder, setShowCompleteOrder] = useState(false);
     const items = useSelector(state => state.cart.carts[restaurantId]);
     const userInfo = useSelector(state => state.user.userInfo);
-    const address = useSelector(state => state.currentLocation.address);
+    const address = useSelector(state => state.currentLocation);
     const error = useSelector(state => state.currentLocation.error);
     const sum = useSelector(state => state.cart.totalAmount[restaurantId].amount);
     const [note, setNote] = useState('');
@@ -87,12 +87,28 @@ const CartScreen = () => {
         navigation.navigate('MapScreen')
     };
     const handleOrder = () => {
-        const fetchOder = async (userInfo, address, item, selectedPaymentMethod, sum, note) => {
-            const response = await orderApi.orderApi(userInfo, address, item, selectedPaymentMethod, sum, note, sum * 0.1);
-        }
+        const delivery_fee = sum * 0.1;
+
+        const fetchOrder = async (userInfo, address, items, selectedPaymentMethod, sum, note) => {
+            try {
+                const response = await orderApi.orderApi(userInfo, address, items, selectedPaymentMethod = 'ZALOPAY', sum, note, delivery_fee);
+
+                if (response) {
+                    setShowCompleteOrder(true);
+                } else {
+                    Alert.alert('Lỗi', 'Đặt hàng không thành công. Vui lòng thử lại.');
+                }
+            } catch (error) {
+                console.error('Đã xảy ra lỗi khi đặt hàng:', error);
+                Alert.alert('Lỗi', 'Đặt hàng không thành công. Vui lòng thử lại.');
+            }
+        };
+
         const fetchUserInfo = async () => {
-            const response = await userApi.getInfoUser(dispatch)
-        }
+            const response = await userApi.getInfoUser(dispatch);
+            return response;
+        };
+
         fetchUserInfo()
         if (userInfo.name == '' || userInfo.phone_number == '') {
             Alert.alert('Cập nhật thông tin ', 'Vui lòng cập nhật thông tin để có thể đặt hàng', [
@@ -101,16 +117,15 @@ const CartScreen = () => {
             ]);
         }
         else {
-            fetchOder(userInfo, address, items);
-            dispatch(clearCart(restaurantId));
+            fetchOrder(userInfo, address, items, selectedPaymentMethod, sum, note);
         }
-    }
+    };
     const handlePayment = () => {
         navigation.navigate('PaymentMethod', { restaurantId: restaurantId })
     }
     const CompleteOrderDisplay = () => (
         <Animated.View style={[styles.card, { transform: [{ translateY: slideAnim }] }]}>
-            <CompleteOrder onComplete={() => setShowCompleteOrder(false)} />
+            <CompleteOrder onComplete={() => setShowCompleteOrder(false)} restaurantId={restaurantId} />
         </Animated.View>
     );
 
@@ -125,7 +140,7 @@ const CartScreen = () => {
                                 <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700' }}>Giao tới</Text>
                             </View>
                             <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{
-                                error ? error : address
+                                error ? error : address.address
                             }</Text>
                         </View>
                     </TouchableOpacity>

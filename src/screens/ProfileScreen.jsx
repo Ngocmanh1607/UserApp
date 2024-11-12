@@ -188,7 +188,7 @@ const UserProfileScreen = () => {
                                 style={styles.input}
                                 onPress={handlePressAddress}
                             >
-                                <Text>{address.address_name}</Text>
+                                <Text>{location.address}</Text>
                             </TouchableOpacity>
                         </View>
 
