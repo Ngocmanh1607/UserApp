@@ -5,7 +5,7 @@ import { Alert } from 'react-native';
 import { setUserId } from '../store/cartSlice';
 import { setUserInfo } from '../store/userSlice';
 import { useDispatch } from 'react-redux';
-const apiKey = "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de"
+const apiKey = "123"
 const userApi = {
     signupApi: async (dispatch, email, password) => {
         try {
@@ -35,7 +35,7 @@ const userApi = {
                 ['userId', userId.toString()],
             ]);
             dispatch(setUserId(userId));
-            const userInfo = await userApi.getInfoUser(dispatch);
+            await userApi.getInfoUser(dispatch);
             return true;
         } catch (error) {
             console.error("Đăng ký thất bại:", error.response ? error.response.data : error.message);
@@ -64,7 +64,7 @@ const userApi = {
                 ['userId', userId.toString()],
             ]);
             dispatch(setUserId(userId));
-            const userInfo = await userApi.getInfoUser(dispatch);
+            await userApi.getInfoUser(dispatch);
             return true;
         } catch (error) {
             Alert.alert("Vui lòng kiểm tra lại tài khoản mật khẩu. Đăng nhập thất bại")
@@ -138,7 +138,7 @@ const userApi = {
                         name: userData.name,
                         image: userData.image,
                         phone_number: userData.phone_number,
-                        mail: userData.email,
+                        // mail: userData.email,
                     },
                     address: {
                         address_name: location.address,

@@ -22,9 +22,12 @@ const userSlice = createSlice({
             state.userId = action.payload;
         },
         setUserInfo: (state, action) => {
-            console.log(state.userInfo);
-            if (action.payload.profile) {
-                state.userInfo = action.payload;
+            const profile = action.payload.profile;
+            if (profile) {
+                state.userInfo.name = profile.name;
+                state.userInfo.image = profile.image;
+                state.userInfo.email = profile.mail;
+                state.userInfo.phone_number = profile.phone_number;
             }
         },
     }

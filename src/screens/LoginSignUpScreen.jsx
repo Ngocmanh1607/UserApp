@@ -175,8 +175,7 @@ const SignUpRoute = () => {
         try {
             const data = await userApi.signupApi(dispatch, email, password)
             if (data == true) {
-                Alert.alert('Success', `Sign Up successful for ${email}!`);
-                navigation.navigate('Main')
+                navigation.navigate('RegisterInf')
             }
         } catch (error) {
 

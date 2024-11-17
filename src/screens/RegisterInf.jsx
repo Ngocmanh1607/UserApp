@@ -7,71 +7,29 @@ import userApi from '../api/userApi';
 import { uploadUserImage } from '../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
-const UserProfileScreen = () => {
+import Snackbar from 'react-native-snackbar';
+const RegisterInf = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const location = useSelector(state => state.defaultLocation);
     const [userInfo, setUserInfo] = useState({
         name: '',
         image: '',
         email: '',
         phone_number: '',
     });
-    const [address, setAddress] = useState({
-        address_name: '',
-        address_x: '',
-        address_y: '',
-    });
-    const location = useSelector(state => state.defaultLocation);
-    const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [imageUri, setImageUri] = useState(userInfo.image);
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            setIsLoading(true);
-            try {
-                const data = await userApi.getInfoUser(dispatch);
-                if (data.profile) {
-                    setUserInfo({
-                        name: data.profile.name,
-                        image: data.profile.image,
-                        email: data.profile.mail,
-                        phone_number: data.profile.phone_number,
-                    });
-                    setAddress(data.address[0]);
-                    setImageUri(data.profile.image);
-                }
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchUserData();
-    }, []);
-
-    // Update address when location changes
-    useEffect(() => {
-        if (location) {
-            setAddress({
-                address_name: location.address,
-                address_x: location.latitude,
-                address_y: location.longitude,
-            });
-        }
-    }, [location]);
-
     const openImagePicker = () => {
-        if (isEditing) {
-            const options = {
-                mediaType: 'photo',
-            };
-            launchImageLibrary(options, (res) => {
-                if (res.assets && res.assets.length > 0) {
-                    setImageUri(res.assets[0].uri);
-                }
-            });
-        }
+        const options = {
+            mediaType: 'photo',
+        };
+        launchImageLibrary(options, (res) => {
+            if (res.assets && res.assets.length > 0) {
+                setImageUri(res.assets[0].uri);
+            }
+        });
     };
 
     const uploadFirebase = async (image) => {
@@ -84,9 +42,8 @@ const UserProfileScreen = () => {
             return null;
         }
     };
-
-    const handleEditToggle = () => {
-        setIsEditing(!isEditing);
+    const handlePressAddress = () => {
+        navigation.navigate('MapScreen', { tempt: false });
     };
 
     const handleSaveChanges = async () => {
@@ -101,41 +58,20 @@ const UserProfileScreen = () => {
                 ...userInfo,
                 image: url,
             };
-            await userApi.updateUser(dispatch, profile, location);
-            Alert.alert('Thành công', 'Thông tin của bạn đã được cập nhật.');
-            setIsEditing(false);
+            const response = await userApi.updateUser(dispatch, profile, location);
+            if (response) {
+                Snackbar.show({
+                    text: 'Thông tin của bạn đã được cập nhật.',
+                    duration: Snackbar.LENGTH_SHORT,
+                });
+                navigation.navigate('Main')
+            }
         } catch (error) {
             console.error('Error updating profile:', error);
             Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.');
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const handlePressAddress = () => {
-        if (isEditing) {
-            navigation.navigate('MapScreen', { tempt: false });
-        }
-    };
-
-    const handleLogout = () => {
-        Alert.alert('Đăng xuất', 'Bạn có chắc chắn muốn đăng xuất không?', [
-            { text: 'Hủy', style: 'cancel' },
-            {
-                text: 'Đăng xuất',
-                onPress: async () => {
-                    try {
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'Auth' }],
-                        });
-                    } catch (error) {
-                        console.error("Error logging out:", error);
-                        Alert.alert('Lỗi', 'Không thể đăng xuất. Vui lòng thử lại.');
-                    }
-                },
-            },
-        ]);
     };
 
     return (
@@ -161,7 +97,6 @@ const UserProfileScreen = () => {
                                 style={styles.input}
                                 value={userInfo.name}
                                 onChangeText={(text) => setUserInfo({ ...userInfo, name: text })}
-                                editable={isEditing}
                             />
 
                             <Text style={styles.label}>Email:</Text>
@@ -169,7 +104,6 @@ const UserProfileScreen = () => {
                                 style={styles.input}
                                 value={userInfo.email}
                                 onChangeText={(text) => setUserInfo({ ...userInfo, email: text })}
-                                editable={isEditing}
                             />
 
                             <Text style={styles.label}>Số điện thoại:</Text>
@@ -177,31 +111,19 @@ const UserProfileScreen = () => {
                                 style={styles.input}
                                 value={userInfo.phone_number.toString()}
                                 onChangeText={(text) => setUserInfo({ ...userInfo, phone_number: text })}
-                                editable={isEditing}
                             />
-
                             <Text style={styles.label}>Địa chỉ:</Text>
                             <TouchableOpacity
                                 style={styles.input}
                                 onPress={handlePressAddress}
                             >
-                                <Text>{address.address_name}</Text>
+                                <Text>{location.address}</Text>
                             </TouchableOpacity>
                         </View>
 
                         <View style={styles.buttonContainer}>
-                            {isEditing ? (
-                                <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
-                                    <Text style={styles.buttonText}>Lưu thay đổi</Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <TouchableOpacity style={styles.editButton} onPress={handleEditToggle}>
-                                    <Text style={styles.buttonText}>Chỉnh sửa</Text>
-                                </TouchableOpacity>
-                            )}
-
-                            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                                <Text style={styles.buttonText}>Đăng xuất</Text>
+                            <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+                                <Text style={styles.buttonText}>Lưu</Text>
                             </TouchableOpacity>
                         </View>
                     </ScrollView>
@@ -212,7 +134,7 @@ const UserProfileScreen = () => {
 };
 
 
-export default UserProfileScreen;
+export default RegisterInf;
 
 const styles = StyleSheet.create({
     container: {
@@ -280,34 +202,21 @@ const styles = StyleSheet.create({
         marginTop: 20,
         paddingHorizontal: 20,
     },
-    editButton: {
-        backgroundColor: '#FF0000',
-        paddingVertical: 12,
-        borderRadius: 8,
-        alignItems: 'center',
-        marginBottom: 10,
-    },
     saveButton: {
-        backgroundColor: '#32CD32',
-        paddingVertical: 12,
-        borderRadius: 8,
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    logoutButton: {
         backgroundColor: '#FF0000',
         paddingVertical: 12,
         borderRadius: 8,
         alignItems: 'center',
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
+        marginBottom: 10,
     },
     profileImage: {
         width: 120,
         height: 120,
         borderRadius: 60,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });
