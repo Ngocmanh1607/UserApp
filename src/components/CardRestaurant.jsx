@@ -9,7 +9,7 @@ const CardRestaurant = ({ restaurant }) => {
     const handlePress = () => {
         navigation.navigate('RestaurantDetail', { restaurant });
     };
-
+    console.log("restaurant", restaurant)
     return (
         <TouchableOpacity style={styles.container} onPress={handlePress}>
             <Image source={{ uri: restaurant.image }} style={styles.imageContainer} />
@@ -19,8 +19,8 @@ const CardRestaurant = ({ restaurant }) => {
                     <Text style={styles.textSubTitle}>{restaurant.description}</Text>
                     <View style={styles.bottomContainer}>
                         <View style={styles.ratingContainer}>
-                            <MaterialIcons name="star" size={20} color="#FFA500" />
                             <Text style={styles.ratingText}>{restaurant.rating}</Text>
+                            <MaterialIcons name="star" size={20} color="#FFA500" />
                         </View>
                         <View style={styles.disContainer}>
                             <Text style={styles.textDis}>Khoảng cách: {(restaurant.distance * 0.001).toFixed(2)}Km</Text>

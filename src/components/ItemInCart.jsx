@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native'
 const ItemInCart = ({ food, restaurantId }) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const toppingName = food.toppings.map((item) => item.name)
+    const toppingName = food.toppings.map((item) => item.topping_name)
     const [quantity, setQuantity] = useState(food.quantity);
     const handleIncrement = () => {
         setQuantity(prevQuantity => prevQuantity + 1);
@@ -47,7 +47,7 @@ const ItemInCart = ({ food, restaurantId }) => {
         navigation.navigate('FoodDetail',)
     }
     return (
-        <TouchableOpacity style={styles.foodContainer}>
+        <TouchableOpacity style={styles.foodContainer} >
             <View style={styles.imageContainer}>
                 <Image
                     source={{ uri: food.image }}
@@ -59,8 +59,8 @@ const ItemInCart = ({ food, restaurantId }) => {
                     <Text style={styles.foodName}>{food.name}</Text>
                 </View>
                 <View style={styles.foodToppingContainer}>
-                    {toppingName.map((name) => {
-                        return <Text style={{ fontSize: 12 }}>{name} </Text>
+                    {toppingName.map((topping_name) => {
+                        return <Text style={{ fontSize: 12 }}>{topping_name} </Text>
                     })}
                 </View>
                 <View style={styles.handleContainer}>

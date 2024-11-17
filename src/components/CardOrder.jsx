@@ -10,7 +10,9 @@ const CardOrder = ({ order }) => {
             {/* Order header with date and status */}
             <View style={styles.orderHeader}>
                 <Text style={styles.orderDate}>{order.date}</Text>
-                <Text style={styles.orderStatus}>{order.status}</Text>
+                <TouchableOpacity onPress={() => (navigation.navigate('OrderStatus'))}><Text style={styles.orderStatus}>
+                    {order.status}
+                </Text></TouchableOpacity>
             </View>
 
             {/* Order content with image and details */}

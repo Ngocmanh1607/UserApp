@@ -68,6 +68,7 @@ const Headerbar = () => {
         const fetchAddressFromCoords = async (latitude, longitude) => {
             try {
                 const data = await apiService.currentLocation(latitude, longitude);
+                console.log(data)
                 if (data) {
                     dispatch(setLocation({
                         latitude, longitude, address: data.address

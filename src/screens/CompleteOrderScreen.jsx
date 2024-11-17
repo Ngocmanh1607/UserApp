@@ -8,13 +8,9 @@ const CompleteOrder = ({ onComplete, restaurantId }) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const handleOrderComplete = () => {
-        // Gọi callback onComplete để tắt BlurView trước khi điều hướng
-        if (onComplete) {
-            onComplete();
-        }
-        // dispatch(clearCart({ restaurantId }));
-        navigation.navigate('OrderStatus');
-    };
+        dispatch(clearCart({ restaurantId }));
+        navigation.navigate('Main');
+    }
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.iconWrapper}>
@@ -24,13 +20,8 @@ const CompleteOrder = ({ onComplete, restaurantId }) => {
                 <Text style={styles.thankYouText}>Cảm ơn bạn đã đặt hàng.</Text>
                 <Text style={styles.subText}>Bạn có thể theo dõi đơn hàng trong phần "Đơn hàng".</Text>
             </View>
-            <TouchableOpacity
-                style={styles.trackOrderButton}
-                onPress={handleOrderComplete}>
-                <Text style={styles.buttonText}>Theo dõi đơn hàng</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.orderAgainContainer} onPress={() => { navigation.navigate('Main') }} >
-                <Text style={styles.orderAgainText}>Quay lại trang chủ</Text>
+            <TouchableOpacity style={styles.trackOrderButton} onPress={() => handleOrderComplete()} >
+                <Text style={styles.buttonText}>Quay lại trang chủ</Text>
             </TouchableOpacity>
         </SafeAreaView>
     );
@@ -86,15 +77,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: '600',
-    },
-    orderAgainContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 10
-    },
-    orderAgainText: {
-        color: '#333',
-        fontSize: 16,
     },
 });
 

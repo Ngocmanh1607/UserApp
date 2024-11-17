@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 const OrderDetailScreen = () => {
     const navigation = useNavigation()
-    // Mock data for the order details
     const orderDetails = {
         driver: {
             name: 'Pham Trung Kien',

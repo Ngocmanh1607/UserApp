@@ -111,6 +111,11 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
+    implementation 'com.mapbox.maps:android:11.7.2'
+    
+      // If you're using compose also add the compose extension
+    implementation 'com.mapbox.extension:maps-compose:11.7.2'
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

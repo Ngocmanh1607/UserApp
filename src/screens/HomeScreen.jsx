@@ -26,6 +26,7 @@ const HomeScreen = () => {
         const fetchRestaurantData = async () => {
             setLoading(true);
             const data = await restaurantApi.getAllRestaurant(address);
+            // console.group("data res : ", data)
             setRestaurants(data);
             setFilteredRestaurants(data);
             await userApi.getInfoUser(dispatch);

@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated, Alert, Button, Image } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated, Alert, Button, Image, Linking, AppState, ActivityIndicator } from 'react-native'
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import ItemInCart from '../components/ItemInCart'
@@ -17,7 +17,7 @@ const CartScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const { restaurantId } = route.params;
-    const selectedPaymentMethod = route.params?.selectedPaymentMethod || 'Tiền mặt';
+    const selectedPaymentMethod = route.params?.selectedPaymentMethod || 'ZALOPAY';
     const dispatch = useDispatch();
     const [discount, setDiscount] = useState(null);
     const [showCompleteOrder, setShowCompleteOrder] = useState(false);
@@ -25,8 +25,10 @@ const CartScreen = () => {
     const userInfo = useSelector(state => state.user.userInfo);
     const address = useSelector(state => state.currentLocation);
     const error = useSelector(state => state.currentLocation.error);
-    const sum = useSelector(state => state.cart.totalAmount[restaurantId].amount);
+    const sum = useSelector(state => state.cart.totalAmount?.[restaurantId]?.amount) || 0;
     const [note, setNote] = useState('');
+    const [transactionId, setTransactionId] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const slideAnim = useRef(new Animated.Value(500)).current;
     const [foodData, setFoodData] = useState(() => {
         if (items)
@@ -65,17 +67,6 @@ const CartScreen = () => {
         // Clean up the animation
         return () => animation.stop();
     }, [slideAnim]);
-
-    const data = [
-        { label: 'Item 1', value: '1' },
-        { label: 'Item 2', value: '2' },
-        { label: 'Item 3', value: '3' },
-        { label: 'Item 4', value: '4' },
-        { label: 'Item 5', value: '5' },
-        { label: 'Item 6', value: '6' },
-        { label: 'Item 7', value: '7' },
-        { label: 'Item 8', value: '8' },
-    ];
     useEffect(() => {
         const unsubscribe = navigation.addListener('blur', () => {
             setShowCompleteOrder(false);
@@ -83,6 +74,32 @@ const CartScreen = () => {
 
         return unsubscribe;
     }, [navigation]);
+    // Lắng nghe khi người dùng quay lại app bằng cách sử dụng AppState
+    useEffect(() => {
+        const handleAppStateChange = (nextAppState) => {
+            if (nextAppState === 'active' && transactionId) {
+                // Khi ứng dụng trở về trạng thái "active", kiểm tra trạng thái thanh toán
+                const checkPaymentStatus = async () => {
+                    const statusData = await orderApi.orderCheckStatus(transactionId);
+                    if (statusData == 'Giao dịch thành công') {
+                        Alert.alert('Thanh toán', 'Giao dịch thành công')
+                        setShowCompleteOrder(true)
+                    }
+                    else {
+                        Alert.alert('Thanh toán', 'Giao dịch thất bại. Vui lòng thử lại')
+                    }
+                };
+                checkPaymentStatus();
+            }
+        };
+
+        // Thêm listener cho AppState
+        const subscription = AppState.addEventListener('change', handleAppStateChange);
+        // Dọn dẹp listener khi component unmount
+        return () => {
+            subscription.remove();
+        };
+    }, [transactionId]);
     const handlePress = () => {
         navigation.navigate('MapScreen')
     };
@@ -91,26 +108,26 @@ const CartScreen = () => {
 
         const fetchOrder = async (userInfo, address, items, selectedPaymentMethod, sum, note) => {
             try {
+                setIsLoading(true)
                 const response = await orderApi.orderApi(userInfo, address, items, selectedPaymentMethod = 'ZALOPAY', sum, note, delivery_fee);
-
-                if (response) {
-                    setShowCompleteOrder(true);
-                } else {
-                    Alert.alert('Lỗi', 'Đặt hàng không thành công. Vui lòng thử lại.');
+                setTransactionId(response.app_trans_id);
+                console.log(response.url)
+                if (response.url) {
+                    await Linking.openURL(response.url);
                 }
+                setIsLoading(false)
             } catch (error) {
                 console.error('Đã xảy ra lỗi khi đặt hàng:', error);
                 Alert.alert('Lỗi', 'Đặt hàng không thành công. Vui lòng thử lại.');
             }
         };
-
         const fetchUserInfo = async () => {
             const response = await userApi.getInfoUser(dispatch);
-            return response;
+            console.log(response);
         };
 
         fetchUserInfo()
-        if (userInfo.name == '' || userInfo.phone_number == '') {
+        if (userInfo.name == '' || userInfo.phone_number == '' || userInfo == 'null') {
             Alert.alert('Cập nhật thông tin ', 'Vui lòng cập nhật thông tin để có thể đặt hàng', [
                 { text: 'Huỷ', style: 'cancel' },
                 { text: 'Ok', onPress: () => navigation.navigate('Thông tin') },
@@ -130,100 +147,98 @@ const CartScreen = () => {
     );
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.headContainer}>
-                <View style={styles.locationContainer}>
-                    <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handlePress}>
-                        <Ionicons name="location" size={25} color="#FF0000" style={{ paddingVertical: 6 }} />
-                        <View>
+        isLoading ? (<View style={styles.loaderContainer} >
+            <ActivityIndicator size="large" color="#FF0000" />
+        </View>
+        ) : (
+            <SafeAreaView style={styles.container} >
+                <View style={styles.headContainer}>
+                    <View style={styles.locationContainer}>
+                        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handlePress}>
+                            <Ionicons name="location" size={25} color="#FF0000" style={{ paddingVertical: 6 }} />
                             <View>
-                                <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700' }}>Giao tới</Text>
+                                <View>
+                                    <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700' }}>Giao tới</Text>
+                                </View>
+                                <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{
+                                    error ? error : address.address
+                                }</Text>
                             </View>
-                            <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{
-                                error ? error : address.address
-                            }</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={styles.mainContainer}>
+                    {items && items.length > 0 ? (
+                        <ScrollView style={styles.scrollContainer}>
+                            {foodData.map((food) => (
+                                <ItemInCart food={food} key={food.uniqueId} restaurantId={restaurantId} />)
+                            )}
+                        </ScrollView>
+                    ) : (
+                        <View style={styles.scrollContainer}>
+                            <Text style={{ textAlign: 'center', marginTop: 20 }}>Chưa có món ăn trong giỏ hàng</Text>
                         </View>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <View style={styles.mainContainer}>
-                {items && items.length > 0 ? (
-                    <ScrollView style={styles.scrollContainer}>
-                        {foodData.map((food) => {
-                            return <ItemInCart food={food} key={food.uniqueId} restaurantId={restaurantId} />
-                        })}
-                    </ScrollView>
-                ) : (
-                    <Text style={{ textAlign: 'center', marginTop: 20 }}>Chưa có món ăn trong giỏ hàng</Text>
-                )}
-                <View style={styles.noteContainer}>
-                    <TextInput placeholder='Ghi chú' style={styles.row} value={note} onChangeText={setNote}></TextInput>
-                </View>
-                <View style={styles.summaryContainer}>
-                    <Text style={styles.textBold}>Chi tiết thanh toán</Text>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Tạm tính</Text>
-                        <Text style={styles.value}>{formatPrice(sum)}</Text>
+                    )}
+                    <View style={styles.noteContainer}>
+                        <TextInput placeholder='Ghi chú' style={[styles.row, { alignItems: 'center', justifyContent: 'center' }]} value={note} onChangeText={setNote}></TextInput>
                     </View>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Phí áp dụng</Text>
-                        <Text style={styles.value}>{formatPrice(sum * 0.1)}</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Giảm giá</Text>
-                        <Text style={styles.value}>{formatPrice(0)}</Text>
+                    <View style={styles.summaryContainer}>
+                        <Text style={styles.textBold}>Chi tiết thanh toán</Text>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Tạm tính</Text>
+                            <Text style={styles.value}>{formatPrice(sum)}</Text>
+                        </View>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Phí áp dụng</Text>
+                            <Text style={styles.value}>{formatPrice(sum * 0.1)}</Text>
+                        </View>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Giảm giá</Text>
+                            <Text style={styles.value}>{formatPrice(0)}</Text>
+                        </View>
                     </View>
                 </View>
-            </View>
-            <View style={styles.footerContainer}>
                 <View style={styles.methodPaymentContainer}>
+                    <Text style={styles.paymentText}> Phương thức thanh toán</Text>
                     <TouchableOpacity style={styles.payment} onPress={handlePayment}>
                         <Text style={styles.paymentText}> {selectedPaymentMethod}</Text>
                     </TouchableOpacity>
-                    <View style={styles.discount}>
-                        <Dropdown
-                            style={styles.dropdown}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            data={data}
-                            labelField="label"
-                            placeholder="Select discount"
-                            value={discount}
-                            onChange={item => {
-                                setDiscount(item.value);
-                            }}
-                        />
+                </View>
+                <View style={styles.footerContainer}>
+                    <View style={[styles.row, { borderBlockColor: '#FFFFFF', borderBottomWidth: 1 }]}>
+                        <Text style={[styles.label, { fontWeight: '500' }]}>Tổng số tiền</Text>
+                        <Text style={[styles.value, { fontWeight: '500' }]}>{formatPrice(sum)}</Text>
                     </View>
+                    <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
+                        <Text style={styles.buttonText}>Đặt món</Text>
+                    </TouchableOpacity>
                 </View>
-                <View style={[styles.row, { borderBlockColor: '#FFFFFF', borderBottomWidth: 1 }]}>
-                    <Text style={[styles.label, styles.totalLabel]}>Tổng số tiền</Text>
-                    <Text style={[styles.value, styles.totalValue]}>{formatPrice(sum)}</Text>
-                </View>
-                <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
-                    <Text style={styles.buttonText}>Đặt món</Text>
-                </TouchableOpacity>
-            </View>
-
-            {
-                showCompleteOrder && (
-                    <>
-                        <BlurView
-                            style={styles.absolute}
-                            blurType="light"
-                            blurAmount={1}
-                            reducedTransparencyFallbackColor="white"
-                        />
-                        <CompleteOrderDisplay />
-                    </>
-                )
-            }
-        </SafeAreaView >
+                {
+                    showCompleteOrder && (
+                        <>
+                            <BlurView
+                                style={styles.absolute}
+                                blurType="light"
+                                blurAmount={1}
+                                reducedTransparencyFallbackColor="white"
+                            />
+                            <CompleteOrderDisplay />
+                        </>
+                    )
+                }
+            </SafeAreaView>
+        )
     )
 }
 
 export default CartScreen
 
 const styles = StyleSheet.create({
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     container: {
         flex: 1,
         // backgroundColor: '#FFF',
@@ -245,13 +260,14 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     scrollContainer: {
-        height: 200
+        height: 350
     },
     footerContainer: {
-        backgroundColor: '#FF0000',
-        borderRadius: 20,
+        backgroundColor: '#fff',
+        borderRadius: 5,
         padding: 10,
-        margin: 10,
+        marginHorizontal: 15,
+        marginVertical: 5
     },
     summaryContainer: {
         backgroundColor: '#FFFF',
@@ -278,8 +294,7 @@ const styles = StyleSheet.create({
     },
     totalLabel: {
         fontWeight: 'bold',
-        fontSize: 18,
-        color: "#FFF"
+        fontSize: 16,
     },
     totalValue: {
         fontWeight: 'bold',
@@ -287,14 +302,14 @@ const styles = StyleSheet.create({
         color: "#FFF"
     },
     button: {
-        backgroundColor: '#FFF',
+        backgroundColor: '#FF0000',
         borderRadius: 10,
         paddingVertical: 10,
         alignItems: 'center',
         marginTop: 20,
     },
     buttonText: {
-        color: '#FF3D00',
+        color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
     },
@@ -304,16 +319,15 @@ const styles = StyleSheet.create({
         color: '#000'
     },
     methodPaymentContainer: {
-        flexDirection: 'row'
-    },
-    payment: {
-        width: '50%',
-        borderRightWidth: 1,
-        justifyContent: 'center',
+        backgroundColor: '#FFF',
+        marginHorizontal: 15,
+        marginVertical: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-    },
-    discount: {
-        width: '50%'
+        borderRadius: 5,
+        height: 40,
+        padding: 10
     },
     locationContainer: {
         flexDirection: 'row',
@@ -369,7 +383,6 @@ const styles = StyleSheet.create({
     paymentText: {
         fontSize: 16,
         fontWeight: '500',
-        color: '#fff'
     },
     image: {
         width: 24,

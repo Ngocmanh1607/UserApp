@@ -9,9 +9,10 @@ const apiKey = "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7
 const userApi = {
     signupApi: async (dispatch, email, password) => {
         try {
+            const fcmToken = "1";
             const response = await apiClient.post(
                 "/user/signup",
-                { email, password },
+                { email, password, fcmToken },
                 {
                     headers: {
                         "x-api-key": apiKey
@@ -34,8 +35,7 @@ const userApi = {
                 ['userId', userId.toString()],
             ]);
             dispatch(setUserId(userId));
-            const userInfo = await userApi.getInfoUser();
-            dispatch(setUserInfo(userInfo));
+            const userInfo = await userApi.getInfoUser(dispatch);
             return true;
         } catch (error) {
             console.error("Đăng ký thất bại:", error.response ? error.response.data : error.message);
@@ -43,8 +43,9 @@ const userApi = {
         }
     },
 
-    loginApi: async (email, password, dispatch) => {
+    loginApi: async (email, password, dispatch, fcmToken) => {
         try {
+            const fcmToken = 1
             const response = await apiClient.post(
                 "/user/login",
                 { email, password },
@@ -64,7 +65,6 @@ const userApi = {
             ]);
             dispatch(setUserId(userId));
             const userInfo = await userApi.getInfoUser(dispatch);
-            dispatch(setUserInfo(userInfo));
             return true;
         } catch (error) {
             Alert.alert("Vui lòng kiểm tra lại tài khoản mật khẩu. Đăng nhập thất bại")

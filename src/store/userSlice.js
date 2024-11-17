@@ -22,8 +22,10 @@ const userSlice = createSlice({
             state.userId = action.payload;
         },
         setUserInfo: (state, action) => {
-            state.userInfo = action.payload;
-            console.log(state.userInfo)
+            console.log(state.userInfo);
+            if (action.payload.profile) {
+                state.userInfo = action.payload;
+            }
         },
     }
 })

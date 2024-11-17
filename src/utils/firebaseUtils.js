@@ -1,16 +1,18 @@
+import storage from '@react-native-firebase/storage';
 
-import { storage } from './firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-
-const uploadUserImage = async (userId, imageUri) => {
+const uploadRestaurantImage = async (userId, imageUri) => {
     try {
-        const response = await fetch(imageUri);
-        const blob = await response.blob();
-        const storageRef = ref(storage, `users/${userId}/user_image.jpg`);
+        const response = await fetch(imageUri); // Fetch the image from URI
+        const blob = await response.blob(); // Convert it to a blob
 
-        await uploadBytes(storageRef, blob);
+        // Create a reference to where the image will be stored
+        const storageRef = storage().ref(`restaurants/${userId}/restaurant_image.jpg`);
 
-        const downloadURL = await getDownloadURL(storageRef);
+        // Upload the image
+        await storageRef.put(blob);
+
+        // Get the download URL after upload
+        const downloadURL = await storageRef.getDownloadURL();
 
         console.log('Image URL:', downloadURL);
         return downloadURL;
@@ -20,5 +22,26 @@ const uploadUserImage = async (userId, imageUri) => {
     }
 };
 
+const uploadFoodImage = async (restaurantId, foodName, imageUri) => {
+    try {
+        const response = await fetch(imageUri); // Fetch the image from URI
+        const blob = await response.blob(); // Convert it to a blob
 
-export { uploadUserImage }
+        // Create a reference to where the food image will be stored
+        const storageRef = storage().ref(`restaurants/${restaurantId}/food-images/${foodName}.jpg`);
+
+        // Upload the image
+        await storageRef.put(blob);
+
+        // Get the download URL after upload
+        const downloadURL = await storageRef.getDownloadURL();
+
+        console.log('Image URL:', downloadURL);
+        return downloadURL;
+    } catch (error) {
+        console.error('Error uploading food image:', error);
+        throw error;
+    }
+};
+
+export { uploadRestaurantImage, uploadFoodImage };

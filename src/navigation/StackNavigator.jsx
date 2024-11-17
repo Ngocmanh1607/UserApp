@@ -66,7 +66,7 @@ const StackNavigator = () => {
             <Stack.Screen name="CartScreen" component={CartScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Giỏ hàng', headerBackTitle: 'Quay lại' }} />
             <Stack.Screen name="Message" component={MessageScreen} options={{ headerShown: true }} />
             <Stack.Screen name="CompleteOrder" component={CompleteOrder} />
-            <Stack.Screen name="OrderStatus" component={OrderStatusScreen} />
+            <Stack.Screen name="OrderStatus" component={OrderStatusScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Trạng thái', headerBackTitle: 'Quay lại' }} />
             <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen} />
         </Stack.Navigator>
     );

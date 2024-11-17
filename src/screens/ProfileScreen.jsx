@@ -39,6 +39,7 @@ const UserProfileScreen = () => {
                         phone_number: data.profile.phone_number,
                     });
                     setAddress(data.address[data.address.length - 1]);
+
                     setImageUri(data.profile.image);
                 }
             } catch (error) {
@@ -125,13 +126,18 @@ const UserProfileScreen = () => {
                 text: 'Đăng xuất',
                 onPress: async () => {
                     try {
-                        const result = await userApi.logoutApi();
-                        if (result) {
-                            navigation.reset({
-                                index: 0,
-                                routes: [{ name: 'Auth' }],
-                            });
-                        }
+                        // const result = await userApi.logoutApi();
+                        // const result = ""
+                        // if (result) {
+                        //     navigation.reset({
+                        //         index: 0,
+                        //         routes: [{ name: 'Auth' }],
+                        //     });
+                        // }
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Auth' }],
+                        });
                     } catch (error) {
                         console.error("Error logging out:", error);
                         Alert.alert('Lỗi', 'Không thể đăng xuất. Vui lòng thử lại.');
@@ -188,7 +194,7 @@ const UserProfileScreen = () => {
                                 style={styles.input}
                                 onPress={handlePressAddress}
                             >
-                                <Text>{location.address}</Text>
+                                {/* <Text>{address.address_name}</Text> */}
                             </TouchableOpacity>
                         </View>
 
