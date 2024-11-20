@@ -56,10 +56,10 @@ const RestaurantScreen = ({ route }) => {
                     <View style={styles.bottomContainer}>
                         <View style={styles.ratingContainer}>
                             <MaterialIcons name="star" size={20} color="#FFA500" />
-                            <Text style={styles.ratingText}>{restaurant.rating}</Text>
+                            <Text style={styles.ratingText}>{restaurant.rating || 5}</Text>
                         </View>
                         <View style={styles.disContainer}>
-                            <Text style={styles.textDis}>Khoảng cách: {restaurant.distance}Km</Text>
+                            <Text style={styles.textDis}>Khoảng cách: {(restaurant.distance * 0.001).toFixed(2)}Km</Text>
                         </View>
                         <TouchableOpacity>
                             <Feather name="heart" size={20} style={styles.heart} />

@@ -21,7 +21,7 @@ const UserProfileScreen = () => {
         address_x: '',
         address_y: '',
     });
-    const location = useSelector(state => state.defaultLocation);
+    const location = useSelector(state => state.currentLocation);
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [imageUri, setImageUri] = useState(userInfo.image);
@@ -38,7 +38,7 @@ const UserProfileScreen = () => {
                         email: data.profile.mail,
                         phone_number: data.profile.phone_number,
                     });
-                    setAddress(data.address[0]);
+                    // setAddress(data.address[0]);
                     setImageUri(data.profile.image);
                 }
             } catch (error) {
@@ -92,15 +92,23 @@ const UserProfileScreen = () => {
     const handleSaveChanges = async () => {
         try {
             setIsLoading(true);
-            const url = await uploadFirebase(imageUri);
-            if (!url) {
-                Alert.alert("Lỗi", "Không thể tải ảnh lên. Vui lòng thử lại.");
-                return;
+            let url = userInfo.image;
+            if (imageUri !== userInfo.image) {
+                url = await uploadFirebase(imageUri);
+                if (!url) {
+                    Alert.alert("Lỗi", "Không thể tải ảnh lên. Vui lòng thử lại.");
+                    return;
+                }
             }
+
             const profile = {
                 ...userInfo,
                 image: url,
             };
+
+            // Gửi API cập nhật thông tin người dùng
+            await userApi.updateUser(dispatch, profile, location);
+
             await userApi.updateUser(dispatch, profile, location);
             Alert.alert('Thành công', 'Thông tin của bạn đã được cập nhật.');
             setIsEditing(false);

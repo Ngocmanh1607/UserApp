@@ -19,15 +19,11 @@ const CardResInCart = ({ restaurant, restaurantId }) => {
             <View style={styles.mainContainer}>
                 <View style={styles.textContainer}>
                     <Text style={styles.text}>{restaurant.name}</Text>
-                    {
-                        items.map((item) => (
-                            <Text key={item.uniqueId} style={styles.textFood}>{item.name}</Text>
-                        ))
-                    }
+                    <Text style={styles.textFood}>{items.length} món</Text>
                     <Text style={styles.textAmount}>{formatPrice(restaurant.amount)}</Text>
                 </View>
             </View>
-        </TouchableOpacity>
+        </TouchableOpacity >
     );
 }
 const styles = StyleSheet.create({

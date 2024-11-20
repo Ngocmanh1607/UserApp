@@ -119,6 +119,7 @@ const CartScreen = () => {
             } catch (error) {
                 console.error('Đã xảy ra lỗi khi đặt hàng:', error);
                 Alert.alert('Lỗi', 'Đặt hàng không thành công. Vui lòng thử lại.');
+                setIsLoading(false)
             }
         };
         const fetchUserInfo = async () => {
@@ -139,7 +140,10 @@ const CartScreen = () => {
     };
     const handlePayment = () => {
         navigation.navigate('PaymentMethod', { restaurantId: restaurantId })
-    }
+    };
+    const handleDiscount = () => {
+        navigation.navigate('CouponScreen')
+    };
     const CompleteOrderDisplay = () => (
         <Animated.View style={[styles.card, { transform: [{ translateY: slideAnim }] }]}>
             <CompleteOrder onComplete={() => setShowCompleteOrder(false)} restaurantId={restaurantId} />
@@ -181,6 +185,12 @@ const CartScreen = () => {
                     )}
                     <View style={styles.noteContainer}>
                         <TextInput placeholder='Ghi chú' style={[styles.row, { alignItems: 'center', justifyContent: 'center' }]} value={note} onChangeText={setNote}></TextInput>
+                    </View>
+                    <View style={styles.couponContainer}>
+                        <Text style={styles.paymentText}>Mã giảm giá</Text>
+                        <TouchableOpacity style={styles.payment} onPress={() => handleDiscount()}>
+                            <Text style={styles.discountText}>{discount ? discount : 'Chọn mã giảm giá'}</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.summaryContainer}>
                         <Text style={styles.textBold}>Chi tiết thanh toán</Text>
@@ -271,9 +281,9 @@ const styles = StyleSheet.create({
     },
     summaryContainer: {
         backgroundColor: '#FFFF',
-        borderRadius: 10,
+        borderRadius: 5,
         padding: 10,
-        marginTop: 5,
+        marginVertical: 5,
         elevation: 10,
     },
     row: {
@@ -337,7 +347,7 @@ const styles = StyleSheet.create({
     },
     noteContainer: {
         backgroundColor: '#FFFF',
-        borderRadius: 10,
+        borderRadius: 5,
         paddingLeft: 10,
         elevation: 10,
         height: 40
@@ -389,4 +399,14 @@ const styles = StyleSheet.create({
         height: 24,
         marginRight: 8,
     },
+    couponContainer: {
+        backgroundColor: '#FFF',
+        marginVertical: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderRadius: 5,
+        height: 40,
+        padding: 10
+    }
 })

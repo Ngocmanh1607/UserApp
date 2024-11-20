@@ -27,9 +27,7 @@ const FoodDetailScreen = () => {
     useEffect(() => {
         const fetchTopping = async () => {
             try {
-
                 const data = await foodApi.getFoodTopping(food.id)
-                console.log(data)
                 setToppings(data)
             } catch (error) {
 
@@ -86,7 +84,7 @@ const FoodDetailScreen = () => {
             )
             navigation.goBack();
         } catch (error) {
-
+            console.log(error)
         }
     }
     return (
@@ -103,7 +101,7 @@ const FoodDetailScreen = () => {
 
                 <ScrollView style={styles.toppingContainer}>
                     <Text style={styles.toppingTitle}>Topping</Text>
-                    {toppings.map(topping => (
+                    {toppings && toppings.map(topping => (
                         <View key={topping.id} style={styles.toppingItem}>
                             <Text style={styles.toppingName}>{topping.topping_name}</Text>
                             <Text style={styles.toppingPrice}>{formatPrice(topping.price)}</Text>

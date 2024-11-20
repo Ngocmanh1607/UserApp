@@ -5,6 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import MapboxGL from '@rnmapbox/maps';
+import RatingCard from '../components/RatingCard';
 
 const OrderStatusScreen = () => {
     const navigation = useNavigation();
@@ -47,36 +48,42 @@ const OrderStatusScreen = () => {
                     />
                 </View>
             ) : (
-                <MapboxGL.MapView style={styles.map}>
-                    <MapboxGL.Camera
-                        zoomLevel={13}
-                        centerCoordinate={restaurantLocation}
-                    />
-                    <MapboxGL.PointAnnotation coordinate={restaurantLocation} id="restaurant">
-                        <View style={styles.marker}>
-                            <Ionicons name="restaurant" size={24} color="#FF6347" />
-                        </View>
-                    </MapboxGL.PointAnnotation>
-                    <MapboxGL.PointAnnotation coordinate={deliveryLocation} id="delivery">
-                        <View style={styles.marker}>
-                            <MaterialCommunityIcons name="motorbike" size={24} color="#007AFF" />
-                        </View>
-                    </MapboxGL.PointAnnotation>
-                    {route && (
-                        <MapboxGL.ShapeSource id="routeSource" shape={{
-                            type: 'Feature',
-                            geometry: {
-                                type: 'LineString',
-                                coordinates: route.coordinates
-                            }
-                        }}>
-                            <MapboxGL.LineLayer
-                                id="routeLayer"
-                                style={{ lineWidth: 5, lineColor: '#007AFF' }}
-                            />
-                        </MapboxGL.ShapeSource>
-                    )}
-                </MapboxGL.MapView>
+                orderStatus === 'completed' ? (
+                    <View style={styles.container}>
+                        <RatingCard />
+                    </View>
+                ) : (
+                    <MapboxGL.MapView style={styles.map} >
+                        <MapboxGL.Camera
+                            zoomLevel={13}
+                            centerCoordinate={restaurantLocation}
+                        />
+                        <MapboxGL.PointAnnotation coordinate={restaurantLocation} id="restaurant">
+                            <View style={styles.marker}>
+                                <Ionicons name="restaurant" size={24} color="#FF6347" />
+                            </View>
+                        </MapboxGL.PointAnnotation>
+                        <MapboxGL.PointAnnotation coordinate={deliveryLocation} id="delivery">
+                            <View style={styles.marker}>
+                                <MaterialCommunityIcons name="motorbike" size={24} color="#007AFF" />
+                            </View>
+                        </MapboxGL.PointAnnotation>
+                        {route && (
+                            <MapboxGL.ShapeSource id="routeSource" shape={{
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'LineString',
+                                    coordinates: route.coordinates
+                                }
+                            }}>
+                                <MapboxGL.LineLayer
+                                    id="routeLayer"
+                                    style={{ lineWidth: 5, lineColor: '#007AFF' }}
+                                />
+                            </MapboxGL.ShapeSource>
+                        )}
+                    </MapboxGL.MapView>
+                )
             )}
 
             <View style={styles.orderInfoContainer}>
@@ -112,7 +119,7 @@ const OrderStatusScreen = () => {
                     </TouchableOpacity>
                 )}
             </View>
-        </SafeAreaView>
+        </SafeAreaView >
     );
 };
 

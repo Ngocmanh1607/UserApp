@@ -12,7 +12,7 @@ const userApi = {
             const fcmToken = "1";
             const response = await apiClient.post(
                 "/user/signup",
-                { email, password, fcmToken },
+                { email, password, fcmToken, role: "user" },
                 {
                     headers: {
                         "x-api-key": apiKey
