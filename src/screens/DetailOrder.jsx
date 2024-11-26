@@ -1,103 +1,88 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React from 'react';
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import formatPrice from '../utils/formatPrice';
+import { useNavigation, useRoute } from '@react-navigation/native';
 const OrderDetailScreen = () => {
-    const navigation = useNavigation()
-    const orderDetails = {
-        driver: {
-            name: 'Pham Trung Kien',
-            rating: 5.0,
-            vehicle: 'Yamaha | Nozza',
-            licensePlate: '68T1-572.84',
-            driverImage: 'https://link-to-driver-image.com/driver.jpg', // Replace with a real image
-        },
-        items: [
-            {
-                name: 'Mì Soyum bò Mỹ',
-                price: '70.000₫',
-                quantity: 1,
-                options: [
-                    'Chọn cách chế biến I: Nấu Chín (Phí hộp đựng muỗng đũa)',
-                    'Chọn cấp độ cay: Cấp 2',
-                    'nhiều nước chấm muối ớt xanh'
-                ],
-                image: 'https://link-to-item-image.com/item1.jpg', // Replace with a real image
-            },
-            {
-                name: 'Mì Kim chi bò Mỹ',
-                price: '70.000₫',
-                quantity: 1,
-                options: [
-                    'Chọn cách chế biến I: Nấu Chín (Phí hộp đựng muỗng đũa)',
-                    'Chọn cấp độ cay: Cấp 2'
-                ],
-                image: 'https://link-to-item-image.com/item2.jpg', // Replace with a real image
-            },
-        ],
-        total: '93.000₫',
-        paymentMethod: 'MoMo',
-        orderId: '29270933',
-        orderTime: '28/08/2024 | 19:20',
-    };
-
+    const route = useRoute();
+    const order = route.params?.order || {};
     return (
         <View style={styles.container}>
             <ScrollView >
                 {/* Order completion message */}
-                <View style={styles.orderCompleteContainer}>
+                {/* <View style={styles.orderCompleteContainer}>
                     <Text style={styles.orderCompleteText}>Đơn hàng của bạn đã hoàn tất</Text>
                     <Image// Replace with a real image
                         style={styles.orderCompleteIcon}
                     />
-                </View>
+                </View> */}
 
                 {/* Driver Information */}
-                <View style={styles.driverInfoContainer}>
-                    <Text style={styles.licensePlate}>{orderDetails.driver.licensePlate}</Text>
-                    <Text>{orderDetails.driver.vehicle}</Text>
-                    <View style={styles.driverDetails}>
-                        <Image source={require('../assets/Images/Shipper.webp')} style={styles.driverImage} />
-                        <View style={styles.driverInfo}>
-                            <Text style={styles.driverName}>{orderDetails.driver.name}</Text>
-                            <Text style={styles.driverRating}>⭐ {orderDetails.driver.rating}</Text>
-                        </View>
-                    </View>
-                </View>
+                {
+                    order.Driver && (
+                        <View style={styles.driverInfoContainer}>
+                            <Text style={styles.licensePlate}>{order.Driver.license_plate}</Text>
+                            <Text>{order.Driver.car_name}</Text>
+                            <View style={styles.driverDetails}>
+                                <Image source={{ uri: order.Driver.Profile.image }} style={styles.driverImage} />
 
-                {/* Ordered Items */}
-                {orderDetails.items.map((item, index) => (
-                    <View key={index} style={styles.orderItemContainer}>
-                        <View style={styles.orderItemDetails}>
-                            <Image source={require('../assets/Images/pizza1.jpg')} style={styles.orderItemImage} />
-                            <View style={styles.orderItemText}>
-                                <Text style={styles.orderItemName}>{item.name}</Text>
-                                {item.options.map((option, optIndex) => (
-                                    <Text key={optIndex} style={styles.orderItemOption}>{option}</Text>
-                                ))}
+                                <View style={styles.driverInfo}>
+                                    <Text style={styles.driverName}>{order.Driver.Profile.name}</Text>
+                                    <Text style={styles.driverRating}>⭐ 5</Text>
+                                </View>
+
                             </View>
                         </View>
-                        <Text style={styles.orderItemPrice}>{item.price}</Text>
+                    )
+                }
+                {/* Order ID */}
+                <View style={styles.orderIdContainer}>
+                    <Text style={styles.orderId}>Mã đơn: {order.id}</Text>
+                    <Text style={styles.orderTime}>{order.order_date}</Text>
+                </View>
+                {/* Ordered Items */}
+                {order.listCartItem.map((item, index) => (
+                    <View key={index} style={styles.orderItemContainer}>
+                        <View style={styles.orderItemDetails}>
+                            <Image source={{ uri: item.image }} style={styles.orderItemImage} />
+                            <View style={styles.orderItemText}>
+                                <Text style={styles.orderItemName}>{item.name}</Text>
+                                <Text style={styles.orderItemOption}>Mô tả: {item.descriptions}</Text>
+                                {
+                                    item.toppings && (item.toppings.map((option, optIndex) => (
+                                        <Text key={optIndex} style={styles.orderItemOption}>{option.topping_name}</Text>
+                                    )))}
+                                <Text style={styles.orderItemOption}>Số lượng: {item.quantity}</Text>
+                                <Text style={styles.orderItemPrice}>Giá: {item.price}</Text>
+                            </View>
+                        </View>
                     </View>
                 ))}
 
                 {/* Payment Information */}
-                <View style={styles.paymentInfoContainer}>
-                    <Text style={styles.paymentMethod}>Trả qua {orderDetails.paymentMethod}</Text>
-                    <Text style={styles.orderTotal}>{orderDetails.total}</Text>
-                </View>
-
-                {/* Order ID */}
-                <View style={styles.orderIdContainer}>
-                    <Text style={styles.orderId}>Mã đơn: {orderDetails.orderId}</Text>
-                    <Text style={styles.orderTime}>{orderDetails.orderTime}</Text>
+                <View style={styles.summaryContainer}>
+                    {/* <Text style={styles.textBold}>Chi tiết thanh toán</Text>
+                    <View style={styles.row}>
+                        <Text style={styles.label}>Tạm tính</Text>
+                        <Text style={styles.value}>{formatPrice(order.price)}</Text>
+                    </View>
+                    <View style={styles.row}>
+                        <Text style={styles.label}>Phí áp dụng</Text>
+                        <Text style={styles.value}>{formatPrice(order.delivery_fee)}</Text>
+                    </View>
+                    <View style={styles.row}>
+                        <Text style={styles.label}>Giảm giá</Text>
+                        <Text style={styles.value}>{formatPrice(0)}</Text>
+                    </View> */}
+                    <View style={styles.row}>
+                        <Text style={styles.paymentMethod}>Trả qua: {order.order_pay}</Text>
+                        <Text style={styles.orderTotal}>{formatPrice(order.price)}</Text>
+                    </View>
                 </View>
 
                 {/* Reorder Button */}
-                <TouchableOpacity style={styles.reorderButton}>
+                {/* <TouchableOpacity style={styles.reorderButton}>
                     <Text style={styles.reorderButtonText}>Đặt lại món</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </ScrollView>
         </View>
     );
@@ -166,7 +151,7 @@ const styles = StyleSheet.create({
     driverImage: {
         width: 40,
         height: 40,
-        borderRadius: 20,
+        borderRadius: 5,
     },
     driverInfo: {
         marginLeft: 10,
@@ -189,8 +174,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     orderItemImage: {
-        width: 50,
-        height: 50,
+        width: 60,
+        height: 60,
         borderRadius: 5,
         marginRight: 10,
     },
@@ -220,8 +205,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     orderTotal: {
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 16,
+        fontWeight: '500',
         marginTop: 5,
     },
     orderIdContainer: {
@@ -250,5 +235,42 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         color: '#fff',
+    },
+    summaryContainer: {
+        backgroundColor: '#FFFF',
+        borderRadius: 5,
+        padding: 10,
+        marginVertical: 5,
+        elevation: 10,
+    },
+    textBold: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#000'
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 5,
+        // height: 40
+    },
+    label: {
+        fontWeight: '300',
+        fontSize: 16,
+        color: '#000',
+    },
+    value: {
+        fontWeight: '300',
+        fontSize: 16,
+        color: '#000',
+    },
+    totalLabel: {
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    totalValue: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        color: "#FFF"
     },
 });

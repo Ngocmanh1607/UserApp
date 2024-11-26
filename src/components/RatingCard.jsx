@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome"
+import { orderApi } from "../api/orderApi";
+import { useRoute } from "@react-navigation/native";
 
-const RatingCard = () => {
+const RatingCard = ({ order_id }) => {
     const [restaurantRating, setRestaurantRating] = useState(0);
     const [shipperRating, setShipperRating] = useState(0);
-    const [comment, setComment] = useState("");
-
+    const [commentRes, setCommentRes] = useState("");
+    const [commentShipper, setCommentShipper] = useState("");
     const renderStars = (rating, setRating) => {
         return Array(5)
             .fill(0)
@@ -23,13 +25,14 @@ const RatingCard = () => {
     };
 
     const handleSubmit = () => {
-        // Handle submission logic here
-        console.log({
-            restaurantRating,
-            shipperRating,
-            comment,
-        });
-        alert("Cảm ơn bạn đã đánh giá!");
+        const fetchReview = async () => {
+            await orderApi.review(order_id, restaurantRating, commentRes, shipperRating, commentShipper);
+        }
+        fetchReview();
+        Alert.alert(
+            "Thông báo", // Title
+            "Cảm ơn bạn đã đánh giá!", // Message
+        );
     };
 
     return (
@@ -40,18 +43,28 @@ const RatingCard = () => {
             <Text style={styles.label}>Nhà hàng:</Text>
             <View style={styles.starsContainer}>{renderStars(restaurantRating, setRestaurantRating)}</View>
 
+            {/* Nhận xét */}
+            <Text style={styles.label}>Nhận xét nhà hàng:</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Nhập nhận xét của bạn..."
+                multiline
+                value={commentRes}
+                onChangeText={setCommentRes}
+            />
+
             {/* Đánh giá shipper */}
             <Text style={styles.label}>Shipper:</Text>
             <View style={styles.starsContainer}>{renderStars(shipperRating, setShipperRating)}</View>
 
             {/* Nhận xét */}
-            <Text style={styles.label}>Nhận xét:</Text>
+            <Text style={styles.label}>Nhận xét tài xế:</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Nhập nhận xét của bạn..."
                 multiline
-                value={comment}
-                onChangeText={setComment}
+                value={commentShipper}
+                onChangeText={setCommentShipper}
             />
 
             {/* Nút Gửi */}
@@ -81,7 +94,6 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 16,
-        marginVertical: 10,
     },
     starsContainer: {
         flexDirection: "row",

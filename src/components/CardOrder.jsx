@@ -1,42 +1,50 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-
+import formatPrice from '../utils/formatPrice';
 const CardOrder = ({ order }) => {
     const navigation = useNavigation();
+    const getOrderStatus = (status) => {
+        const statusMapping = {
+            ORDER_CANCELED: "Đơn hàng đã bị hủy",
+            ORDER_CONFIRMED: "Hoàn thành"
+        };
 
+        return statusMapping[status] || "Theo dõi đơn hàng";
+    };
+    const handlePressOrder = (id, order_status) => {
+        if (order_status !== 'ORDER_CANCELED') {
+            navigation.navigate('OrderStatus', { orderId: id })
+        }
+    }
     return (
         <View style={styles.orderItem}>
             {/* Order header with date and status */}
             <View style={styles.orderHeader}>
-                <Text style={styles.orderDate}>{order.date}</Text>
-                <TouchableOpacity onPress={() => (navigation.navigate('OrderStatus'))}><Text style={styles.orderStatus}>
-                    {order.status}
+                <Text style={styles.orderDate}>{order.order_date}</Text>
+                <TouchableOpacity onPress={() => handlePressOrder(order.id, order.order_status)}><Text style={[styles.orderStatus, { color: order.order_status === 'ORDER_CONFIRMED' ? "#28a745" : "#FF0000" }]}>
+                    {getOrderStatus(order.order_status)}
                 </Text></TouchableOpacity>
             </View>
 
             {/* Order content with image and details */}
             <View style={styles.orderContent}>
-                {console.log(order.image)}
-                {/* <Image
-                    source={order.image ? { uri: order.image } : require('../assets/Images/pizza.png')}
-                    style={styles.orderImage}
-                /> */}
                 <Image
-                    source={require('../assets/Images/pizza.png')}
+                    source={{ uri: order.Restaurant.image }}
                     style={styles.orderImage}
                 />
 
                 <View style={styles.orderDetails}>
-                    <Text style={styles.orderRestaurant}>{order.restaurant}</Text>
-                    <Text style={styles.orderInfo}>{order.quantity} • {order.price}</Text>
+                    <Text style={styles.orderRestaurant}>{order.Restaurant.name}</Text>
+                    <Text style={styles.orderInfo}>{order.listCartItem.length} món</Text>
+                    <Text style={styles.orderInfo}>Tổng giá: {formatPrice(order.price)}</Text>
                 </View>
             </View>
 
             {/* Touchable area with the options to reorder or view details */}
             <TouchableOpacity
                 style={styles.reorderButtonContainer}
-                onPress={() => { navigation.navigate('DetailOrder') }}
+                onPress={() => { navigation.navigate('DetailOrder', { order: order }) }}
             >
                 {/* "Xem chi tiết đơn hàng" and "Đặt lại" in a row */}
                 <Text style={styles.viewOrder}>Xem chi tiết đơn hàng</Text>
@@ -70,7 +78,6 @@ const styles = StyleSheet.create({
     },
     orderStatus: {
         fontSize: 14,
-        color: '#28a745',
     },
     orderContent: {
         flexDirection: 'row',

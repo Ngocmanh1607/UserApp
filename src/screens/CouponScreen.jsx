@@ -1,17 +1,23 @@
 
-import React, { useState } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from "react-native";
+import { orderApi } from "../api/orderApi";
 
 const CouponPage = () => {
-    const [coupons, setCoupons] = useState([
-        { id: "1", title: "Giảm 10% cho đơn hàng đầu tiên", code: "WELCOME10" },
-        { id: "2", title: "Freeship cho đơn hàng trên 100k", code: "FREESHIP100" },
-        { id: "3", title: "Giảm 20% cho đơn hàng trên 200k", code: "SAVE20" },
-        { id: "4", title: "Tặng 50k cho đơn hàng đầu tiên", code: "FIRST50" },
-    ]);
-
+    const route = useRoute();
+    const { restaurantId } = route.params;
+    const navigation = useNavigation();
+    const [coupons, setCoupons] = useState([]);
+    useEffect(() => {
+        const fetchCoupon = async () => {
+            const response = await orderApi.getCoupon();
+            setCoupons(response);
+        }
+        fetchCoupon();
+    }, [])
     const handleCouponClick = (coupon) => {
-        Alert.alert("Mã Coupon", `Bạn đã nhận được mã: ${coupon.code}`);
+        navigation.navigate('CartScreen', { discount: coupon, restaurantId: restaurantId });
     };
 
     const renderCoupon = ({ item }) => (
@@ -19,8 +25,8 @@ const CouponPage = () => {
             style={styles.couponCard}
             onPress={() => handleCouponClick(item)}
         >
-            <Text style={styles.couponTitle}>{item.title}</Text>
-            <Text style={styles.couponCode}>Mã: {item.code}</Text>
+            <Text style={styles.couponTitle}>{item.cupon_name}</Text>
+            <Text style={styles.couponCode}>Mã: {item.cupon_code}</Text>
         </TouchableOpacity>
     );
 

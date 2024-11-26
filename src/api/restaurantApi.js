@@ -25,7 +25,6 @@ const restaurantApi = {
             throw error;
         }
     },
-
     // API tìm kiếm nhà hàng
     async searchRestaurants(searchQuery) {
         try {

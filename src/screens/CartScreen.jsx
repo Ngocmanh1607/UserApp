@@ -1,16 +1,13 @@
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated, Alert, Button, Image, Linking, AppState, ActivityIndicator } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
-import AntDesign from 'react-native-vector-icons/AntDesign'
 import ItemInCart from '../components/ItemInCart'
-import { Dropdown } from 'react-native-element-dropdown';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
 import CompleteOrder from './CompleteOrderScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import formatPrice from '../utils/formatPrice';
 import { orderApi } from '../api/orderApi';
-import { clearCart, removeItem } from '../store/cartSlice';
 import userApi from '../api/userApi';
 
 const CartScreen = () => {
@@ -18,14 +15,14 @@ const CartScreen = () => {
     const navigation = useNavigation();
     const { restaurantId } = route.params;
     const selectedPaymentMethod = route.params?.selectedPaymentMethod || 'ZALOPAY';
+    const discount = route.params?.discount;
     const dispatch = useDispatch();
-    const [discount, setDiscount] = useState(null);
     const [showCompleteOrder, setShowCompleteOrder] = useState(false);
     const items = useSelector(state => state.cart.carts[restaurantId]);
     const userInfo = useSelector(state => state.user.userInfo);
     const address = useSelector(state => state.currentLocation);
     const error = useSelector(state => state.currentLocation.error);
-    const sum = useSelector(state => state.cart.totalAmount?.[restaurantId]?.amount) || 0;
+    const [cost, setCost] = useState();
     const [note, setNote] = useState('');
     const [transactionId, setTransactionId] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -54,6 +51,7 @@ const CartScreen = () => {
                 uniqueId: item.uniqueId
             })));
         }
+        handleGetPrice()
     }, [items]);
     useEffect(() => {
         const animation = Animated.timing(slideAnim, {
@@ -78,7 +76,6 @@ const CartScreen = () => {
     useEffect(() => {
         const handleAppStateChange = (nextAppState) => {
             if (nextAppState === 'active' && transactionId) {
-                // Khi ứng dụng trở về trạng thái "active", kiểm tra trạng thái thanh toán
                 const checkPaymentStatus = async () => {
                     const statusData = await orderApi.orderCheckStatus(transactionId);
                     if (statusData == 'Giao dịch thành công') {
@@ -104,23 +101,16 @@ const CartScreen = () => {
         navigation.navigate('MapScreen')
     };
     const handleOrder = () => {
-        const delivery_fee = sum * 0.1;
-
-        const fetchOrder = async (userInfo, address, items, selectedPaymentMethod, sum, note) => {
-            try {
-                setIsLoading(true)
-                const response = await orderApi.orderApi(userInfo, address, items, selectedPaymentMethod = 'ZALOPAY', sum, note, delivery_fee);
-                setTransactionId(response.app_trans_id);
-                console.log(response.url)
-                if (response.url) {
-                    await Linking.openURL(response.url);
-                }
-                setIsLoading(false)
-            } catch (error) {
-                console.error('Đã xảy ra lỗi khi đặt hàng:', error);
-                Alert.alert('Lỗi', 'Đặt hàng không thành công. Vui lòng thử lại.');
-                setIsLoading(false)
+        const fetchOrder = async (userInfo, address, items, selectedPaymentMethod, note) => {
+            setIsLoading(true)
+            const cuponid = discount?.id
+            const response = await orderApi.orderApi(userInfo, address, items, selectedPaymentMethod = 'ZALOPAY', cost.totalFoodPrice, cost.shippingCost, note, cuponid);
+            setTransactionId(response.app_trans_id);
+            console.log(response.url)
+            if (response.url) {
+                await Linking.openURL(response.url);
             }
+            setIsLoading(false)
         };
         const fetchUserInfo = async () => {
             const response = await userApi.getInfoUser(dispatch);
@@ -135,15 +125,26 @@ const CartScreen = () => {
             ]);
         }
         else {
-            fetchOrder(userInfo, address, items, selectedPaymentMethod, sum, note);
+            fetchOrder(userInfo, address, items, selectedPaymentMethod, note);
         }
     };
     const handlePayment = () => {
         navigation.navigate('PaymentMethod', { restaurantId: restaurantId })
     };
     const handleDiscount = () => {
-        navigation.navigate('CouponScreen')
+        navigation.navigate('CouponScreen', { restaurantId: restaurantId })
     };
+    const handleGetPrice = async () => {
+        setIsLoading(true);
+        try {
+            const response = await orderApi.getPrice(address.latitude, address.longitude, restaurantId, items);
+            setCost(response);
+        } catch (error) {
+            console.error('Error fetching price:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
     const CompleteOrderDisplay = () => (
         <Animated.View style={[styles.card, { transform: [{ translateY: slideAnim }] }]}>
             <CompleteOrder onComplete={() => setShowCompleteOrder(false)} restaurantId={restaurantId} />
@@ -151,7 +152,7 @@ const CartScreen = () => {
     );
 
     return (
-        isLoading ? (<View style={styles.loaderContainer} >
+        isLoading || !cost ? (<View style={styles.loaderContainer} >
             <ActivityIndicator size="large" color="#FF0000" />
         </View>
         ) : (
@@ -189,22 +190,22 @@ const CartScreen = () => {
                     <View style={styles.couponContainer}>
                         <Text style={styles.paymentText}>Mã giảm giá</Text>
                         <TouchableOpacity style={styles.payment} onPress={() => handleDiscount()}>
-                            <Text style={styles.discountText}>{discount ? discount : 'Chọn mã giảm giá'}</Text>
+                            <Text style={styles.discountText}>{discount ? discount.cupon_code : 'Chọn mã giảm giá'}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.summaryContainer}>
                         <Text style={styles.textBold}>Chi tiết thanh toán</Text>
                         <View style={styles.row}>
                             <Text style={styles.label}>Tạm tính</Text>
-                            <Text style={styles.value}>{formatPrice(sum)}</Text>
+                            <Text style={styles.value}>{formatPrice(cost.totalFoodPrice)}</Text>
                         </View>
                         <View style={styles.row}>
                             <Text style={styles.label}>Phí áp dụng</Text>
-                            <Text style={styles.value}>{formatPrice(sum * 0.1)}</Text>
+                            <Text style={styles.value}>{formatPrice(cost.shippingCost)}</Text>
                         </View>
                         <View style={styles.row}>
                             <Text style={styles.label}>Giảm giá</Text>
-                            <Text style={styles.value}>{formatPrice(0)}</Text>
+                            <Text style={styles.value}>{formatPrice(discount && discount.price)}</Text>
                         </View>
                     </View>
                 </View>
@@ -217,7 +218,7 @@ const CartScreen = () => {
                 <View style={styles.footerContainer}>
                     <View style={[styles.row, { borderBlockColor: '#FFFFFF', borderBottomWidth: 1 }]}>
                         <Text style={[styles.label, { fontWeight: '500' }]}>Tổng số tiền</Text>
-                        <Text style={[styles.value, { fontWeight: '500' }]}>{formatPrice(sum)}</Text>
+                        <Text style={[styles.value, { fontWeight: '500' }]}>{formatPrice(cost.totalPrice - (discount?.price ?? 0))}</Text>
                     </View>
                     <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
                         <Text style={styles.buttonText}>Đặt món</Text>

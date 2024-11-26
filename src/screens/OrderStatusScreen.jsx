@@ -3,43 +3,81 @@ import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image } from 'r
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import MapboxGL from '@rnmapbox/maps';
 import RatingCard from '../components/RatingCard';
+import { io } from "socket.io-client";
 
 const OrderStatusScreen = () => {
-    const navigation = useNavigation();
-    const [orderStatus, setOrderStatus] = useState('confirmed');
-
-    // Static coordinates (for demonstration purposes)
-    const restaurantLocation = [105.8342, 21.0278]; // Hanoi
-    const deliveryLocation = [105.8429, 21.0285]; // Nearby location in Hanoi
-    const [route, setRoute] = useState(null);
-
-    // Advance the order status
-    const advanceOrderStatus = () => {
-        if (orderStatus === 'confirmed') setOrderStatus('preparing');
-        else if (orderStatus === 'preparing') setOrderStatus('delivering');
-        else if (orderStatus === 'delivering') setOrderStatus('completed');
-    };
+    const route = useRoute();
+    const orderId = route.params?.orderId;
+    const [orderStatus, setOrderStatus] = useState('PAID');
+    const [loading, setLoading] = useState(true);
+    const restaurantLocation = [105.8342, 21.0278];
+    const deliveryLocation = [105.8429, 21.0285];
+    const [router, setRouter] = useState(null);
 
     // Load the route data when order status changes to "delivering"
-    useEffect(() => {
-        if (orderStatus === 'delivering') {
-            // Fetch route data here
-            // Simulated route data for demonstration purposes
-            setRoute({
-                coordinates: [
-                    restaurantLocation,
-                    deliveryLocation
-                ]
-            });
-        }
-    }, [orderStatus]);
+    // useEffect(() => {
+    //     if (orderStatus === 'delivering') {
+    //         // Fetch route data here
+    //         // Simulated route data for demonstration purposes
+    //         setRouter({
+    //             coordinates: [
+    //                 restaurantLocation,
+    //                 deliveryLocation
+    //             ]
+    //         });
+    //     }
+    // }, [orderStatus]);
 
+    useEffect(() => {
+        // Tạo kết nối socket
+        const socket = io("http://localhost:3000");
+        socket.emit("joinOrder", orderId);
+
+        // Lắng nghe sự kiện cập nhật trạng thái đơn hàng
+        socket.on("orderStatusUpdate", ({ orderId, status, detailDriver }) => {
+            console.log("Order status updated:", orderId, status, detailDriver);
+            setOrderStatus(status);
+            setLoading(false);
+        });
+
+        // Xử lý khi socket ngắt kết nối
+        socket.on("disconnect", () => {
+            console.log("Socket disconnected");
+        });
+
+        // Dọn dẹp khi component unmount
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
     return (
         <SafeAreaView style={styles.container}>
-            {orderStatus === 'confirmed' ? (
+            {loading ? (
+                // Hiển thị loader hoặc thông báo khi đang chờ dữ liệu
+                <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                    <Text style={styles.loadingText}>Đang tải trạng thái đơn hàng...</Text>
+                </View>
+            ) : (
+                <>
+                    {
+                        orderStatus === 'ORDER_CONFIRMED' ? (
+                            <View style={styles.container}>
+                                <RatingCard order_id={orderId} />
+                            </View>
+                        ) : (
+                            <View style={styles.imageContainer}>
+                                <Image
+                                    source={require('../assets/Images/background2.png')}
+                                    style={styles.chefImage}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                        )
+                    }
+                    {/* {orderStatus === 'PAID' ? (
                 <View style={styles.imageContainer}>
                     <Image
                         source={require('../assets/Images/background2.png')}
@@ -48,78 +86,76 @@ const OrderStatusScreen = () => {
                     />
                 </View>
             ) : (
-                orderStatus === 'completed' ? (
+                orderStatus === 'completed' && (
                     <View style={styles.container}>
                         <RatingCard />
                     </View>
-                ) : (
-                    <MapboxGL.MapView style={styles.map} >
-                        <MapboxGL.Camera
-                            zoomLevel={13}
-                            centerCoordinate={restaurantLocation}
-                        />
-                        <MapboxGL.PointAnnotation coordinate={restaurantLocation} id="restaurant">
-                            <View style={styles.marker}>
-                                <Ionicons name="restaurant" size={24} color="#FF6347" />
-                            </View>
-                        </MapboxGL.PointAnnotation>
-                        <MapboxGL.PointAnnotation coordinate={deliveryLocation} id="delivery">
-                            <View style={styles.marker}>
-                                <MaterialCommunityIcons name="motorbike" size={24} color="#007AFF" />
-                            </View>
-                        </MapboxGL.PointAnnotation>
-                        {route && (
-                            <MapboxGL.ShapeSource id="routeSource" shape={{
-                                type: 'Feature',
-                                geometry: {
-                                    type: 'LineString',
-                                    coordinates: route.coordinates
-                                }
-                            }}>
-                                <MapboxGL.LineLayer
-                                    id="routeLayer"
-                                    style={{ lineWidth: 5, lineColor: '#007AFF' }}
-                                />
-                            </MapboxGL.ShapeSource>
-                        )}
-                    </MapboxGL.MapView>
-                )
-            )}
+                ))} */}
 
-            <View style={styles.orderInfoContainer}>
-                <Text style={styles.orderStatus}>
-                    {orderStatus === 'confirmed' && 'Đơn hàng đã xác nhận'}
-                    {orderStatus === 'preparing' && 'Đơn hàng đang được chuẩn bị'}
-                    {orderStatus === 'delivering' && 'Đang giao hàng'}
-                    {orderStatus === 'completed' && 'Đơn hàng đã hoàn thành'}
-                </Text>
-
-                <View style={styles.progressContainer}>
-                    <View style={[styles.progressItem, orderStatus === 'confirmed' && styles.activeStep]}>
-                        <Ionicons name="checkmark-circle-outline" size={24} color={orderStatus === 'confirmed' ? "#007AFF" : "#9E9E9E"} />
-                        <Text style={styles.progressText}>Xác nhận</Text>
+                    {/* <MapboxGL.MapView style={styles.map} >
+                <MapboxGL.Camera
+                    zoomLevel={13}
+                    centerCoordinate={restaurantLocation}
+                />
+                <MapboxGL.PointAnnotation coordinate={restaurantLocation} id="restaurant">
+                    <View style={styles.marker}>
+                        <Ionicons name="restaurant" size={24} color="#FF6347" />
                     </View>
-                    <TouchableOpacity style={[styles.progressItem, orderStatus === 'preparing' && styles.activeStep]}>
-                        <Ionicons name="fast-food-outline" size={24} color={orderStatus === 'preparing' ? "#007AFF" : "#9E9E9E"} />
-                        <Text style={styles.progressText}>Chuẩn bị món</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.progressItem, orderStatus === 'delivering' && styles.activeStep]}>
-                        <Ionicons name="bicycle-outline" size={24} color={orderStatus === 'delivering' ? "#007AFF" : "#9E9E9E"} />
-                        <Text style={styles.progressText}>Giao món</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.progressItem, orderStatus === 'completed' && styles.activeStep]}>
-                        <Ionicons name="checkmark-done-circle-outline" size={24} color={orderStatus === 'completed' ? "#007AFF" : "#9E9E9E"} />
-                        <Text style={styles.progressText}>Hoàn thành</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {orderStatus !== 'completed' && (
-                    <TouchableOpacity style={styles.orderDetailsButton} onPress={advanceOrderStatus}>
-                        <Text style={styles.orderDetailsText}>Tiến tới bước tiếp theo</Text>
-                    </TouchableOpacity>
+                </MapboxGL.PointAnnotation>
+                <MapboxGL.PointAnnotation coordinate={deliveryLocation} id="delivery">
+                    <View style={styles.marker}>
+                        <MaterialCommunityIcons name="motorbike" size={24} color="#007AFF" />
+                    </View>
+                </MapboxGL.PointAnnotation>
+                {route && (
+                    <MapboxGL.ShapeSource id="routeSource" shape={{
+                        type: 'Feature',
+                        geometry: {
+                            type: 'LineString',
+                            coordinates: route.coordinates
+                        }
+                    }}>
+                        <MapboxGL.LineLayer
+                            id="routeLayer"
+                            style={{ lineWidth: 5, lineColor: '#007AFF' }}
+                        />
+                    </MapboxGL.ShapeSource>
                 )}
-            </View>
-        </SafeAreaView >
+            </MapboxGL.MapView> */}
+
+
+                    <View View style={styles.orderInfoContainer}>
+                        <Text style={styles.orderStatus}>
+                            {orderStatus === 'UNPAID' && 'Đơn hàng chưa được thanh toán'}
+                            {orderStatus === 'PAID' && 'Đơn hàng đã thanh toán'}
+                            {orderStatus === 'PREPARING_ORDER' && 'Nhà hàng đang chuẩn bị món'}
+                            {orderStatus === 'DELIVERING' && 'Đang giao hàng'}
+                            {orderStatus === 'ORDER_RECEIVED' && 'Shipper đã nhận đơn'}
+                            {orderStatus === 'ORDER_CONFIRMED' && 'Đơn hàng đã hoàn thành'}
+                            {orderStatus === 'ORDER_CANCELED' && 'Đơn hàng đã bị hủy'}
+                        </Text>
+
+                        <View style={styles.progressContainer}>
+                            <View style={[styles.progressItem, orderStatus === 'PAID' && styles.activeStep]}>
+                                <Ionicons name="checkmark-circle-outline" size={24} color={orderStatus === 'confirmed' ? "#007AFF" : "#9E9E9E"} />
+                                <Text style={styles.progressText}>Xác nhận</Text>
+                            </View>
+                            <TouchableOpacity style={[styles.progressItem, orderStatus === 'PREPARING_ORDER' && styles.activeStep]}>
+                                <Ionicons name="fast-food-outline" size={24} color={orderStatus === 'PREPARING_ORDER' ? "#007AFF" : "#9E9E9E"} />
+                                <Text style={styles.progressText}>Chuẩn bị món</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.progressItem, orderStatus === 'DELIVERING' && styles.activeStep]}>
+                                <Ionicons name="bicycle-outline" size={24} color={orderStatus === 'DELIVERING' ? "#007AFF" : "#9E9E9E"} />
+                                <Text style={styles.progressText}>Giao món</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.progressItem, orderStatus === 'ORDER_CONFIRMED' && styles.activeStep]}>
+                                <Ionicons name="checkmark-done-circle-outline" size={24} color={orderStatus === 'completed' ? "#007AFF" : "#9E9E9E"} />
+                                <Text style={styles.progressText}>Hoàn thành</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </>)}
+        </SafeAreaView>
     );
 };
 

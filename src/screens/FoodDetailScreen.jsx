@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, SafeAreaView, FlatList } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -90,28 +90,27 @@ const FoodDetailScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
             <Image source={{ uri: food.image }} style={styles.image} blurRadius={1} />
-            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                <Ionicons name="arrow-back" size={28} color="#fff" />
-            </TouchableOpacity>
             <View style={styles.mainContainer}>
                 <View style={styles.headerContainer}>
                     <Text style={styles.textName}>{food.name}</Text>
                     <Text style={styles.textPrice}>{formatPrice(food.price)}</Text>
                 </View>
 
-                <ScrollView style={styles.toppingContainer}>
-                    <Text style={styles.toppingTitle}>Topping</Text>
-                    {toppings && toppings.map(topping => (
-                        <View key={topping.id} style={styles.toppingItem}>
-                            <Text style={styles.toppingName}>{topping.topping_name}</Text>
-                            <Text style={styles.toppingPrice}>{formatPrice(topping.price)}</Text>
+                <FlatList
+                    style={styles.toppingContainer}
+                    data={toppings}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.toppingItem}>
+                            <Text style={styles.toppingName}>{item.topping_name}</Text>
+                            <Text style={styles.toppingPrice}>{formatPrice(item.price)}</Text>
                             <CheckBox
-                                value={topping.selected}
-                                onValueChange={() => toggleTopping(topping.id)}
+                                value={item.selected}
+                                onValueChange={() => toggleTopping(item.id)}
                             />
                         </View>
-                    ))}
-                </ScrollView>
+                    )}
+                />
 
                 <View style={styles.cardBottom}>
                     <View style={styles.bottomContainer}>
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         zIndex: 1,
         width: '95%',
-        height: '100%',
+        height: '90%',
         top: 180,
         borderTopRightRadius: 10,
         borderTopLeftRadius: 10,
