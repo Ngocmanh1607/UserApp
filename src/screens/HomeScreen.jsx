@@ -26,6 +26,7 @@ const HomeScreen = () => {
         const fetchRestaurantData = async () => {
             setLoading(true);
             const data = await restaurantApi.getAllRestaurant(address);
+            console.log(data)
             setRestaurants(data);
             setFilteredRestaurants(data);
             await userApi.getInfoUser(dispatch);
@@ -36,7 +37,6 @@ const HomeScreen = () => {
             fetchRestaurantData();
         }
     }, [address]);
-
     const handleSearch = (query) => {
         setSearch(query);
         if (query.length > 0) {

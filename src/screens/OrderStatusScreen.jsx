@@ -33,7 +33,7 @@ const OrderStatusScreen = () => {
 
     useEffect(() => {
         // Tạo kết nối socket
-        const socket = io("http://localhost:3000");
+        const socket = io("https://lh30mlhb-3000.asse.devtunnels.ms/");
         socket.emit("joinOrder", orderId);
 
         // Lắng nghe sự kiện cập nhật trạng thái đơn hàng
@@ -129,23 +129,23 @@ const OrderStatusScreen = () => {
                             {orderStatus === 'UNPAID' && 'Đơn hàng chưa được thanh toán'}
                             {orderStatus === 'PAID' && 'Đơn hàng đã thanh toán'}
                             {orderStatus === 'PREPARING_ORDER' && 'Nhà hàng đang chuẩn bị món'}
-                            {orderStatus === 'DELIVERING' && 'Đang giao hàng'}
-                            {orderStatus === 'ORDER_RECEIVED' && 'Shipper đã nhận đơn'}
+                            {orderStatus === 'DELIVERING' && 'Shipper đã nhận đơn'}
+                            {orderStatus === 'GIVED ORDER' && 'Đang giao hàng'}
                             {orderStatus === 'ORDER_CONFIRMED' && 'Đơn hàng đã hoàn thành'}
                             {orderStatus === 'ORDER_CANCELED' && 'Đơn hàng đã bị hủy'}
                         </Text>
 
                         <View style={styles.progressContainer}>
                             <View style={[styles.progressItem, orderStatus === 'PAID' && styles.activeStep]}>
-                                <Ionicons name="checkmark-circle-outline" size={24} color={orderStatus === 'confirmed' ? "#007AFF" : "#9E9E9E"} />
+                                <Ionicons name="checkmark-circle-outline" size={24} color={orderStatus === 'PAID' ? "#007AFF" : "#9E9E9E"} />
                                 <Text style={styles.progressText}>Xác nhận</Text>
                             </View>
-                            <TouchableOpacity style={[styles.progressItem, orderStatus === 'PREPARING_ORDER' && styles.activeStep]}>
-                                <Ionicons name="fast-food-outline" size={24} color={orderStatus === 'PREPARING_ORDER' ? "#007AFF" : "#9E9E9E"} />
+                            <TouchableOpacity style={[styles.progressItem, orderStatus === 'DELIVERING' && styles.activeStep]}>
+                                <Ionicons name="fast-food-outline" size={24} color={orderStatus === 'DELIVERING' ? "#007AFF" : "#9E9E9E"} />
                                 <Text style={styles.progressText}>Chuẩn bị món</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.progressItem, orderStatus === 'DELIVERING' && styles.activeStep]}>
-                                <Ionicons name="bicycle-outline" size={24} color={orderStatus === 'DELIVERING' ? "#007AFF" : "#9E9E9E"} />
+                            <TouchableOpacity style={[styles.progressItem, orderStatus === 'GIVED ORDER' && styles.activeStep]}>
+                                <Ionicons name="bicycle-outline" size={24} color={orderStatus === 'GIVED ORDER' ? "#007AFF" : "#9E9E9E"} />
                                 <Text style={styles.progressText}>Giao món</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.progressItem, orderStatus === 'ORDER_CONFIRMED' && styles.activeStep]}>

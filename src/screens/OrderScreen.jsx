@@ -12,6 +12,7 @@ const OrderScreen = () => {
     useEffect(() => {
         const fetchOrder = async () => {
             const response = await orderApi.getOrder();
+            console.log(response);
             setOrders(response);
             setFilteredOrders(response);
         };

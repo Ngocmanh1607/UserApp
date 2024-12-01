@@ -16,6 +16,7 @@ const RegisterInf = () => {
         name: '',
         image: '',
         email: '',
+        date: '',
         phone_number: '',
     });
     const [isLoading, setIsLoading] = useState(false);
@@ -111,6 +112,12 @@ const RegisterInf = () => {
                                 style={styles.input}
                                 value={userInfo.phone_number.toString()}
                                 onChangeText={(text) => setUserInfo({ ...userInfo, phone_number: text })}
+                            />
+                            <Text style={styles.label}>Năm sinh:</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={userInfo.date}
+                                onChangeText={(text) => setUserInfo({ ...userInfo, date: text })}
                             />
                             <Text style={styles.label}>Địa chỉ:</Text>
                             <TouchableOpacity

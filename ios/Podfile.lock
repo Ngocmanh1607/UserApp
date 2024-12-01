@@ -1743,8 +1743,27 @@ PODS:
     - React-Core
   - RNSVG (15.8.0):
     - React-Core
-  - RNVectorIcons (10.0.0):
+  - RNVectorIcons (10.2.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - SocketRocket (0.7.0)
   - Turf (2.8.0)
   - Yoga (0.0.0)
@@ -2138,7 +2157,7 @@ SPEC CHECKSUMS:
   RNScreens: de55b9d7de8a017d1588dcb70415492d0b0597c2
   RNSnackbar: 37ce6daf19c8bd35cf6133db5797aa298c8782ac
   RNSVG: 8b1a777d54096b8c2a0fd38fc9d5a454332bbb4d
-  RNVectorIcons: 8b5bb0fa61d54cd2020af4f24a51841ce365c7e9
+  RNVectorIcons: 7b81882e9c9369031aede0016dee0fe415cf2f43
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Turf: aa2ede4298009639d10db36aba1a7ebaad072a5e
   Yoga: b05994d1933f507b0a28ceaa4fdb968dc18da178

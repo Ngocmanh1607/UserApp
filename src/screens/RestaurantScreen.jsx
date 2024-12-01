@@ -13,6 +13,7 @@ import restaurantApi from '../api/restaurantApi';
 const RestaurantScreen = ({ route }) => {
     const navigation = useNavigation();
     const { restaurant } = route.params;
+    console.log(restaurant);
     const restaurantId = restaurant.id;
     const [loading, setLoading] = useState(true);
     const [restaurantData, setRestaurantData] = useState([]);
@@ -59,7 +60,7 @@ const RestaurantScreen = ({ route }) => {
                             <Text style={styles.ratingText}>{restaurant.rating || 5}</Text>
                         </View>
                         <View style={styles.disContainer}>
-                            <Text style={styles.textDis}>Khoảng cách: {(restaurant.distance * 0.001).toFixed(2)}Km</Text>
+                            <Text style={styles.textDis}>Khoảng cách: {(restaurant.distance || 0).toFixed(2)}Km</Text>
                         </View>
                         <TouchableOpacity>
                             <Feather name="heart" size={20} style={styles.heart} />

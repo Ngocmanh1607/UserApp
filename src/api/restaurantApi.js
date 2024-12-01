@@ -1,5 +1,7 @@
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiClient from "./apiClient";
+import { Alert } from "react-native";
 const apiKey = '123'
 const restaurantApi = {
 
@@ -16,13 +18,25 @@ const restaurantApi = {
             throw error;
         }
     },
-    async getRestaurants(params = {}) {
+    async getInfoRestaurants(restaurant_id) {
         try {
-            const response = await apiClient.get('/restaurants', { params });
-            return response.data; // Trả về dữ liệu từ phản hồi
-        } catch (error) {
-            console.error('Error fetching restaurants:', error);
-            throw error;
+            const userId = await AsyncStorage.getItem('userId');
+            const accessToken = await AsyncStorage.getItem('accessToken');
+            if (!userId || !accessToken) {
+                Alert.alert(accessToken)
+            }
+            const response = await apiClient.get(`/restaurant/${restaurant_id}/detail`,
+                {
+                    headers: {
+                        "x-api-key": apiKey,
+                        "authorization": accessToken,
+                        "x-client-id": userId,
+                    }
+                })
+            return response.data.metadata;
+        }
+        catch (error) {
+            console.log(error)
         }
     },
     // API tìm kiếm nhà hàng

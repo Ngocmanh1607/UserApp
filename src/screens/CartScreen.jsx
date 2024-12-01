@@ -104,7 +104,7 @@ const CartScreen = () => {
         const fetchOrder = async (userInfo, address, items, selectedPaymentMethod, note) => {
             setIsLoading(true)
             const cuponid = discount?.id
-            const response = await orderApi.orderApi(userInfo, address, items, selectedPaymentMethod = 'ZALOPAY', cost.totalFoodPrice, cost.shippingCost, note, cuponid);
+            const response = await orderApi.orderApi(userInfo, address, items, selectedPaymentMethod = 'ZALOPAY', cost.totalPrice, cost.shippingCost, note, cuponid);
             setTransactionId(response.app_trans_id);
             console.log(response.url)
             if (response.url) {

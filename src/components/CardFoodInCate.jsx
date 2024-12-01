@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from '@react-navigation/native';
 import formatPrice from '../utils/formatPrice';
+import restaurantApi from '../api/restaurantApi';
 
 const CardFood2 = ({ food }) => {
+
     const navigation = useNavigation()
+    const handelPress = () => {
+        const fetchInfoRes = async () => {
+            const response = await restaurantApi.getInfoRestaurants(food.restaurantId);
+            console.log(response);
+            navigation.navigate('RestaurantDetail', { restaurant: response });
+        }
+        fetchInfoRes();
+    }
     return (
-        <TouchableOpacity style={styles.container} onPress={() => {
-            navigation.navigate('FoodDetail', { food })
-        }}>
+        <TouchableOpacity style={styles.container} onPress={() => { handelPress() }}>
             <View style={styles.imageContainer}>
                 <Image
-                    // source={{ uri: food.productImage }}
+                    source={{ uri: food.productImage }}
                     style={styles.foodImage}
                 />
             </View>

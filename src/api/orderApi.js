@@ -119,7 +119,7 @@ const orderApi = {
                 Alert.alert(accessToken)
             }
             console.log(userId, accessToken)
-            const response = await apiClient.get('customer/all/order',
+            const response = await apiClient.get('/customer/all/order',
                 {
                     headers: {
                         "x-api-key": apiKey,

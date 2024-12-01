@@ -35,7 +35,6 @@ const Categories = () => {
 
 
     const handleCategoryPress = ((index, categoryId) => {
-        console.log("Category pressed:", { index, categoryId });
         setSelectedIndex(index);
         navigation.navigate('FoodCategory', { categoryId })
     });
@@ -50,18 +49,15 @@ const Categories = () => {
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.scrollContainer}
             >
                 {categories.map((category, index) => (
                     <TouchableOpacity
                         key={category.id}
-                        style={[
-                            styles.box
-                        ]}
+                        style={styles.box}
                         onPress={() => handleCategoryPress(index, category.id)}
                     >
                         <Image
-                            source={require('../assets/Images/Trasua.jpg')}
+                            source={require('../assets/Images/logo.png')}
                             style={styles.image}
                         />
                         <Text
@@ -71,24 +67,6 @@ const Categories = () => {
                     </TouchableOpacity>
                 ))}
             </ScrollView>
-
-            {/* {isLoading ? (
-                <LoadingSpinner />
-            ) : !isNull ? (
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.foodScrollView}
-                >
-                    {foodData.map(food => (
-                        <FoodCard key={food.productId} food={food} />
-                    ))}
-                </ScrollView>
-            ) : (
-                <Text style={styles.noDataText}>
-                    Chưa có món ăn nào trong category này
-                </Text>
-            )} */}
         </View>
     );
 };
@@ -97,7 +75,7 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         marginTop: 10,
-        elevation: 5
+        // backgroundColor: "#adadac"
     },
     loadingContainer: {
         flex: 1,
@@ -122,14 +100,16 @@ const styles = StyleSheet.create({
         marginBottom: 5
     },
     box: {
+        width: 100,
         flexDirection: 'column',
         marginHorizontal: 5,
         marginBottom: 10,
-        padding: 10,
+        padding: 0,
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 2,
+        backgroundColor: '#f3f3f2'
     },
     text: {
         marginLeft: 10,

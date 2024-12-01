@@ -17,9 +17,7 @@ const foodApi = {
     },
     getFoodInCate: async (cateId) => {
         try {
-            // const response = await apiClient.get(`/categories/${cateId}/products`,
-
-            const response = await axios.get(`https://ddaa-183-80-67-137.ngrok-free.app/v1/api/categories/${cateId}/products`,
+            const response = await apiClient.get(`/categories/${cateId}/products`,
                 {
                     headers: {
                         "x-api-key": apiKey,

@@ -23,7 +23,7 @@ const CardRestaurant = ({ restaurant }) => {
                             <MaterialIcons name="star" size={20} color="#FFA500" />
                         </View>
                         <View style={styles.disContainer}>
-                            <Text style={styles.textDis}>Khoảng cách: {(restaurant.distance * 0.001).toFixed(2)}Km</Text>
+                            <Text style={styles.textDis}>Khoảng cách: {(restaurant.distance).toFixed(2)}Km</Text>
                         </View>
                     </View>
                 </View>

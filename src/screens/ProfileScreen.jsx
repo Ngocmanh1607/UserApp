@@ -15,6 +15,7 @@ const UserProfileScreen = () => {
         image: '',
         email: '',
         phone_number: '',
+        date: ''
     });
     const [address, setAddress] = useState({
         address_name: '',
@@ -37,6 +38,7 @@ const UserProfileScreen = () => {
                         image: data.profile.image,
                         email: data.profile.mail,
                         phone_number: data.profile.phone_number,
+                        date: data.profile.date,
                     });
                     // setAddress(data.address[0]);
                     setImageUri(data.profile.image);
@@ -187,7 +189,13 @@ const UserProfileScreen = () => {
                                 onChangeText={(text) => setUserInfo({ ...userInfo, phone_number: text })}
                                 editable={isEditing}
                             />
-
+                            <Text style={styles.label}>Năm sinh:</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={userInfo.date}
+                                onChangeText={(text) => setUserInfo({ ...userInfo, date: text })}
+                                editable={isEditing}
+                            />
                             <Text style={styles.label}>Địa chỉ:</Text>
                             <TouchableOpacity
                                 style={styles.input}

@@ -5,11 +5,12 @@ import { Alert } from 'react-native';
 import { setUserId } from '../store/cartSlice';
 import { setUserInfo } from '../store/userSlice';
 import { useDispatch } from 'react-redux';
+import fetchFcmToken from '../utils/fcmToken';
 const apiKey = "123"
 const userApi = {
     signupApi: async (dispatch, email, password) => {
         try {
-            const fcmToken = "1";
+            const fcmToken = await fetchFcmToken();
             const response = await apiClient.post(
                 "/user/signup",
                 { email, password, fcmToken, role: "user" },
@@ -45,7 +46,6 @@ const userApi = {
 
     loginApi: async (email, password, dispatch, fcmToken) => {
         try {
-            const fcmToken = 1
             const response = await apiClient.post(
                 "/user/login",
                 { email, password },
@@ -138,6 +138,7 @@ const userApi = {
                         name: userData.name,
                         image: userData.image,
                         phone_number: userData.phone_number,
+                        date: userData.date
                         // mail: userData.email,
                     },
                     address: {
