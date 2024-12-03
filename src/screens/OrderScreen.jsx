@@ -1,23 +1,26 @@
 // OrderScreen.js
 import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import CardOrder from '../components/CardOrder';
 import { orderApi } from '../api/orderApi';
+import { useFocusEffect } from '@react-navigation/native';
 
 const OrderScreen = () => {
     const [search, setSearch] = useState('');
     const [orders, setOrders] = useState();
     const [filteredOrders, setFilteredOrders] = useState([]);
-    useEffect(() => {
-        const fetchOrder = async () => {
-            const response = await orderApi.getOrder();
-            console.log(response);
-            setOrders(response);
-            setFilteredOrders(response);
-        };
-        fetchOrder();
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            const fetchOrder = async () => {
+                const response = await orderApi.getOrder();
+                console.log(response);
+                setOrders(response);
+                setFilteredOrders(response);
+            };
+            fetchOrder();
+        }, [])
+    );
 
     useEffect(() => {
         if (search.trim() === '') {
@@ -33,7 +36,6 @@ const OrderScreen = () => {
     const removeAccents = (str) => {
         return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     };
-    // Render mỗi đơn hàng bằng CardOrder
     const renderOrderItem = ({ item }) => (
         <CardOrder order={item} />
     );

@@ -13,7 +13,6 @@ import restaurantApi from '../api/restaurantApi';
 const RestaurantScreen = ({ route }) => {
     const navigation = useNavigation();
     const { restaurant } = route.params;
-    console.log(restaurant);
     const restaurantId = restaurant.id;
     const [loading, setLoading] = useState(true);
     const [restaurantData, setRestaurantData] = useState([]);

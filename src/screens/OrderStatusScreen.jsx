@@ -36,19 +36,16 @@ const OrderStatusScreen = () => {
         const socket = io("https://lh30mlhb-3000.asse.devtunnels.ms/");
         socket.emit("joinOrder", orderId);
 
-        // Lắng nghe sự kiện cập nhật trạng thái đơn hàng
         socket.on("orderStatusUpdate", ({ orderId, status, detailDriver }) => {
             console.log("Order status updated:", orderId, status, detailDriver);
             setOrderStatus(status);
             setLoading(false);
         });
 
-        // Xử lý khi socket ngắt kết nối
         socket.on("disconnect", () => {
             console.log("Socket disconnected");
         });
 
-        // Dọn dẹp khi component unmount
         return () => {
             socket.disconnect();
         };
@@ -140,7 +137,7 @@ const OrderStatusScreen = () => {
                                 <Ionicons name="checkmark-circle-outline" size={24} color={orderStatus === 'PAID' ? "#007AFF" : "#9E9E9E"} />
                                 <Text style={styles.progressText}>Xác nhận</Text>
                             </View>
-                            <TouchableOpacity style={[styles.progressItem, orderStatus === 'DELIVERING' && styles.activeStep]}>
+                            <TouchableOpacity style={[styles.progressItem, orderStatus === 'DELIVERING' || orderStatus === 'PREPARING_ORDER' && styles.activeStep]}>
                                 <Ionicons name="fast-food-outline" size={24} color={orderStatus === 'DELIVERING' ? "#007AFF" : "#9E9E9E"} />
                                 <Text style={styles.progressText}>Chuẩn bị món</Text>
                             </TouchableOpacity>

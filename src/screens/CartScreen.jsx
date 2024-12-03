@@ -40,7 +40,7 @@ const CartScreen = () => {
             }));
     });
     useEffect(() => {
-        if (items) {
+        if (items && items.length > 0) {
             setFoodData(items.map(item => ({
                 id: item.id,
                 name: item.name,
@@ -50,8 +50,8 @@ const CartScreen = () => {
                 toppings: item.toppings,
                 uniqueId: item.uniqueId
             })));
+            handleGetPrice()
         }
-        handleGetPrice()
     }, [items]);
     useEffect(() => {
         const animation = Animated.timing(slideAnim, {
@@ -152,7 +152,7 @@ const CartScreen = () => {
     );
 
     return (
-        isLoading || !cost ? (<View style={styles.loaderContainer} >
+        isLoading ? (<View style={styles.loaderContainer} >
             <ActivityIndicator size="large" color="#FF0000" />
         </View>
         ) : (
@@ -197,11 +197,11 @@ const CartScreen = () => {
                         <Text style={styles.textBold}>Chi tiết thanh toán</Text>
                         <View style={styles.row}>
                             <Text style={styles.label}>Tạm tính</Text>
-                            <Text style={styles.value}>{formatPrice(cost.totalFoodPrice)}</Text>
+                            <Text style={styles.value}>{formatPrice(cost ? cost.totalFoodPrice : 0)}</Text>
                         </View>
                         <View style={styles.row}>
                             <Text style={styles.label}>Phí áp dụng</Text>
-                            <Text style={styles.value}>{formatPrice(cost.shippingCost)}</Text>
+                            <Text style={styles.value}>{formatPrice(cost ? cost.shippingCost : 0)}</Text>
                         </View>
                         <View style={styles.row}>
                             <Text style={styles.label}>Giảm giá</Text>
@@ -218,7 +218,7 @@ const CartScreen = () => {
                 <View style={styles.footerContainer}>
                     <View style={[styles.row, { borderBlockColor: '#FFFFFF', borderBottomWidth: 1 }]}>
                         <Text style={[styles.label, { fontWeight: '500' }]}>Tổng số tiền</Text>
-                        <Text style={[styles.value, { fontWeight: '500' }]}>{formatPrice(cost.totalPrice - (discount?.price ?? 0))}</Text>
+                        <Text style={[styles.value, { fontWeight: '500' }]}>{formatPrice(cost ? (cost.totalPrice - (discount?.price ?? 0)) : 0)}</Text>
                     </View>
                     <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
                         <Text style={styles.buttonText}>Đặt món</Text>
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     scrollContainer: {
-        height: 350
+        height: 250
     },
     footerContainer: {
         backgroundColor: '#fff',

@@ -20,17 +20,17 @@ const restaurantApi = {
     },
     async getInfoRestaurants(restaurant_id) {
         try {
-            const userId = await AsyncStorage.getItem('userId');
-            const accessToken = await AsyncStorage.getItem('accessToken');
-            if (!userId || !accessToken) {
-                Alert.alert(accessToken)
-            }
-            const response = await apiClient.get(`/restaurant/${restaurant_id}/detail`,
+            // const userId = await AsyncStorage.getItem('userId');
+            // const accessToken = await AsyncStorage.getItem('accessToken');
+            // if (!userId || !accessToken) {
+            //     Alert.alert(accessToken)
+            // }
+            const response = await apiClient.get(`/restaurant/${restaurant_id}/llm`,
                 {
                     headers: {
                         "x-api-key": apiKey,
-                        "authorization": accessToken,
-                        "x-client-id": userId,
+                        // "authorization": accessToken,
+                        // "x-client-id": userId,
                     }
                 })
             return response.data.metadata;
@@ -59,6 +59,20 @@ const restaurantApi = {
                 }
             })
             console.log('metadat', response.data.metadata)
+            return response.data.metadata
+        } catch (error) {
+            console.log('Error foods restaurants:', error);
+            throw error; // Ném lỗi để xử lý bên ngoài
+        }
+    },
+    async getDistance(userLatitude, userLongtitude, restaurant_id) {
+        try {
+            const response = await apiClient.get(`/customer/${userLatitude}/${userLongtitude}/${restaurant_id}`, {
+                headers: {
+                    "x-api-key": apiKey,
+                }
+            })
+
             return response.data.metadata
         } catch (error) {
             console.log('Error foods restaurants:', error);

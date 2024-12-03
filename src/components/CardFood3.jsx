@@ -6,18 +6,17 @@ import formatPrice from '../utils/formatPrice';
 import restaurantApi from '../api/restaurantApi';
 import { useSelector } from 'react-redux';
 
-const CardFood2 = ({ food }) => {
-
-    const navigation = useNavigation()
+const CardFood3 = ({ food, id }) => {
     const address = useSelector(state => state.currentLocation);
     const [restaurant, setRestaurant] = useState({});
+    const navigation = useNavigation();
 
-    const handelPress = async () => {
+    const handlePres = async () => {
         try {
             // Gọi cả hai API đồng thời
             const [restaurantInfo, distance] = await Promise.all([
-                restaurantApi.getInfoRestaurants(food.restaurantId),
-                restaurantApi.getDistance(address.latitude, address.longitude, food.restaurantId)
+                restaurantApi.getInfoRestaurants(id),
+                restaurantApi.getDistance(address.latitude, address.longitude, id)
             ]);
             const dis = parseFloat(distance);
             const updatedRestaurant = { ...restaurantInfo, distance: dis };
@@ -31,55 +30,56 @@ const CardFood2 = ({ food }) => {
         }
     };
     return (
-        <TouchableOpacity style={styles.container} onPress={() => { handelPress() }}>
+        <TouchableOpacity style={styles.container} onPress={() => handlePres()}>
             <View style={styles.imageContainer}>
                 <Image
-                    source={{ uri: food.productImage }}
+                    source={{ uri: food.image }}
                     style={styles.foodImage}
                 />
             </View>
             <View style={styles.mainContainer} >
                 <View style={styles.foodNameContainer}>
-                    <Text style={styles.foodName}>{food.productName}</Text>
+                    <Text style={styles.foodName}>{food.name}</Text>
                 </View>
                 <View style={styles.foodDesContainer}>
                     <Text style={styles.foodDescription} numberOfLines={2}>
-                        {food.productDescription}
+                        {food.descriptions}
                     </Text>
                 </View>
                 <View style={styles.priceContainer}>
-                    <Text style={styles.price}>{formatPrice(food.productPrice)}</Text>
-                    <View style={styles.addButton}>
+                    <Text style={styles.price}>{formatPrice(food.price)}</Text>
+                    {/* <View style={styles.addButton}>
                         <MaterialIcons name="add" size={16} color="white" />
-                    </View>
+                    </View> */}
                 </View>
             </View>
         </TouchableOpacity>
     );
 };
 
-export default CardFood2;
+export default CardFood3;
 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "#ffffff",
-        borderRadius: 10,
-        elevation: 5,
-        height: 120,
+        borderRadius: 5,
+        elevation: 10,
+        width: 150,
+        height: 200,
         padding: 10,
-        flexDirection: 'row',
+        justifyContent: 'center',
         alignItems: 'center',
-        margin: 5
+        marginRight: 10
     },
     mainContainer: {
-        width: "70 %"
-    },
-    imageContainer: {
-        marginRight: 10,
+        marginTop: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     foodImage: {
-        width: 90,
-        height: 90,
+        marginTop: 5,
+        width: 100,
+        height: 100,
         borderRadius: 10,
     },
     foodNameContainer: {
@@ -102,16 +102,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginTop: 10,
     },
     price: {
         fontSize: 16,
         color: '#FF0000',
         fontWeight: 'bold',
     },
-    addButton: {
-        backgroundColor: '#FF0000',
-        borderRadius: 50,
-        padding: 6,
-    }
 });

@@ -6,6 +6,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import OrderScreen from '../screens/OrderScreen';
 import ChatScreen from '../screens/ChatScreen';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import ChatboxScreen from '../screens/ChatboxScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,7 +35,7 @@ const TabNavigator = ({ handleLogout }) => {
                         iconName = 'perm-identity';
                     } else if (route.name === 'Đơn hàng') {
                         iconName = 'list-alt';
-                    } else if (route.name === 'Tin nhắn') {
+                    } else if (route.name === 'Chat box') {
                         iconName = 'chat-bubble-outline';
                     }
                     return <MaterialIcons name={iconName} size={26} color={color} />;
@@ -43,7 +44,7 @@ const TabNavigator = ({ handleLogout }) => {
         >
             <Tab.Screen name="Trang chủ" component={HomeScreen} />
             <Tab.Screen name="Đơn hàng" component={OrderScreen} options={{ headerShown: true }} />
-            <Tab.Screen name="Tin nhắn" component={ChatScreen} options={{ headerShown: true }} />
+            <Tab.Screen name="Chat box" component={ChatboxScreen} options={{ headerShown: true, title: 'Chat' }} />
             <Tab.Screen name="Thông tin" component={ProfileScreen} options={() => ({
                 headerShown: true,
                 // headerRight: () => (
