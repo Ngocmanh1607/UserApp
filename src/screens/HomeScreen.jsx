@@ -90,8 +90,8 @@ const HomeScreen = () => {
                         </ScrollView>
                     ) : (
                         <ScrollView>
-                            <Categories />
                             <OfferSlider />
+                            <Categories />
                             <CardSlider />
                             {filteredRestaurants.length > 0 ? (
                                 filteredRestaurants.map((restaurant) => (

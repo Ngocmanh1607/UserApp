@@ -1,85 +1,150 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, ScrollView, ActivityIndicator, Image } from 'react-native';
-import React, { useState } from 'react';
-import llmApi from '../api/llmApi';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Image } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { getChatllm, llmApi, postSendData, } from '../api/llmApi';
 import CardFood3 from '../components/CardFood3';
 
 const ChatboxScreen = () => {
-    const [products, setProducts] = useState([]);
-    const [chat, setChat] = useState([]);
+    const [chatHistory, setChatHistory] = useState([]);
+    const scrollViewRef = useRef();
     const [message, setMessage] = useState('');
-
-    const [send, setSend] = useState(false);
-    const [userSend, setUserSend] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [des, setDes] = useState('');
-    const sendMessage = () => {
-        setSend(true);
-        setIsLoading(true);
-        setMessage('');
-        const fetchApi = async () => {
-            try {
-                const response = await llmApi(userSend);
-                setProducts(response.product);
-                setDes(response.description)
-                // console.log(response.description);
-            } catch (error) {
-                console.error('Error fetching API:', error);
-            } finally {
-                setIsLoading(false); // Kết thúc loading
+    const sortedData = [];
+
+    useEffect(() => {
+        const fetchGetChat = async () => {
+            const data = await getChatllm();
+            let currentBlock = { user: null, bot: null, products: null };
+            data.forEach((item) => {
+                if (item.type === 'user') {
+                    // Nếu gặp user mới, đẩy block cũ vào sortedData (nếu đầy đủ)
+                    if (currentBlock.user || currentBlock.bot || currentBlock.products) {
+                        sortedData.push(currentBlock);
+                        currentBlock = { user: null, bot: null, products: null };
+                    }
+                    currentBlock.user = item;
+                } else if (item.type === 'bot') {
+                    currentBlock.bot = item;
+                } else if (item.type === 'products') {
+                    currentBlock.products = item;
+                }
+            });
+            // Đẩy block cuối cùng vào mảng (nếu còn dư)
+            if (currentBlock.user || currentBlock.bot || currentBlock.products) {
+                sortedData.push(currentBlock);
             }
-        };
-        fetchApi();
+
+            // Trích xuất các block trở lại dạng phẳng
+            const finalSortedData = sortedData.flatMap((block) =>
+                [block.user, block.bot, block.products].filter(Boolean)
+            );
+
+            if (finalSortedData) {
+                setChatHistory(finalSortedData)
+            }
+        }
+        fetchGetChat()
+    }, [])
+    useEffect(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, [chatHistory]);
+
+    const fetchSend = async (data) => {
+        await postSendData(data);
+    };
+
+    const sendMessage = async () => {
+        if (!message.trim()) return;
+        setIsLoading(true);
+        const userMessage = { type: 'user', text: message };
+
+        // Cập nhật lịch sử chat và dữ liệu gửi
+        setChatHistory((prevChat) => [...prevChat, userMessage]);
+        const newMessages = [userMessage];
+
+        try {
+            const response = await llmApi(message);
+            const botResponse = response.description || "Xin lỗi, tôi không hiểu yêu cầu của bạn.";
+            const products = response.product || [];
+            const productIds = products.map((item) => item.id);
+
+            const botMessages = [
+                { type: 'bot', text: botResponse },
+                ...(products.length > 0
+                    ? [{ type: 'products', items: products }]
+                    : []),
+            ];
+            // Thêm vào danh sách tin nhắn mới nhất để gửi
+            newMessages.push(
+                { type: 'bot', text: botResponse },
+                ...(products.length > 0 ? [{ type: 'products', items: productIds }] : [])
+            );
+            setChatHistory((prevChat) => [...prevChat, ...botMessages]);
+            console.log(newMessages)
+            // Gửi dữ liệu sau khi cập nhật
+            await fetchSend(newMessages);
+        } catch (error) {
+            console.error('Error fetching API:', error);
+            setChatHistory((prevChat) => [
+                ...prevChat,
+                { type: 'bot', text: 'Đã xảy ra lỗi, vui lòng thử lại.' },
+            ]);
+        } finally {
+            setMessage('');
+            setIsLoading(false);
+        }
     };
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.chatContainer}>
-                {/* Driver Message */}
-                <View style={[styles.messageBubble, styles.driverMessage]}>
-                    <Text style={styles.messageText}>Xin chào, tôi có thể giúp gì cho bạn?</Text>
-                </View>
-
-                {/* User message */}
-                {send && (
-                    <View style={[styles.messageBubble, styles.userMessage]}>
-                        <Text style={styles.messageText}>{userSend}</Text>
-                    </View>
-                )}
+            <ScrollView style={styles.chatContainer} contentContainerStyle={{ paddingBottom: 10 }} ref={scrollViewRef}>
+                {chatHistory.map((chat, index) => {
+                    if (chat.type === 'user' || chat.type === 'bot') {
+                        return (
+                            <View
+                                key={index}
+                                style={[
+                                    styles.messageBubble,
+                                    chat.type === 'user' ? styles.userMessage : styles.botMessage,
+                                ]}
+                            >
+                                <Text style={styles.messageText}>{chat.text}</Text>
+                            </View>
+                        );
+                    } else if (chat.type === 'products') {
+                        return (
+                            <ScrollView
+                                key={index}
+                                horizontal={true}
+                                showsHorizontalScrollIndicator={false}
+                                style={styles.horizontalScrollView}
+                            >
+                                {chat.items.map((item) => (
+                                    <CardFood3 food={item} id={item.restaurant_id} key={item.id} />
+                                ))}
+                            </ScrollView>
+                        );
+                    }
+                    return null;
+                })}
 
                 {/* Loading Indicator */}
                 {isLoading && (
-                    <View>
-                        <Image source={require('../assets/Images/loading.gif')} style={styles.imageLoading} />
+                    <View style={styles.loadingContainer}>
+                        <Image
+                            source={require('../assets/Images/loading.gif')}
+                            style={styles.imageLoading}
+                        />
                     </View>
                 )}
-
-                {/* Products list */}
-                <ScrollView
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.horizontalScrollView}
-                >
-                    {products && products.length > 0 && products.map((item) => (
-                        <CardFood3 food={item} id={item.restaurant_id} key={item.id} />
-                    ))}
-                </ScrollView>
-                <View style={styles.DesContainer}>
-                    <Text style={styles.textDes}>{des}</Text>
-                </View>
             </ScrollView>
 
-            {/* Chat Input */}
+            {/* Input */}
             <View style={styles.inputContainer}>
                 <TextInput
                     style={styles.input}
                     placeholder="Bạn muốn ăn gì?"
                     value={message}
-                    onChangeText={(text) => {
-                        setMessage(text);
-                        setUserSend(text);
-                        setProducts([]);
-                        setDes([]);
-                    }}
+                    onChangeText={setMessage}
                 />
                 <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
                     <Text style={styles.sendButtonText}>Gửi</Text>
@@ -109,7 +174,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
         backgroundColor: '#0084FF',
     },
-    driverMessage: {
+    botMessage: {
         alignSelf: 'flex-start',
         backgroundColor: '#808080',
     },
@@ -149,15 +214,9 @@ const styles = StyleSheet.create({
     },
     imageLoading: {
         width: 40,
-        height: 15,
-        userSelect: 'none'
+        height: 40,
     },
-    DesContainer: {
-        backgroundColor: '#FFF',
-        padding: 10,
-        borderRadius: 5,
+    loadingContainer: {
+        marginVertical: 10,
     },
-    textDes: {
-        color: '#000',
-    }
 });

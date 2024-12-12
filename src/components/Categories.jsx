@@ -9,7 +9,17 @@ const Categories = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState();
     const [categories, setCategories] = useState([]);
-
+    const categoryIcons = {
+        1: require('../assets/Images/icon_1.jpg'),
+        2: require('../assets/Images/icon_2.jpg'),
+        3: require('../assets/Images/icon_3.jpg'),
+        4: require('../assets/Images/icon_4.jpg'),
+        5: require('../assets/Images/icon_5.png'),
+        6: require('../assets/Images/icon_6.jpg'),
+        7: require('../assets/Images/icon_7.jpg'),
+        8: require('../assets/Images/icon_8.jpg'),
+        9: require('../assets/Images/icon_9.jpg'),
+    };
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -57,7 +67,7 @@ const Categories = () => {
                         onPress={() => handleCategoryPress(index, category.id)}
                     >
                         <Image
-                            source={require('../assets/Images/logo.png')}
+                            source={categoryIcons[category.id]}
                             style={styles.image}
                         />
                         <Text
@@ -103,7 +113,7 @@ const styles = StyleSheet.create({
         width: 100,
         flexDirection: 'column',
         marginHorizontal: 5,
-        marginBottom: 10,
+        marginVertical: 10,
         padding: 0,
         borderRadius: 10,
         alignItems: 'center',

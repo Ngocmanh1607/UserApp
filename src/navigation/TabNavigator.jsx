@@ -44,7 +44,7 @@ const TabNavigator = ({ handleLogout }) => {
         >
             <Tab.Screen name="Trang chủ" component={HomeScreen} />
             <Tab.Screen name="Đơn hàng" component={OrderScreen} options={{ headerShown: true }} />
-            <Tab.Screen name="Chat box" component={ChatboxScreen} options={{ headerShown: true, title: 'Chat' }} />
+            <Tab.Screen name="Chat box" component={ChatboxScreen} options={{ headerShown: true, title: 'Chat Bot' }} />
             <Tab.Screen name="Thông tin" component={ProfileScreen} options={() => ({
                 headerShown: true,
                 // headerRight: () => (
