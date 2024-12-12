@@ -92,34 +92,62 @@ const UserProfileScreen = () => {
     };
 
     const handleSaveChanges = async () => {
-        try {
-            setIsLoading(true);
-            let url = userInfo.image;
-            if (imageUri !== userInfo.image) {
-                url = await uploadFirebase(imageUri);
-                if (!url) {
-                    Alert.alert("Lỗi", "Không thể tải ảnh lên. Vui lòng thử lại.");
-                    return;
-                }
-            }
-
-            const profile = {
-                ...userInfo,
-                image: url,
-            };
-
-            // Gửi API cập nhật thông tin người dùng
-            await userApi.updateUser(dispatch, profile, location);
-
-            await userApi.updateUser(dispatch, profile, location);
-            Alert.alert('Thành công', 'Thông tin của bạn đã được cập nhật.');
-            setIsEditing(false);
-        } catch (error) {
-            console.error('Error updating profile:', error);
-            Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.');
-        } finally {
-            setIsLoading(false);
+        if (!userInfo.name.trim()) {
+            Alert.alert('Lỗi', 'Tên không được để trống.');
+            return;
         }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userInfo.email)) {
+            Alert.alert('Lỗi', 'Email không hợp lệ.');
+            return;
+        }
+
+        if (isNaN(userInfo.phone_number) || userInfo.phone_number.length < 10) {
+            Alert.alert('Lỗi', 'Số điện thoại phải là số hợp lệ và ít nhất 10 ký tự.');
+            return;
+        }
+
+        Alert.alert(
+            'Xác nhận',
+            'Bạn có chắc chắn muốn lưu thay đổi?',
+            [
+                {
+                    text: 'Hủy',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Lưu',
+                    onPress: async () => {
+                        try {
+                            setIsLoading(true);
+                            let url = userInfo.image;
+                            if (imageUri !== userInfo.image) {
+                                url = await uploadFirebase(imageUri);
+                                if (!url) {
+                                    Alert.alert('Lỗi', 'Không thể tải ảnh lên. Vui lòng thử lại.');
+                                    return;
+                                }
+                            }
+
+                            const profile = {
+                                ...userInfo,
+                                image: url,
+                            };
+
+                            await userApi.updateUser(dispatch, profile, location);
+                            Alert.alert('Thành công', 'Thông tin của bạn đã được cập nhật.');
+                            setIsEditing(false);
+                        } catch (error) {
+                            console.error('Error updating profile:', error);
+                            Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.');
+                        } finally {
+                            setIsLoading(false);
+                        }
+                    },
+                },
+            ]
+        );
     };
 
     const handlePressAddress = () => {
