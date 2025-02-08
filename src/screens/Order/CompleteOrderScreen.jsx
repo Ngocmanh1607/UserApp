@@ -3,7 +3,7 @@ import React from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
-import { clearCart } from '../store/cartSlice';
+import { clearCart } from '../../store/cartSlice';
 const CompleteOrder = ({ onComplete, restaurantId }) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();

@@ -2,7 +2,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from "react-native";
-import { orderApi } from "../api/orderApi";
+import { orderApi } from "../../api/orderApi";
 
 const CouponPage = () => {
     const route = useRoute();

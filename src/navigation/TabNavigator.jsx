@@ -1,12 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import HomeScreen from '../screens/HomeScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import OrderScreen from '../screens/OrderScreen';
-import ChatScreen from '../screens/ChatScreen';
+
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import ChatboxScreen from '../screens/ChatboxScreen';
+import HomeScreen from '../screens/Home/HomeScreen';
+import OrderScreen from '../screens/Order/OrderScreen';
+import ChatboxScreen from '../screens/Chat/ChatboxScreen';
+import UserProfileScreen from '../screens/ProfileScreen';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -45,7 +46,7 @@ const TabNavigator = ({ handleLogout }) => {
             <Tab.Screen name="Trang chủ" component={HomeScreen} />
             <Tab.Screen name="Đơn hàng" component={OrderScreen} options={{ headerShown: true }} />
             <Tab.Screen name="Chat box" component={ChatboxScreen} options={{ headerShown: true, title: 'Chat Bot' }} />
-            <Tab.Screen name="Thông tin" component={ProfileScreen} options={() => ({
+            <Tab.Screen name="Thông tin" component={UserProfileScreen} options={() => ({
                 headerShown: true,
                 // headerRight: () => (
                 //     renderHeader()

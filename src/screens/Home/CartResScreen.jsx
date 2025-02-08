@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import CardResInCart from '../components/CardResInCart';
+import CardResInCart from '../../components/CardResInCart';
 
 const CartResScreen = () => {
     const carts = useSelector(state => state.cart.totalAmount);

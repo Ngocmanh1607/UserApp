@@ -1,0 +1,122 @@
+import { Alert, Keyboard, Image, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import styles from '../../styles/LoginRouterStyle';
+import userApi from '../../api/userApi';
+const LoginRouter = () => {
+    const navigation = useNavigation();
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [errors, setErrors] = useState({});
+    const dispatch = useDispatch();
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible(prevState => !prevState);
+    };
+
+    const validate = () => {
+        let valid = true;
+        let errors = {};
+
+        // Validate email
+        if (!email) {
+            valid = false;
+            errors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            valid = false;
+            errors.email = 'Email address is invalid';
+        }
+
+        // Validate password
+        if (!password) {
+            valid = false;
+            errors.password = 'Password is required';
+        } else if (password.length < 6) {
+            valid = false;
+            errors.password = 'Password must be at least 6 characters';
+        }
+
+        setErrors(errors);
+        return valid;
+    };
+
+    const handleSubmit = async () => {
+        if (validate()) {
+            const data = await userApi.loginApi(email, password, dispatch);
+            if (data == true) {
+                Alert.alert('Login Successful', `Welcome, ${email}!`);
+                navigation.navigate('Main');
+            }
+        } else {
+            Alert.alert('Validation Error', 'Please check your input.');
+        }
+    };
+
+    return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+                <View >
+                    <View style={styles.inputLoginContainer}>
+
+                        <Fontisto name="email" color="#9a9a9a" size={22} style={styles.inputIcon} />
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder='Email'
+                            placeholderTextColor='#A9A9A9'
+                            value={email}
+                            onChangeText={(text) => setEmail(text)}
+                        />
+                    </View>
+                    {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+                    <View style={styles.inputLoginContainer}>
+                        <Fontisto name="locked" color="#9a9a9a" size={24} style={styles.inputIcon} />
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder='Password'
+                            secureTextEntry={!isPasswordVisible}
+                            value={password}
+                            onChangeText={(text) => setPassword(text)}
+                            placeholderTextColor='#A9A9A9'
+                        />
+                        <TouchableOpacity onPress={togglePasswordVisibility}>
+                            <Ionicons
+                                name={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
+                                color="#9a9a9a"
+                                size={24}
+                                style={styles.inputPassIcon}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+                    <TouchableOpacity>
+                        <Text style={styles.forgotPassText}>Forget password?</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View >
+                    <TouchableOpacity
+                        style={styles.loginButtonContainer}
+                        onPress={() => {
+                            handleSubmit(email, password);
+                        }}>
+                        <Text style={styles.textLogin}>Login</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.horizontalLine} />
+
+                <View>
+                    <TouchableOpacity style={styles.googleButtonContainer}>
+                        <Image source={require("../../assets/Images/ic_google.png")} style={styles.topImage} />
+                        <Text style={styles.textLoginGoogle}>Login with Google</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </TouchableWithoutFeedback>
+
+    );
+};
+export default LoginRouter;

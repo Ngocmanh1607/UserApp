@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React from 'react';
-import formatPrice from '../utils/formatPrice';
+import formatPrice from '../../utils/formatPrice';
 import { useNavigation, useRoute } from '@react-navigation/native';
 const OrderDetailScreen = () => {
     const route = useRoute();

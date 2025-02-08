@@ -3,14 +3,12 @@ import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, SafeAreaVi
 import CheckBox from '@react-native-community/checkbox';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { addItem } from '../store/cartSlice';
+import { useDispatch } from 'react-redux';
+import { addItem } from '../../store/cartSlice';
 import Snackbar from 'react-native-snackbar';
-import formatPrice from '../utils/formatPrice';
-import userApi from '../api/userApi';
-import { foodApi } from '../api/foodApi';
+import formatPrice from '../../utils/formatPrice';
+import { foodApi } from '../../api/foodApi';
 
 const FoodDetailScreen = () => {
     const route = useRoute();

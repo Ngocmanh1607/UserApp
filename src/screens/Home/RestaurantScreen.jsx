@@ -4,11 +4,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import CardFood2 from '../components/CardFood2';
+import CardFood2 from '../../components/CardFood2';
 import { useNavigation } from '@react-navigation/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import restaurantApi from '../api/restaurantApi';
+import restaurantApi from '../../api/restaurantApi';
 
 const RestaurantScreen = ({ route }) => {
     const navigation = useNavigation();

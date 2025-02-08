@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated, Alert, Button, Image, Linking, AppState, ActivityIndicator } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
-import ItemInCart from '../components/ItemInCart'
+import ItemInCart from '../../components/ItemInCart'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
-import CompleteOrder from './CompleteOrderScreen';
+import CompleteOrder from '../Order/CompleteOrderScreen';
 import { useDispatch, useSelector } from 'react-redux';
-import formatPrice from '../utils/formatPrice';
-import { orderApi } from '../api/orderApi';
-import userApi from '../api/userApi';
+import formatPrice from '../../utils/formatPrice';
+import { orderApi } from '../../api/orderApi';
+import userApi from '../../api/userApi';
 
 const CartScreen = () => {
     const route = useRoute();

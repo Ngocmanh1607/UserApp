@@ -1,45 +1,45 @@
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const ReviewScreen2 = () => {
+const ReviewScreen1 = () => {
     const navigation = useNavigation();
-    const handlePressNext = () => {
-        navigation.replace('Auth');
-    };
     return (
         <View style={styles.container}>
             {/* Phần tiêu đề và hình ảnh */}
             <View style={styles.imageContainer}>
                 <Image
-                    source={require('../assets/Images/background2.png')}
+                    source={require('../../assets/Images/background.png')}
                     style={styles.image}
                 />
             </View>
 
             {/* Phần văn bản */}
             <View style={styles.textContainer}>
-                <Text style={styles.title}>Thưởng thức món ngon</Text>
-                <Text style={styles.title}>với giá phải chăng</Text>
-                <View style={styles.subtitleContainer}>
-                    <Text style={styles.subtitle}>
-                        Bạn có thể trải nghiệm ẩm thực cao cấp
-                        mà không cần lo lắng về giá cả
-                    </Text>
-                </View>
+                <Text style={styles.title}>Chọn</Text>
+                <Text style={styles.title}>Thực đơn yêu thích</Text>
+                <Text style={styles.subtitle}>
+                    Ăn ngon mà không cần rời khỏi nhà, bạn có thể chọn món ăn yêu thích chỉ với một cú nhấp
+                </Text>
             </View>
 
             {/* Phần nút bấm */}
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.nextButton} onPress={handlePressNext}>
-                    <Text style={styles.nextButtonText}>Tiếp tục</Text>
+                <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('thumbnail2')}>
+                    <Text style={styles.nextButtonText}>Tiếp theo</Text>
+                </TouchableOpacity>
+            </View>
+
+            <View style={styles.footer}>
+                <TouchableOpacity style={styles.skipButton} onPress={() => navigation.navigate('Auth')}>
+                    <Text style={styles.skipText}>Bỏ qua</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
 };
 
-export default ReviewScreen2;
+export default ReviewScreen1;
 
 const styles = StyleSheet.create({
     container: {
@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
     textContainer: {
         flex: 2,
         alignItems: 'center',
-
     },
     title: {
         fontSize: 24,
@@ -69,20 +68,29 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'black'
     },
-    subtitleContainer: {
-        width: '70%',
-    },
     subtitle: {
-        fontSize: 18,
+        fontSize: 16,
         textAlign: 'center',
         color: '#666',
         marginTop: 10,
         paddingHorizontal: 30,
     },
+    footer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
+    skipButton: {
+        flex: 1,
+    },
+    skipText: {
+        fontSize: 16,
+        color: '#333',
+    },
     buttonContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 20,
     },
     nextButton: {
         width: "30%",

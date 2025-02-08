@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Headerbar from "../components/Headerbar";
-import CardSlider from "../components/CardSlider";
-import OfferSlider from "../components/OfferSlider";
-import Categories from "../components/Categories";
-import CardRestaurant from "../components/CardRestaurant";
+import Headerbar from "../../components/Headerbar";
+import CardSlider from "../../components/CardSlider";
+import OfferSlider from "../../components/OfferSlider";
+import Categories from "../../components/Categories";
+import CardRestaurant from "../../components/CardRestaurant";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import restaurantApi from "../api/restaurantApi";
+import restaurantApi from "../../api/restaurantApi";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import userApi from "../api/userApi";
+import userApi from "../../api/userApi";
 
 const HomeScreen = () => {
     const [search, setSearch] = useState('');

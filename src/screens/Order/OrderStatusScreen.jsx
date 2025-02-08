@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import MapboxGL from '@rnmapbox/maps';
-import RatingCard from '../components/RatingCard';
+import RatingCard from '../../components/RatingCard';
 import { io } from "socket.io-client";
 
 const OrderStatusScreen = () => {
@@ -67,7 +64,7 @@ const OrderStatusScreen = () => {
                         ) : (
                             <View style={styles.imageContainer}>
                                 <Image
-                                    source={require('../assets/Images/background2.png')}
+                                    source={require('../../assets/Images/background2.png')}
                                     style={styles.chefImage}
                                     resizeMode="contain"
                                 />

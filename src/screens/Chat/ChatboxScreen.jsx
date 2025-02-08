@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Image } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { getChatllm, llmApi, postSendData, } from '../api/llmApi';
-import CardFood3 from '../components/CardFood3';
+import { getChatllm, llmApi, postSendData, } from '../../api/llmApi';
+import CardFood2 from '../../components/CardFoodInCate';
 
 const ChatboxScreen = () => {
     const [chatHistory, setChatHistory] = useState([]);
@@ -119,7 +119,7 @@ const ChatboxScreen = () => {
                                 style={styles.horizontalScrollView}
                             >
                                 {chat.items.map((item) => (
-                                    <CardFood3 food={item} id={item.restaurant_id} key={item.id} />
+                                    <CardFood2 food={item} id={item.restaurant_id} key={item.id} />
                                 ))}
                             </ScrollView>
                         );
@@ -131,7 +131,7 @@ const ChatboxScreen = () => {
                 {isLoading && (
                     <View style={styles.loadingContainer}>
                         <Image
-                            source={require('../assets/Images/loading.gif')}
+                            source={require('../../assets/Images/loading.gif')}
                             style={styles.imageLoading}
                         />
                     </View>

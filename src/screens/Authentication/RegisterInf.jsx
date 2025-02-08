@@ -3,8 +3,8 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView,
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
-import userApi from '../api/userApi';
-import { uploadUserImage } from '../utils/firebaseUtils';
+import userApi from '../../api/userApi';
+import { uploadUserImage } from '../../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import Snackbar from 'react-native-snackbar';

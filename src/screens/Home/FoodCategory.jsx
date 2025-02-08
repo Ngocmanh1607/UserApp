@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { foodApi } from '../api/foodApi';
-import CardFoodInCate from '../components/CardFoodInCate';
+import { foodApi } from '../../api/foodApi';
+import CardFoodInCate from '../../components/CardFoodInCate';
 
 const FoodCategory = ({ route }) => {
     const { categoryId } = route.params;

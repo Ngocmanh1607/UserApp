@@ -1,14 +1,13 @@
 import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
-import MapView, { Marker } from 'react-native-maps';
 import { useDispatch, useSelector } from 'react-redux';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import apiService from '../api/apiService';
-import { setLocation } from '../store/currentLocationSlice';
+import apiService from '../../api/apiService';
+import { setLocation } from '../../store/currentLocationSlice';
 import { useNavigation } from '@react-navigation/native';
 import { debounce } from 'lodash';
 import { useRoute } from '@react-navigation/native';
-import { setDefaultLocation } from '../store/defaultLocationSlice';
+import { setDefaultLocation } from '../../store/defaultLocationSlice';
 const MapScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();

@@ -2,8 +2,8 @@
 import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import CardOrder from '../components/CardOrder';
-import { orderApi } from '../api/orderApi';
+import CardOrder from '../../components/CardOrder';
+import { orderApi } from '../../api/orderApi';
 import { useFocusEffect } from '@react-navigation/native';
 
 const OrderScreen = () => {
