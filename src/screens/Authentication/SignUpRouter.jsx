@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, Alert, ActivityIndicator } from 'react-native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
@@ -7,7 +7,8 @@ import userApi from '../../api/userApi';
 import { useDispatch } from 'react-redux';
 import styles from '../../assets/css/SignUpRouterStyle';
 const SignUpRouter = () => {
-    const navigation = useNavigation()
+    const navigation = useNavigation();
+    const [loading,setLoading]= useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -50,13 +51,16 @@ const SignUpRouter = () => {
         if (!validate()) {
             return;
         }
+        setLoading(true); // Bắt đầu loading
         try {
             const data = await userApi.signupApi(dispatch, email, password);
             if (data === true) {
                 navigation.navigate('RegisterInf');
             }
         } catch (error) {
-            Alert.alert('Đăng ký thất bại ',error.message);
+            Alert.alert('Đăng ký thất bại', error.message);
+        } finally {
+            setLoading(false); // Dừng loading
         }
     };
 
@@ -80,7 +84,7 @@ const SignUpRouter = () => {
                         <Fontisto name="locked" color="#9a9a9a" size={24} style={styles.inputIcon} />
                         <TextInput
                             style={styles.textInput}
-                            placeholder='Password'
+                            placeholder='Mật khẩu'
                             secureTextEntry={!isPasswordVisible}
                             value={password}
                             onChangeText={(text) => setPassword(text)}
@@ -101,7 +105,7 @@ const SignUpRouter = () => {
                         <Fontisto name="locked" color="#9a9a9a" size={24} style={styles.inputIcon} />
                         <TextInput
                             style={styles.textInput}
-                            placeholder='Confirm Password'
+                            placeholder='Xác nhận mật khẩu'
                             secureTextEntry={!isPasswordVisible}
                             value={confirmPassword}
                             onChangeText={(text) => setConfirmPassword(text)}
@@ -119,10 +123,15 @@ const SignUpRouter = () => {
                     {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
                     <View style={styles.loginContainer}>
                         <TouchableOpacity style={styles.loginButtonContainer} onPress={handleSignUp}>
-                            <Text style={styles.textLogin}>Sign Up</Text>
+                                <Text style={styles.textLogin}>Đăng ký</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
+                {loading && (
+                    <View style={styles.loadingOverlay}>
+                        <ActivityIndicator size="small" color="#ffffff" />
+                    </View>
+                )}
             </View>
         </TouchableWithoutFeedback>
 

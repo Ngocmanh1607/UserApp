@@ -73,8 +73,9 @@ const userApi = {
             await userApi.getInfoUser(dispatch);
             return true;
         } catch (error) {
+            console.log(error.response.data);
             if (error.response) {
-                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+                const serverError = error.response.data?.message || "Có lỗi xảy";
                 throw new Error(serverError);
             } else if (error.request) {
                 throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");

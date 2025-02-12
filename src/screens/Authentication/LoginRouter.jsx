@@ -1,4 +1,4 @@
-import { Alert, Keyboard, Image, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, Image, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, ActivityIndicator } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
@@ -9,6 +9,7 @@ import userApi from '../../api/userApi';
 const LoginRouter = () => {
     const navigation = useNavigation();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [loading,setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
@@ -27,7 +28,7 @@ const LoginRouter = () => {
             errors.email = 'Email là bắt buộc';
         } else if (!/\S+@\S+\.\S+/.test(email)) {
             valid = false;
-            errors.email = 'Email address is invalid';
+            errors.email = 'Email không đúng định dạng';
         }
 
         // Validate password
@@ -45,12 +46,18 @@ const LoginRouter = () => {
 
     const handleSubmit = async () => {
         if (validate()) {
-            const data = await userApi.loginApi(email, password, dispatch);
-            if (data === true) {
-                navigation.navigate('Main');
+            setLoading(true);
+            try{
+                const data = await userApi.loginApi(email, password, dispatch);
+                if (data === true) {
+                    navigation.navigate('Main');
+                }
+            }catch(error){
+                Alert.alert('Đăng nhập thất bại ',error.message);
             }
-        } else {
-            Alert.alert('Đăng nhập thất bại ', 'Vui lòng kiểm tra lại.');
+            finally{
+                setLoading(false);
+            }
         }
     };
 
@@ -112,6 +119,11 @@ const LoginRouter = () => {
                         <Text style={styles.textLoginGoogle}>Đăng nhập với Google</Text>
                     </TouchableOpacity>
                 </View>
+                {loading && (
+                    <View style={styles.loadingOverlay}>
+                        <ActivityIndicator size="small" color="#ffffff" />
+                    </View>
+                )}
             </View>
         </TouchableWithoutFeedback>
 
