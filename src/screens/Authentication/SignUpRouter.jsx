@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
@@ -17,33 +17,29 @@ const SignUpRouter = () => {
     const validate = () => {
         let valid = true;
         let errors = {};
-
-        // Validate email
         if (!email) {
             valid = false;
-            errors.email = 'Email is required';
+            errors.email = 'Email là bắt buộc';
         } else if (!/\S+@\S+\.\S+/.test(email)) {
             valid = false;
-            errors.email = 'Email address is invalid';
+            errors.email = 'Email không đúng định dạng';
         }
 
         if (!password) {
             valid = false;
-            errors.password = 'Password is required';
+            errors.password = 'Mật khẩu là bắt buộc';
         } else if (password.length < 6) {
             valid = false;
-            errors.password = 'Password must be at least 6 characters';
+            errors.password = 'Mật khẩu chứa ít nhất 6 kí tự';
         }
-
         // Validate confirmPassword
         if (!confirmPassword) {
             valid = false;
-            errors.confirmPassword = 'Confirm Password is required';
+            errors.confirmPassword = 'Xác nhận mật khẩu là bắt buộc';
         } else if (password !== confirmPassword) {
             valid = false;
-            errors.confirmPassword = 'Passwords do not match';
+            errors.confirmPassword = 'Mật khẩu không khớp';
         }
-
         setErrors(errors);
         return valid;
     };
@@ -55,12 +51,12 @@ const SignUpRouter = () => {
             return;
         }
         try {
-            const data = await userApi.signupApi(dispatch, email, password)
-            if (data == true) {
-                navigation.navigate('RegisterInf')
+            const data = await userApi.signupApi(dispatch, email, password);
+            if (data === true) {
+                navigation.navigate('RegisterInf');
             }
         } catch (error) {
-
+            Alert.alert('Đăng ký thất bại ',error.message);
         }
     };
 

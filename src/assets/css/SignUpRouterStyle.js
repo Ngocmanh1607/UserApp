@@ -20,14 +20,8 @@ const styles = StyleSheet.create({
     },
     textInput: {
         flex: 1,
-        color: "#222222"
-    },
-    forgotPassText: {
-        color: "#FF0000",
-        textAlign: 'right',
-        width: '90%',
-        fontSize: 15,
-        marginVertical: 10,
+        fontSize: 14,
+        color: "#222"
     },
     loginButtonContainer: {
         width: '70%',
@@ -84,8 +78,6 @@ const styles = StyleSheet.create({
         elevation: 10,
         alignItems: 'center',
         height: 50,
-        borderWidth: 1,
-        borderColor: "#222222"
     },
     inputPassIcon: {
         marginLeft: 5,

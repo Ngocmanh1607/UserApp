@@ -24,7 +24,7 @@ const LoginRouter = () => {
         // Validate email
         if (!email) {
             valid = false;
-            errors.email = 'Email is required';
+            errors.email = 'Email là bắt buộc';
         } else if (!/\S+@\S+\.\S+/.test(email)) {
             valid = false;
             errors.email = 'Email address is invalid';
@@ -33,10 +33,10 @@ const LoginRouter = () => {
         // Validate password
         if (!password) {
             valid = false;
-            errors.password = 'Password is required';
+            errors.password = 'Mật khẩu là bắt buộc';
         } else if (password.length < 6) {
             valid = false;
-            errors.password = 'Password must be at least 6 characters';
+            errors.password = 'Mật khẩu phải lớn hơn 6 ký tự';
         }
 
         setErrors(errors);
@@ -46,12 +46,11 @@ const LoginRouter = () => {
     const handleSubmit = async () => {
         if (validate()) {
             const data = await userApi.loginApi(email, password, dispatch);
-            if (data == true) {
-                Alert.alert('Login Successful', `Welcome, ${email}!`);
+            if (data === true) {
                 navigation.navigate('Main');
             }
         } else {
-            Alert.alert('Validation Error', 'Please check your input.');
+            Alert.alert('Đăng nhập thất bại ', 'Vui lòng kiểm tra lại.');
         }
     };
 
@@ -60,7 +59,6 @@ const LoginRouter = () => {
             <View style={styles.container}>
                 <View >
                     <View style={styles.inputLoginContainer}>
-
                         <Fontisto name="email" color="#9a9a9a" size={22} style={styles.inputIcon} />
                         <TextInput
                             style={styles.textInput}
@@ -75,7 +73,7 @@ const LoginRouter = () => {
                         <Fontisto name="locked" color="#9a9a9a" size={24} style={styles.inputIcon} />
                         <TextInput
                             style={styles.textInput}
-                            placeholder='Password'
+                            placeholder='Mật khẩu'
                             secureTextEntry={!isPasswordVisible}
                             value={password}
                             onChangeText={(text) => setPassword(text)}
@@ -92,7 +90,7 @@ const LoginRouter = () => {
                     </View>
                     {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
                     <TouchableOpacity>
-                        <Text style={styles.forgotPassText}>Forget password?</Text>
+                        <Text style={styles.forgotPassText}>Quên mật khẩu?</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -102,7 +100,7 @@ const LoginRouter = () => {
                         onPress={() => {
                             handleSubmit(email, password);
                         }}>
-                        <Text style={styles.textLogin}>Login</Text>
+                        <Text style={styles.textLogin}>Đăng nhập</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -111,7 +109,7 @@ const LoginRouter = () => {
                 <View>
                     <TouchableOpacity style={styles.googleButtonContainer}>
                         <Image source={require("../../assets/Images/ic_google.png")} style={styles.topImage} />
-                        <Text style={styles.textLoginGoogle}>Login with Google</Text>
+                        <Text style={styles.textLoginGoogle}>Đăng nhập với Google</Text>
                     </TouchableOpacity>
                 </View>
             </View>

@@ -27,9 +27,14 @@ const fetchFcmToken = async () => {
 
             return null;
         }
-
         console.log('Người dùng đã cấp quyền thông báo.');
-
+        // Lấy APNs Token trước khi lấy FCM Token
+        const apnsToken = await messaging().getAPNSToken();
+        if (!apnsToken) {
+            console.error("APNs token chưa được thiết lập.");
+            return;
+        }
+        console.log("APNs Token:", apnsToken);
         // Lấy FCM token
         const token = await messaging().getToken();
         if (token) {
@@ -41,7 +46,7 @@ const fetchFcmToken = async () => {
         }
     } catch (error) {
         console.error('Lỗi khi lấy mã FCM:', error);
-        return null;
+        throw new Error('Lỗi khi lấy mã FCM');
     }
 };
 

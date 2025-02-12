@@ -12,8 +12,8 @@ const LoginSignUpScreen = () => {
     const layout = useWindowDimensions();
     const [index, setIndex] = useState(0);
     const [routes] = useState([
-        { key: 'login', title: 'Login' },
-        { key: 'signup', title: 'Sign Up' },
+        { key: 'login', title: 'Đăng nhập' },
+        { key: 'signup', title: 'Đăng ký' },
     ]);
 
     const renderTabBar = props => {
@@ -44,23 +44,22 @@ const LoginSignUpScreen = () => {
 };
 
 
-export default LoginSignUpScreen
+export default LoginSignUpScreen;
 
 const styles = StyleSheet.create({
     indicator: {
-        backgroundColor: "#FF0000",
+        backgroundColor: "#F00",
         width: '30%',
         marginHorizontal: '10%'
     },
     tabBar: {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#FFF",
         borderTopRightRadius: 25,
         borderTopLeftRadius: 25,
     },
     label: {
         fontSize: 16,
         fontWeight: '500',
-
     },
     loginContainer: {
         flex: 1,
