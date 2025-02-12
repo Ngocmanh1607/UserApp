@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import styles from '../../styles/LoginRouterStyle';
+import styles from '../../assets/css/LoginRouterStyle';
 import userApi from '../../api/userApi';
 const LoginRouter = () => {
     const navigation = useNavigation();

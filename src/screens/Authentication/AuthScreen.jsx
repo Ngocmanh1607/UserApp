@@ -1,7 +1,7 @@
 import { Animated, Image,View } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import LoginSignUpScreen from './LoginSignUpScreen';
-import styles from '../../styles/AuthStyle';
+import styles from '../../assets/css/AuthStyle';
 const AuthScreen = () => {
     const slideAnim = useRef(new Animated.Value(1000)).current;
 

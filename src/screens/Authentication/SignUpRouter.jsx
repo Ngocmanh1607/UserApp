@@ -5,7 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import userApi from '../../api/userApi';
 import { useDispatch } from 'react-redux';
-import styles from '../../styles/SignUpRouterStyle';
+import styles from '../../assets/css/SignUpRouterStyle';
 const SignUpRouter = () => {
     const navigation = useNavigation()
     const [email, setEmail] = useState('');

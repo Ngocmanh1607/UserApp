@@ -39,8 +39,14 @@ const userApi = {
             await userApi.getInfoUser(dispatch);
             return true;
         } catch (error) {
-            console.error("Đăng ký thất bại:", error.response ? error.response.data : error.message);
-            return false;
+            if (error.response) {
+                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+                throw new Error(serverError);
+            } else if (error.request) {
+                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+            } else {
+                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+            }
         }
     },
 
@@ -67,8 +73,14 @@ const userApi = {
             await userApi.getInfoUser(dispatch);
             return true;
         } catch (error) {
-            Alert.alert("Vui lòng kiểm tra lại tài khoản mật khẩu. Đăng nhập thất bại")
-            return false;
+            if (error.response) {
+                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+                throw new Error(serverError);
+            } else if (error.request) {
+                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+            } else {
+                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+            }
         }
     },
     logoutApi: async () => {
@@ -100,11 +112,13 @@ const userApi = {
         }
     },
 
-    getInfoUser: async (dispatch) => {
+    getInfoUser: async (dispatch, navigation) => {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
         if (!userId || !accessToken) {
-            throw new Error("User not logged in");
+            Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+            navigation.navigate("Đăng kí thông tin");
+            return;
         }
         try {
             const response = await apiClient.get(`/profile`,
@@ -119,12 +133,25 @@ const userApi = {
             dispatch(setUserInfo(response.data.metadata));
             return response.data.metadata;
         } catch (error) {
-            console.error('Error fetching user info:', error);
-            throw new Error('Failed to fetch user info');
+            if (error.response) {
+                if (error.response.status === 401) {
+                    await AsyncStorage.removeItem('accessToken');
+                    await AsyncStorage.removeItem('userId');
+                    Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
+                    navigation.navigate("Đăng kí thông tin");
+                    return;
+                }
+                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+                throw new Error(serverError);
+            } else if (error.request) {
+                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+            } else {
+                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+            }
         }
     },
 
-    updateUser: async (dispatch, userData, location) => {
+    updateUser: async (dispatch, userData, location, navigation) => {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
         console.log(accessToken)

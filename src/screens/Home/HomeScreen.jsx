@@ -12,6 +12,7 @@ import restaurantApi from "../../api/restaurantApi";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import userApi from "../../api/userApi";
+import styles from "../../assets/css/HomeStyle";
 
 const HomeScreen = () => {
     const [search, setSearch] = useState('');
@@ -29,11 +30,11 @@ const HomeScreen = () => {
             console.log(data)
             setRestaurants(data);
             setFilteredRestaurants(data);
-            await userApi.getInfoUser(dispatch);
+            await userApi.getInfoUser(dispatch,navigation);
             setLoading(false);
         };
 
-        if (address.address && address.address != 'Đang lấy vị trí...') {
+        if (address.address && address.address !== 'Đang lấy vị trí...') {
             fetchRestaurantData();
         }
     }, [address]);
@@ -115,52 +116,3 @@ const HomeScreen = () => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({
-    mainContainer: {
-        flex: 1,
-    },
-    headContainer: {
-        marginHorizontal: 5,
-    },
-    searchbox: {
-        flexDirection: 'row',
-        backgroundColor: '#FFF',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingLeft: 10,
-        marginTop: 10,
-        marginBottom: 10,
-        alignSelf: 'center',
-        elevation: 3,
-        borderRadius: 10,
-        height: 45,
-    },
-    input: {
-        width: '85%',
-        fontSize: 16,
-        color: 'black',
-    },
-    scrollContainer: {
-        marginBottom: 110,
-    },
-    cartContainer: {
-        width: 50,
-        height: 50,
-        backgroundColor: "#FFFFFF",
-        position: 'absolute',
-        zIndex: 1,
-        right: 10,
-        bottom: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-        elevation: 5,
-        borderWidth: 1,
-        borderColor: '#333'
-    },
-    textErrol: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        marginLeft: 20
-    }
-});
