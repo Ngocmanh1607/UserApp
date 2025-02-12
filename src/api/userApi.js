@@ -156,7 +156,9 @@ const userApi = {
         const accessToken = await AsyncStorage.getItem('accessToken');
         console.log(accessToken)
         if (!userId || !accessToken) {
-            throw new Error("User not logged in");
+            Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+            navigation.navigate("Đăng kí thông tin");
+            return;
         }
         try {
             const response = await apiClient.put(`/profile`,
@@ -186,8 +188,21 @@ const userApi = {
             const userInfo = await userApi.getInfoUser(dispatch);
             return response.data.metadata;
         } catch (error) {
-            console.error(error);
-            throw error;
+            if (error.response) {
+                if (error.response.status === 401) {
+                    await AsyncStorage.removeItem('accessToken');
+                    await AsyncStorage.removeItem('userId');
+                    Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
+                    navigation.navigate("Đăng kí thông tin");
+                    return;
+                }
+                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+                throw new Error(serverError);
+            } else if (error.request) {
+                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+            } else {
+                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+            }
         }
     }
 };

@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated, Alert, Button, Image, Linking, AppState, ActivityIndicator } from 'react-native'
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated, Alert,Linking, AppState, ActivityIndicator } from 'react-native';
+import React, {  useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
-import ItemInCart from '../../components/ItemInCart'
+import ItemInCart from '../../components/ItemInCart';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import CompleteOrder from '../Order/CompleteOrderScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import formatPrice from '../../utils/formatPrice';
@@ -79,12 +79,12 @@ const CartScreen = () => {
             if (nextAppState === 'active' && transactionId) {
                 const checkPaymentStatus = async () => {
                     const statusData = await orderApi.orderCheckStatus(transactionId);
-                    if (statusData == 'Giao dịch thành công') {
-                        Alert.alert('Thanh toán', 'Giao dịch thành công')
-                        setShowCompleteOrder(true)
+                    if (statusData === 'Giao dịch thành công') {
+                        Alert.alert('Thanh toán', 'Giao dịch thành công');
+                        setShowCompleteOrder(true);
                     }
                     else {
-                        Alert.alert('Thanh toán', 'Giao dịch thất bại. Vui lòng thử lại')
+                        Alert.alert('Thanh toán', 'Giao dịch thất bại. Vui lòng thử lại');
                     }
                 };
                 checkPaymentStatus();
@@ -99,15 +99,15 @@ const CartScreen = () => {
         };
     }, [transactionId]);
     const handlePress = () => {
-        navigation.navigate('MapScreen')
+        navigation.navigate('MapScreen');
     };
     const handleOrder = () => {
         const fetchOrder = async (userInfo, address, items, selectedPaymentMethod, note) => {
             setIsLoading(true)
-            const cuponid = discount?.id
-            const response = await orderApi.orderApi(userInfo, address, items, selectedPaymentMethod = 'ZALOPAY', cost.totalPrice, cost.shippingCost, note, cuponid);
+            const cuponid = discount?.id;
+            const response = await orderApi.orderApi(userInfo, address, items, selectedPaymentMethod = 'ZALOPAY', cost.totalPrice, cost.shippingCost, note, cuponid,navigation);
             setTransactionId(response.app_trans_id);
-            console.log(response.url)
+            console.log(response.url);
             if (response.url) {
                 await Linking.openURL(response.url);
             }
@@ -119,7 +119,7 @@ const CartScreen = () => {
         };
 
         fetchUserInfo()
-        if (userInfo.name == '' || userInfo.phone_number == '' || userInfo == 'null') {
+        if (userInfo.name === '' || userInfo.phone_number === '' || userInfo === 'null') {
             Alert.alert('Cập nhật thông tin ', 'Vui lòng cập nhật thông tin để có thể đặt hàng', [
                 { text: 'Huỷ', style: 'cancel' },
                 { text: 'Ok', onPress: () => navigation.navigate('Thông tin') },
@@ -130,10 +130,10 @@ const CartScreen = () => {
         }
     };
     const handlePayment = () => {
-        navigation.navigate('PaymentMethod', { restaurantId: restaurantId })
+        navigation.navigate('PaymentMethod', { restaurantId: restaurantId });
     };
     const handleDiscount = () => {
-        navigation.navigate('CouponScreen', { restaurantId: restaurantId })
+        navigation.navigate('CouponScreen', { restaurantId: restaurantId });
     };
     const handleGetPrice = async () => {
         setIsLoading(true);
@@ -141,7 +141,7 @@ const CartScreen = () => {
             const response = await orderApi.getPrice(address.latitude, address.longitude, restaurantId, items);
             setCost(response);
         } catch (error) {
-            console.error('Error fetching price:', error);
+            Alert.alert('Lỗi',error);
         } finally {
             setIsLoading(false);
         }

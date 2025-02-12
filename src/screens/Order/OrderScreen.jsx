@@ -4,16 +4,17 @@ import React, { useCallback, useEffect, useState } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import CardOrder from '../../components/CardOrder';
 import { orderApi } from '../../api/orderApi';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import styles from '../../assets/css/OrderStyle';
 const OrderScreen = () => {
+    const navigation = useNavigation();
     const [search, setSearch] = useState('');
     const [orders, setOrders] = useState();
     const [filteredOrders, setFilteredOrders] = useState([]);
     useFocusEffect(
         useCallback(() => {
             const fetchOrder = async () => {
-                const response = await orderApi.getOrder();
+                const response = await orderApi.getOrder(navigation);
                 console.log(response);
                 setOrders(response);
                 setFilteredOrders(response);

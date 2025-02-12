@@ -6,7 +6,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from "react";
 const apiKey = '123'
 const orderApi = {
-    orderApi: async (userInfo, address, cart, payMethod, price, fee, note, couponId) => {
+    orderApi: async (userInfo, address, cart, payMethod, price, fee, note, couponId, navigation) => {
         try {
             const convertCartToListCartItem = (cart) => {
                 return cart.map(item => ({
@@ -24,7 +24,9 @@ const orderApi = {
             const userId = await AsyncStorage.getItem('userId');
             const accessToken = await AsyncStorage.getItem('accessToken');
             if (!userId || !accessToken) {
-                Alert.alert(accessToken)
+                Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+                navigation.navigate("Đăng kí thông tin");
+                return;
             }
             const orderData = {
                 order: {
@@ -73,9 +75,22 @@ const orderApi = {
                     }
                 })
             return response.data.metadata;
-        }
-        catch (error) {
-            console.log(error)
+        } catch (error) {
+            if (error.response) {
+                if (error.response.status === 401) {
+                    await AsyncStorage.removeItem('accessToken');
+                    await AsyncStorage.removeItem('userId');
+                    Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
+                    navigation.navigate("Đăng kí thông tin");
+                    return;
+                }
+                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+                throw new Error(serverError);
+            } else if (error.request) {
+                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+            } else {
+                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+            }
         }
     },
     orderCheckStatus: async (app_trans_id) => {
@@ -111,12 +126,14 @@ const orderApi = {
             console.log(error)
         }
     },
-    getOrder: async () => {
+    getOrder: async (navigation) => {
         try {
             const userId = await AsyncStorage.getItem('userId');
             const accessToken = await AsyncStorage.getItem('accessToken');
             if (!userId || !accessToken) {
-                Alert.alert(accessToken)
+                Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+                navigation.navigate("Đăng kí thông tin");
+                return;
             }
             console.log(userId, accessToken)
             const response = await apiClient.get('/customer/all/order',
@@ -128,9 +145,22 @@ const orderApi = {
                     }
                 })
             return response.data.metadata;
-        }
-        catch (error) {
-            console.log(error)
+        } catch (error) {
+            if (error.response) {
+                if (error.response.status === 401) {
+                    await AsyncStorage.removeItem('accessToken');
+                    await AsyncStorage.removeItem('userId');
+                    Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
+                    navigation.navigate("Đăng kí thông tin");
+                    return;
+                }
+                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+                throw new Error(serverError);
+            } else if (error.request) {
+                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+            } else {
+                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+            }
         }
     },
     getPrice: async (userLatitude, userLongitude, restaurant_id, listCartItem) => {
