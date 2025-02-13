@@ -1,5 +1,5 @@
-import {Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated, Alert,Linking, AppState, ActivityIndicator } from 'react-native';
-import React, {  useEffect, useRef, useState } from 'react';
+import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated, Alert, Linking, AppState, ActivityIndicator, Modal } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import ItemInCart from '../../components/ItemInCart';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,14 +10,17 @@ import formatPrice from '../../utils/formatPrice';
 import { orderApi } from '../../api/orderApi';
 import userApi from '../../api/userApi';
 import styles from '../../assets/css/CartStyle';
-
+import PaymentMethodScreen from '../Order/PaymentMethodScreen';
 const CartScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const { restaurantId } = route.params;
-    const selectedPaymentMethod = route.params?.selectedPaymentMethod || 'ZALOPAY';
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('ZALOPAY');
     const discount = route.params?.discount;
     const dispatch = useDispatch();
+
+    const [modalVisible, setModalVisible] = useState(false);
+
     const [showCompleteOrder, setShowCompleteOrder] = useState(false);
     const items = useSelector(state => state.cart.carts[restaurantId]);
     const userInfo = useSelector(state => state.user.userInfo);
@@ -49,9 +52,9 @@ const CartScreen = () => {
                 quantity: item.quantity,
                 price: item.price,
                 toppings: item.toppings,
-                uniqueId: item.uniqueId
+                uniqueId: item.uniqueId,
             })));
-            handleGetPrice()
+            handleGetPrice();
         }
     }, [items]);
     useEffect(() => {
@@ -105,7 +108,7 @@ const CartScreen = () => {
         const fetchOrder = async (userInfo, address, items, selectedPaymentMethod, note) => {
             setIsLoading(true)
             const cuponid = discount?.id;
-            const response = await orderApi.orderApi(userInfo, address, items, selectedPaymentMethod = 'ZALOPAY', cost.totalPrice, cost.shippingCost, note, cuponid,navigation);
+            const response = await orderApi.orderApi(userInfo, address, items, selectedPaymentMethod = 'ZALOPAY', cost.totalPrice, cost.shippingCost, note, cuponid, navigation);
             setTransactionId(response.app_trans_id);
             console.log(response.url);
             if (response.url) {
@@ -114,7 +117,7 @@ const CartScreen = () => {
             setIsLoading(false)
         };
         const fetchUserInfo = async () => {
-            const response = await userApi.getInfoUser(dispatch,navigation);
+            const response = await userApi.getInfoUser(dispatch, navigation);
             console.log(response);
         };
 
@@ -130,8 +133,14 @@ const CartScreen = () => {
         }
     };
     const handlePayment = () => {
-        navigation.navigate('PaymentMethod', { restaurantId: restaurantId });
+        // navigation.navigate('PaymentMethod', { restaurantId: restaurantId });
+        setModalVisible(true);
     };
+    const handleSelectPaymentMethod = (method) => {
+        setSelectedPaymentMethod(method);
+        setModalVisible(false); // Đóng modal sau khi chọn
+    };
+
     const handleDiscount = () => {
         navigation.navigate('CouponScreen', { restaurantId: restaurantId });
     };
@@ -141,7 +150,7 @@ const CartScreen = () => {
             const response = await orderApi.getPrice(address.latitude, address.longitude, restaurantId, items);
             setCost(response);
         } catch (error) {
-            Alert.alert('Lỗi',error);
+            Alert.alert('Lỗi', error);
         } finally {
             setIsLoading(false);
         }
@@ -181,8 +190,8 @@ const CartScreen = () => {
                             )}
                         </ScrollView>
                     ) : (
-                        <View style={styles.scrollContainer}>
-                            <Text style={{ textAlign: 'center', marginTop: 20 }}>Chưa có món ăn trong giỏ hàng</Text>
+                        <View style={styles.subContainer}>
+                            <Text style={{ fontSize: 16, fontWeight: '500' }}>Chưa có món ăn trong giỏ hàng</Text>
                         </View>
                     )}
                     <View style={styles.noteContainer}>
@@ -210,12 +219,19 @@ const CartScreen = () => {
                         </View>
                     </View>
                 </View>
-                <View style={styles.methodPaymentContainer}>
+                <TouchableOpacity style={styles.methodPaymentContainer} onPress={handlePayment}>
                     <Text style={styles.paymentText}> Phương thức thanh toán</Text>
                     <TouchableOpacity style={styles.payment} onPress={handlePayment}>
                         <Text style={styles.paymentText}> {selectedPaymentMethod}</Text>
                     </TouchableOpacity>
-                </View>
+                </TouchableOpacity>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}>
+                    <PaymentMethodScreen onSelectMethod={handleSelectPaymentMethod} />
+                </Modal>
+
                 <View style={styles.footerContainer}>
                     <View style={[styles.row, { borderBlockColor: '#FFFFFF', borderBottomWidth: 1 }]}>
                         <Text style={[styles.label, { fontWeight: '500' }]}>Tổng số tiền</Text>

@@ -2,6 +2,10 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
         padding: 16,
         backgroundColor: '#fff',
     },
@@ -13,7 +17,6 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginTop: 20,
         marginBottom: 10,
     },
     paymentOption: {

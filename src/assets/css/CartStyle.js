@@ -26,7 +26,12 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     scrollContainer: {
-        height: 250
+        height: 270,
+    },
+    subContainer: {
+        height: 270,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     footerContainer: {
         backgroundColor: '#fff',
@@ -87,7 +92,6 @@ const styles = StyleSheet.create({
     methodPaymentContainer: {
         backgroundColor: '#FFF',
         marginHorizontal: 15,
-        marginVertical: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

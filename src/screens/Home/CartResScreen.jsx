@@ -5,31 +5,37 @@ import CardResInCart from '../../components/CardResInCart';
 
 const CartResScreen = () => {
     const carts = useSelector(state => state.cart.totalAmount);
-    return (
-        <View>
-            {
-                carts.length > 0 ? (Object.entries(carts).map(([id, restaurant]) => (
-                    <CardResInCart key={id} restaurant={restaurant} restaurantId={id} />
-                ))) : (
-                    <View style={styles.container}>
-                        <Text>Chưa có món nào trong giỏ hàng</Text>
-                    </View>
-                )
-            }
-        </View>
-    )
-}
 
-export default CartResScreen
+    return (
+        <View style={styles.container}>
+            {carts.length > 0 ? (
+                Object.entries(carts).map(([id, restaurant]) => (
+                    <CardResInCart key={id} restaurant={restaurant} restaurantId={id} />
+                ))
+            ) : (
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>Chưa có món nào trong giỏ hàng</Text>
+                </View>
+            )}
+        </View>
+    );
+};
+
+export default CartResScreen;
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 10,
-        marginHorizontal: 10,
-        borderRadius: 5,
-        height: 30,
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+    emptyContainer: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff'
-    }
-})
+    },
+    emptyText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#555',
+    },
+});
