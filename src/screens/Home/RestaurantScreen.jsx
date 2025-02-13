@@ -10,6 +10,7 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import restaurantApi from '../../api/restaurantApi';
 import styles from '../../assets/css/RestaurantStyle';
+import ArrowBack from '../../components/ArrowBack';
 
 const RestaurantScreen = ({ route }) => {
     const navigation = useNavigation();
@@ -48,10 +49,7 @@ const RestaurantScreen = ({ route }) => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <SafeAreaView style={styles.container}>
                 <Image source={{ uri: restaurant.image }} style={styles.imageContainer} />
-                <TouchableOpacity style={styles.backButton} onPress={() => { navigation.goBack() }}>
-                    <Ionicons name="arrow-back" size={28} color="#000" />
-                </TouchableOpacity>
-
+                <ArrowBack navigation={navigation}/>
                 <View style={styles.headerContainer}>
                     <Text style={styles.text}>{restaurant.name}</Text>
                     <View style={styles.bottomContainer}>

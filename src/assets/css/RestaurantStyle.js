@@ -12,13 +12,6 @@ const styles = StyleSheet.create({
         height: 180,
         resizeMode: 'cover',
     },
-    backButton: {
-        position: 'absolute',
-        top: 50,
-        left: 1,
-        padding: 10,
-        zIndex: 1,
-    },
     headerContainer: {
         width: '95%',
         backgroundColor: '#ffffff',
