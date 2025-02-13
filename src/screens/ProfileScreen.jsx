@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {  Text, View, Image, TouchableOpacity, TextInput, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { Text, View, Image, TouchableOpacity, TextInput, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -8,6 +8,7 @@ import { uploadUserImage } from '../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from '../assets/css/ProfileStyle';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 const UserProfileScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -32,7 +33,7 @@ const UserProfileScreen = () => {
         const fetchUserData = async () => {
             setIsLoading(true);
             try {
-                const data = await userApi.getInfoUser(dispatch,navigation);
+                const data = await userApi.getInfoUser(dispatch, navigation);
                 if (data.profile) {
                     setUserInfo({
                         name: data.profile.name,
@@ -140,8 +141,8 @@ const UserProfileScreen = () => {
                             Alert.alert('Thành công', 'Thông tin của bạn đã được cập nhật.');
                             setIsEditing(false);
                         } catch (error) {
-                            console.error('Error updating profile:', error);
-                            Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.');
+                            // Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.');
+                            Alert.alert('Lỗi', error.message);
                         } finally {
                             setIsLoading(false);
                         }
@@ -176,7 +177,7 @@ const UserProfileScreen = () => {
             },
         ]);
     };
-
+    const handleCancel = () => setIsEditing(!isEditing);
     return (
         <View style={styles.container}>
             {
@@ -195,7 +196,7 @@ const UserProfileScreen = () => {
                         </View>
 
                         <View style={styles.infoContainer}>
-                            <Text style={styles.label}>Tên:</Text>
+                            <Text style={styles.label}>Tên</Text>
                             <TextInput
                                 style={styles.input}
                                 value={userInfo.name}
@@ -203,28 +204,28 @@ const UserProfileScreen = () => {
                                 editable={isEditing}
                             />
 
-                            <Text style={styles.label}>Email:</Text>
+                            {/* <Text style={styles.label}>Email:</Text>
                             <TextInput
                                 style={styles.input}
                                 value={userInfo.email}
                                 onChangeText={(text) => setUserInfo({ ...userInfo, email: text })}
                                 editable={isEditing}
-                            />
-
-                            <Text style={styles.label}>Số điện thoại:</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={userInfo.phone_number.toString()}
-                                onChangeText={(text) => setUserInfo({ ...userInfo, phone_number: text })}
-                                editable={isEditing}
-                            />
-                            <Text style={styles.label}>Năm sinh:</Text>
+                            /> */}
+                            <Text style={styles.label}>Năm sinh</Text>
                             <TextInput
                                 style={styles.input}
                                 value={userInfo.date}
                                 onChangeText={(text) => setUserInfo({ ...userInfo, date: text })}
                                 editable={isEditing}
                             />
+                            <Text style={styles.label}>Số điện thoại</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={userInfo.phone_number.toString()}
+                                onChangeText={(text) => setUserInfo({ ...userInfo, phone_number: text })}
+                                editable={isEditing}
+                            />
+
                             <Text style={styles.label}>Địa chỉ:</Text>
                             <TouchableOpacity
                                 style={styles.input}
@@ -234,25 +235,31 @@ const UserProfileScreen = () => {
                             </TouchableOpacity>
                         </View>
 
-                        <View style={styles.buttonContainer}>
-                            {isEditing ? (
+                        {isEditing ? (
+                            <View style={styles.buttonContainer}>
                                 <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
-                                    <Text style={styles.buttonText}>Lưu thay đổi</Text>
+                                    <Text style={styles.buttonText}>Lưu</Text>
                                 </TouchableOpacity>
-                            ) : (
+                                <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+                                    <Text style={styles.buttonText}>Huỷ</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                            <View style={styles.buttonContainer}>
                                 <TouchableOpacity style={styles.editButton} onPress={handleEditToggle}>
                                     <Text style={styles.buttonText}>Chỉnh sửa</Text>
+                                    <Icon name="edit" size={18} color="#fff" style={styles.logoutIcon} />
                                 </TouchableOpacity>
-                            )}
-
-                            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                                <Text style={styles.buttonText}>Đăng xuất</Text>
-                            </TouchableOpacity>
-                        </View>
+                                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                                    <Text style={styles.buttonText}>Đăng xuất</Text>
+                                    <Icon name="sign-out-alt" size={18} color="#fff" style={styles.logoutIcon} />
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     </ScrollView>
                 )
             }
-        </View>
+        </View >
     );
 };
 export default UserProfileScreen;

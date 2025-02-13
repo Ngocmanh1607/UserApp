@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F8F8',
+        backgroundColor: '#FAFAFA',
     },
     header: {
         backgroundColor: '#FF6347',
@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         alignSelf: 'center',
-        borderRadius: 60,
-        borderWidth: 3,
+        borderRadius: 15,
+        borderWidth: 2,
         borderColor: '#FF0000',
         elevation: 5
     },
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: '600',
         marginBottom: 5,
     },
     input: {
@@ -62,33 +62,50 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
     },
     buttonContainer: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
         marginTop: 20,
         paddingHorizontal: 20,
     },
     editButton: {
-        backgroundColor: '#FF0000',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: '#F00',
         paddingVertical: 12,
         borderRadius: 8,
+        width: '45%',
         alignItems: 'center',
-        marginBottom: 10,
     },
     saveButton: {
         backgroundColor: '#32CD32',
         paddingVertical: 12,
         borderRadius: 8,
+        width: '45%',
         alignItems: 'center',
-        marginBottom: 10,
+    },
+    cancelButton: {
+        backgroundColor: '#F00',
+        paddingVertical: 12,
+        borderRadius: 8,
+        width: '45%',
+        alignItems: 'center',
     },
     logoutButton: {
-        backgroundColor: '#FF0000',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: '#F00',
         paddingVertical: 12,
         borderRadius: 8,
         alignItems: 'center',
+        width: '45%',
     },
     buttonText: {
         color: '#fff',
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: '600',
+    },
+    logoutIcon: {
+        marginLeft: 10,
     },
     profileImage: {
         width: 120,
