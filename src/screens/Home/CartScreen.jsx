@@ -228,7 +228,9 @@ const CartScreen = () => {
                 <Modal
                     animationType="slide"
                     transparent={true}
-                    visible={modalVisible}>
+                    visible={modalVisible}
+                    onRequestClose={() => setModalVisible(false)}
+                >
                     <PaymentMethodScreen onSelectMethod={handleSelectPaymentMethod} />
                 </Modal>
 
