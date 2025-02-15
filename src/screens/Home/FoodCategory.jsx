@@ -1,11 +1,11 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { foodApi } from '../../api/foodApi';
 import CardFoodInCate from '../../components/CardFoodInCate';
 
 const FoodCategory = ({ route }) => {
     const { categoryId } = route.params;
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [foodData, setFoodData] = useState([]);
     const [isNull, setIsNull] = useState(false);
 
@@ -34,21 +34,23 @@ const FoodCategory = ({ route }) => {
     }, [categoryId]);
 
     return (
-        <ScrollView style={styles.container}>
-            {isLoading && (
+        <View style={styles.container}>
+            {isLoading ? (
                 <View style={styles.loadingContainer}>
-                    <Text>Đang tải...</Text>
+                    <ActivityIndicator size="large" color="red" />
                 </View>
-            )}
-            {!isLoading && foodData.length > 0 && (
-                foodData.map((food) => <CardFoodInCate food={food} key={food.productId} />)
-            )}
-            {!isLoading && isNull && (
+            ) : foodData.length > 0 ? (
+                <ScrollView style={styles.scrollContainer}>
+                    {foodData.map((food) => (
+                        <CardFoodInCate food={food} key={food.productId} />
+                    ))}
+                </ScrollView>
+            ) : (
                 <View style={styles.containerText}>
-                    <Text>Chưa có món nào trong danh mục này</Text>
+                    <Text style={styles.text}>Chưa có món nào trong danh mục này</Text>
                 </View>
             )}
-        </ScrollView>
+        </View>
     );
 };
 
@@ -59,18 +61,18 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     containerText: {
-        marginTop: 10,
-        marginHorizontal: 10,
-        borderRadius: 5,
-        height: 30,
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20,
+    },
+    text: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: 'black',
     },
 });

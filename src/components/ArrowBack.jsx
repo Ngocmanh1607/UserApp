@@ -6,7 +6,7 @@ const ArrowBack = () => {
     const navigation = useNavigation();
     return (
         <TouchableOpacity style={styles.backButton} onPress={() => { navigation.goBack() }}>
-            <Ionicons name="arrow-back" size={28} color="#f00" />
+            <Ionicons name="arrow-back" size={28} color="#000" />
         </TouchableOpacity>
     )
 }

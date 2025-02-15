@@ -77,7 +77,7 @@ const HomeScreen = () => {
 
                 {/* Loading Indicator */}
                 {loading ? (
-                    <ActivityIndicator size="large" color="red" style={{ marginTop: 20 }} />
+                    <ActivityIndicator size="small" color="red" style={{ marginTop: 20 }} />
                 ) : (
                     isSearch ? (
                         <ScrollView>

@@ -30,10 +30,10 @@ const OfferSlider = () => {
 export default OfferSlider
 const styles = StyleSheet.create({
     container: {
-        width: '98%',
         height: 180,
         alignSelf: 'center',
-        marginTop: 10,
+        marginTop: 5,
+        marginHorizontal:10,
     },
     image: {
         width: '100%',

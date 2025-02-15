@@ -4,9 +4,7 @@ import React from "react";
 const CardSlider = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.cardhead}>
-                Near me
-            </Text>
+            <Text style={styles.cardhead}>Các quán gần đây</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <TouchableOpacity style={styles.card} >
                     <View>
@@ -79,28 +77,28 @@ export default CardSlider
 
 const styles = StyleSheet.create({
     container: {
-        marginVertical: 5,
+        
     },
     cardhead: {
-        fontSize: 20,
-        fontWeight: '600',
+        fontSize: 18,
+        fontWeight: '500',
         marginHorizontal: 10,
         paddingLeft: 5
     },
     cardimage: {
         width: '100%',
-        height: 150,
-        borderTopLeftRadius: 17,
-        borderTopRightRadius: 17,
+        height: 100,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
     },
     card: {
-        width: 300,
-        height: 200,
+        width: 250,
+        height: 150,
         marginLeft: 10,
-        marginTop: 10,
-        borderRadius: 18,
-        elevation: 3,
-        backgroundColor: '#fff'
+        marginVertical:5,
+        borderRadius: 10,
+        elevation: 10,
+        backgroundColor: '#fff',
     },
     cardin1: {
         marginHorizontal: 3,
@@ -117,7 +115,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 6,
     },
     cardin2txt1: {
-        fontSize: 12,
+        fontSize: 14,
         marginRight: 10,
         fontWeight: '500'
     }

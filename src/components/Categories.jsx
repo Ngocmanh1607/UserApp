@@ -22,8 +22,8 @@ const Categories = () => {
     };
     useEffect(() => {
         const fetchCategories = async () => {
+            setIsLoading(true);
             try {
-                setIsLoading(true);
                 const data = await foodApi.getCategories();
                 if (data && Array.isArray(data)) {
                     const filteredCategories = data.map(category => ({

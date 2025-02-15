@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     },
     addButton: {
         backgroundColor: '#FF0000',
-        borderRadius: 50,
+        borderRadius: 10,
         padding: 6,
     }
 });

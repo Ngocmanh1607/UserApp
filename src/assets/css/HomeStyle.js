@@ -13,8 +13,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingLeft: 10,
-        marginTop: 10,
-        marginBottom: 10,
+        marginBottom: 5,
         alignSelf: 'center',
         elevation: 3,
         borderRadius: 10,
@@ -31,7 +30,7 @@ const styles = StyleSheet.create({
     cartContainer: {
         width: 50,
         height: 50,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#fff",
         position: 'absolute',
         zIndex: 1,
         right: 10,
@@ -40,8 +39,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         elevation: 5,
-        borderWidth: 1,
-        borderColor: '#333',
     },
     textErrol: {
         fontSize: 14,
