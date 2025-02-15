@@ -3,17 +3,21 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f9f9f9",
-        padding: 20,
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: 16,
+        backgroundColor: '#fff',
     },
     listContainer: {
-        paddingBottom: 20,
+        paddingBottom: 5,
     },
     couponCard: {
         backgroundColor: "#fff",
         padding: 15,
         borderRadius: 8,
-        marginBottom: 15,
+        marginBottom: 5,
         shadowColor: "#000",
         shadowOpacity: 0.1,
         shadowRadius: 5,

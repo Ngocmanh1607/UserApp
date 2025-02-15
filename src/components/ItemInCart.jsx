@@ -86,16 +86,14 @@ export default ItemInCart
 
 const styles = StyleSheet.create({
     foodContainer: {
-        backgroundColor: "#ffffff",
-        borderRadius: 15,
+        backgroundColor: "#fff",
+        borderRadius: 10,
         elevation: 5,
-        width: "95%",
-        height: 120,
+        height: 100,
         margin: 5,
         alignItems: 'center',
         flex: 1,
         flexDirection: 'row',
-        borderWidth: 1
     },
     foodImage: {
         width: 80,
@@ -120,9 +118,8 @@ const styles = StyleSheet.create({
     },
     addButton: {
         backgroundColor: '#FF0000',
-        borderRadius: 50,
+        borderRadius: 10,
         padding: 8,
-        marginBottom: 10
     },
     imageContainer: {
         marginHorizontal: 10
@@ -133,14 +130,13 @@ const styles = StyleSheet.create({
     numberContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     handleContainer: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginRight: 10,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     infContainer: {
         flex: 1,

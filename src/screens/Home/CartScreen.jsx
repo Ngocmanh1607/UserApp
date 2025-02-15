@@ -11,15 +11,17 @@ import { orderApi } from '../../api/orderApi';
 import userApi from '../../api/userApi';
 import styles from '../../assets/css/CartStyle';
 import PaymentMethodScreen from '../Order/PaymentMethodScreen';
+import CouponPage from '../Order/CouponScreen';
 const CartScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const { restaurantId } = route.params;
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('ZALOPAY');
-    const discount = route.params?.discount;
+    const [coupon, setCoupon] = useState('');
     const dispatch = useDispatch();
 
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalPayment, setModalPayment] = useState(false);
+    const [modalCoupon, setModalCoupon] = useState(false);
 
     const [showCompleteOrder, setShowCompleteOrder] = useState(false);
     const items = useSelector(state => state.cart.carts[restaurantId]);
@@ -133,16 +135,19 @@ const CartScreen = () => {
         }
     };
     const handlePayment = () => {
-        // navigation.navigate('PaymentMethod', { restaurantId: restaurantId });
-        setModalVisible(true);
+        setModalPayment(true);
     };
     const handleSelectPaymentMethod = (method) => {
         setSelectedPaymentMethod(method);
-        setModalVisible(false); // Đóng modal sau khi chọn
+        setModalPayment(false); // Đóng modal sau khi chọn
     };
 
     const handleDiscount = () => {
-        navigation.navigate('CouponScreen', { restaurantId: restaurantId });
+        setModalCoupon(true);
+    };
+    const handleSelectCoupon = (coupon) => {
+        setCoupon(coupon);
+        setModalCoupon(false);
     };
     const handleGetPrice = async () => {
         setIsLoading(true);
@@ -197,12 +202,20 @@ const CartScreen = () => {
                     <View style={styles.noteContainer}>
                         <TextInput placeholder='Ghi chú' style={[styles.row, { alignItems: 'center', justifyContent: 'center' }]} value={note} onChangeText={setNote}></TextInput>
                     </View>
-                    <View style={styles.couponContainer}>
+                    <TouchableOpacity style={styles.couponContainer} onPress={() => handleDiscount()}>
                         <Text style={styles.paymentText}>Mã giảm giá</Text>
-                        <TouchableOpacity style={styles.payment} onPress={() => handleDiscount()}>
-                            <Text style={styles.discountText}>{discount ? discount.cupon_code : 'Chọn mã giảm giá'}</Text>
-                        </TouchableOpacity>
-                    </View>
+                        <Text style={styles.discountText}>{coupon ? coupon.cupon_code : 'Chọn mã giảm giá'}</Text>
+                    </TouchableOpacity>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalCoupon}
+                        onRequestClose={() => setModalCoupon(false)}
+                    >
+
+                        <CouponPage onSelectCoupon={handleSelectCoupon} />
+                    </Modal>
+
                     <View style={styles.summaryContainer}>
                         <Text style={styles.textBold}>Chi tiết thanh toán</Text>
                         <View style={styles.row}>
@@ -215,34 +228,35 @@ const CartScreen = () => {
                         </View>
                         <View style={styles.row}>
                             <Text style={styles.label}>Giảm giá</Text>
-                            <Text style={styles.value}>{formatPrice(discount && discount.price)}</Text>
+                            <Text style={styles.value}>{formatPrice(coupon && coupon.price)}</Text>
                         </View>
                     </View>
-                </View>
-                <TouchableOpacity style={styles.methodPaymentContainer} onPress={handlePayment}>
-                    <Text style={styles.paymentText}> Phương thức thanh toán</Text>
-                    <TouchableOpacity style={styles.payment} onPress={handlePayment}>
-                        <Text style={styles.paymentText}> {selectedPaymentMethod}</Text>
+                    <TouchableOpacity style={styles.methodPaymentContainer} onPress={handlePayment}>
+                        <Text style={styles.paymentText}> Phương thức thanh toán</Text>
+                        <TouchableOpacity style={styles.payment} onPress={handlePayment}>
+                            <Text style={styles.paymentText}> {selectedPaymentMethod}</Text>
+                        </TouchableOpacity>
                     </TouchableOpacity>
-                </TouchableOpacity>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => setModalVisible(false)}
-                >
-                    <PaymentMethodScreen onSelectMethod={handleSelectPaymentMethod} />
-                </Modal>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalPayment}
+                        onRequestClose={() => setModalPayment(false)}
+                    >
+                        <PaymentMethodScreen onSelectMethod={handleSelectPaymentMethod} />
+                    </Modal>
 
-                <View style={styles.footerContainer}>
-                    <View style={[styles.row, { borderBlockColor: '#FFFFFF', borderBottomWidth: 1 }]}>
-                        <Text style={[styles.label, { fontWeight: '500' }]}>Tổng số tiền</Text>
-                        <Text style={[styles.value, { fontWeight: '500' }]}>{formatPrice(cost ? (cost.totalPrice - (discount?.price ?? 0)) : 0)}</Text>
+                    <View style={styles.footerContainer}>
+                        <View style={[styles.row, { borderBlockColor: '#FFFFFF', borderBottomWidth: 1 }]}>
+                            <Text style={[styles.label, { fontWeight: '500' }]}>Tổng số tiền</Text>
+                            <Text style={[styles.value, { fontWeight: '500' }]}>{formatPrice(cost ? (cost.totalPrice - (coupon?.price ?? 0)) : 0)}</Text>
+                        </View>
+                        <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
+                            <Text style={styles.buttonText}>Đặt món</Text>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
-                        <Text style={styles.buttonText}>Đặt món</Text>
-                    </TouchableOpacity>
                 </View>
+
                 {
                     showCompleteOrder && (
                         <>

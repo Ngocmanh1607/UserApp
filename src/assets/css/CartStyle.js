@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     },
     scrollContainer: {
         height: 270,
+        marginVertical: 5,
     },
     subContainer: {
         height: 270,
@@ -37,14 +38,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 5,
         padding: 10,
-        marginHorizontal: 15,
         marginVertical: 5,
     },
     summaryContainer: {
         backgroundColor: '#FFFF',
         borderRadius: 5,
         padding: 10,
-        marginVertical: 5,
         elevation: 10,
     },
     row: {
@@ -85,19 +84,19 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     textBold: {
-        fontSize: 18,
-        fontWeight: '600',
+        fontSize: 16,
+        fontWeight: '500',
         color: '#000',
     },
     methodPaymentContainer: {
         backgroundColor: '#FFF',
-        marginHorizontal: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         borderRadius: 5,
         height: 40,
         padding: 10,
+        marginTop: 5,
     },
     locationContainer: {
         flexDirection: 'row',
@@ -153,6 +152,7 @@ const styles = StyleSheet.create({
     paymentText: {
         fontSize: 16,
         fontWeight: '500',
+        color: '#000',
     },
     image: {
         width: 24,
