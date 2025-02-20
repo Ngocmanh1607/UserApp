@@ -12,6 +12,11 @@ const styles = StyleSheet.create({
         height: 180,
         resizeMode: 'cover',
     },
+    heartContainer: {
+        position: 'absolute',
+        top: 80,
+        right: 20,
+    },
     headerContainer: {
         flexDirection: 'row',
         width: '95%',

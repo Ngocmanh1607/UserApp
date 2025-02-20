@@ -153,6 +153,9 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: '#000',
     },
+    discountText: {
+        fontSize: 16,
+    },
     image: {
         width: 24,
         height: 24,

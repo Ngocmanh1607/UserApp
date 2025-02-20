@@ -10,7 +10,7 @@ import restaurantApi from '../../api/restaurantApi';
 import styles from '../../assets/css/RestaurantStyle';
 import ArrowBack from '../../components/ArrowBack';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
+import Feather from 'react-native-vector-icons/Feather';
 const RestaurantScreen = ({ route }) => {
     const navigation = useNavigation();
     const { restaurant } = route.params;
@@ -52,6 +52,9 @@ const RestaurantScreen = ({ route }) => {
             <SafeAreaView style={styles.container}>
                 <Image source={{ uri: restaurant.image }} style={styles.imageContainer} />
                 <ArrowBack navigation={navigation}/>
+                <TouchableOpacity style={styles.heartContainer}>
+                            <Feather name="heart" size={20} style={styles.heart} color={'#fff'} />
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.headerContainer} onPress={handlePress}>
                     <View style={styles.summaryContainer}>
                     <Text style={styles.text}>{restaurant.name}</Text>
@@ -63,9 +66,6 @@ const RestaurantScreen = ({ route }) => {
                         <View style={styles.disContainer}>
                             <Text style={styles.textDis}>Khoảng cách: {(restaurant.distance || 0).toFixed(2)}Km</Text>
                         </View>
-                        {/* <TouchableOpacity>
-                            <Feather name="heart" size={20} style={styles.heart} />
-                        </TouchableOpacity> */}
                     </View>
                     </View>
                     <View style={styles.iconContainer}>
