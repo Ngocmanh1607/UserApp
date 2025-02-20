@@ -239,9 +239,11 @@ const UserProfileScreen = () => {
                             <View style={styles.buttonContainer}>
                                 <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
                                     <Text style={styles.buttonText}>Lưu</Text>
+                                    <Icon name="save" size={18} color="#fff" style={styles.logoutIcon} />
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
                                     <Text style={styles.buttonText}>Huỷ</Text>
+                                    <Icon name="times" size={18} color="#fff" style={styles.logoutIcon} />
                                 </TouchableOpacity>
                             </View>
                         ) : (

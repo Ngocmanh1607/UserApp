@@ -77,6 +77,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     saveButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
         backgroundColor: '#32CD32',
         paddingVertical: 12,
         borderRadius: 8,
@@ -84,6 +86,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     cancelButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
         backgroundColor: '#F00',
         paddingVertical: 12,
         borderRadius: 8,

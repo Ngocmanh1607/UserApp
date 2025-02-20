@@ -104,7 +104,7 @@ const FoodDetailScreen = () => {
                             <Text style={styles.toppingName}>{item.topping_name}</Text>
                             <Text style={styles.toppingPrice}>{formatPrice(item.price)}</Text>
                             <CheckBox
-                                
+                                style={styles.checkbox}
                                 value={item.selected}
                                 onValueChange={() => toggleTopping(item.id)}
                             />

@@ -11,17 +11,7 @@ import UserProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = ({ handleLogout }) => {
-    // const renderHeader = () => {
-    //     return (
-    //         <TouchableOpacity
-    //             style={styles.logoutButton}
-    //             onPress={handleLogout}
-    //         >
-    //             <Text style={styles.logoutText}>Đăng xuất</Text>
-    //         </TouchableOpacity>
-    //     )
-    // }
+const TabNavigator = () => {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({

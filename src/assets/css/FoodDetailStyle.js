@@ -66,6 +66,10 @@ const styles = StyleSheet.create({
         marginRight: 10,
         color: '#000000',
     },
+    checkbox: {
+        transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],
+        marginRight: 10,
+    },
     cardBottom: {
         flex: 1,
         width: '100%',

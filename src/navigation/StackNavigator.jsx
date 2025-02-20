@@ -19,6 +19,7 @@ import CouponPage from '../screens/Order/CouponScreen';
 import RestaurantScreen from '../screens/Home/RestaurantScreen';
 import FoodCategory from '../screens/Home/FoodCategory';
 import CartResScreen from '../screens/Home/CartResScreen';
+import ReviewScreen from '../screens/Home/ReviewScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -72,6 +73,7 @@ const StackNavigator = () => {
             <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen} />
             <Stack.Screen name="RegisterInf" component={RegisterInf} options={{ headerShown: true, title: 'Đăng ký thông tin', headerBackTitle: 'Quay lại' }} />
             <Stack.Screen name="CouponScreen" component={CouponPage} options={{ headerShown: true, title: 'Coupon', headerBackTitle: 'Quay lại' }} />
+            <Stack.Screen name="ReviewScreen" component={ReviewScreen} options={{ headerShown: true, title: 'Đánh giá', headerBackTitle: 'Quay lại' }} />
         </Stack.Navigator>
     );
 };

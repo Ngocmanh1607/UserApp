@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CardFood2 from '../../components/CardFood2';
 import { useNavigation } from '@react-navigation/native';
@@ -11,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import restaurantApi from '../../api/restaurantApi';
 import styles from '../../assets/css/RestaurantStyle';
 import ArrowBack from '../../components/ArrowBack';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const RestaurantScreen = ({ route }) => {
     const navigation = useNavigation();
@@ -45,12 +44,16 @@ const RestaurantScreen = ({ route }) => {
             setFilteredData(filtered);
         }
     }
+    const handlePress =()=>{
+        navigation.navigate('ReviewScreen');
+    }
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <SafeAreaView style={styles.container}>
                 <Image source={{ uri: restaurant.image }} style={styles.imageContainer} />
                 <ArrowBack navigation={navigation}/>
-                <View style={styles.headerContainer}>
+                <TouchableOpacity style={styles.headerContainer} onPress={handlePress}>
+                    <View style={styles.summaryContainer}>
                     <Text style={styles.text}>{restaurant.name}</Text>
                     <View style={styles.bottomContainer}>
                         <View style={styles.ratingContainer}>
@@ -60,12 +63,15 @@ const RestaurantScreen = ({ route }) => {
                         <View style={styles.disContainer}>
                             <Text style={styles.textDis}>Khoảng cách: {(restaurant.distance || 0).toFixed(2)}Km</Text>
                         </View>
-                        <TouchableOpacity>
+                        {/* <TouchableOpacity>
                             <Feather name="heart" size={20} style={styles.heart} />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
-                </View>
-
+                    </View>
+                    <View style={styles.iconContainer}>
+                    <FontAwesome name="chevron-right" size={16} color={'#555'} />
+                    </View>
+                </TouchableOpacity>
                 <View style={styles.mainInContainer}>
                     <View style={styles.searchbox}>
                         <TouchableOpacity>
