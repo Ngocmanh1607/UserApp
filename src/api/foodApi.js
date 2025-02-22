@@ -1,5 +1,5 @@
 import apiClient from "./apiClient";
-import axios from 'axios'
+
 const apiKey = '123'
 const foodApi = {
     getCategories: async () => {

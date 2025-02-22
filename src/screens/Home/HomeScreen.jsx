@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, FlatList } from "react-native";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Headerbar from "../../components/Headerbar";
 import CardSlider from "../../components/CardSlider";
@@ -20,24 +20,44 @@ const HomeScreen = () => {
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
     const [isSearch, setIsSearch] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true); // Kiểm tra còn dữ liệu để tải không
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const address = useSelector(state => state.currentLocation);
     useEffect(() => {
-        const fetchRestaurantData = async () => {
-            setLoading(true);
-            const data = await restaurantApi.getAllRestaurant(address);
-            console.log(data)
-            setRestaurants(data);
-            setFilteredRestaurants(data);
-            await userApi.getInfoUser(dispatch,navigation);
-            setLoading(false);
-        };
-
         if (address.address && address.address !== 'Đang lấy vị trí...') {
-            fetchRestaurantData();
+            fetchRestaurantData(1,false);
         }
     }, [address]);
+    const fetchRestaurantData = async (pageNumber = 1, isLoadMore = false) => {
+        if (!hasMore || loadingMore) return;
+
+        if (!isLoadMore) setLoading(true);
+        else setLoadingMore(true);
+
+        try {
+            const data = await restaurantApi.getAllRestaurant(address, pageNumber);
+            if (data.length === 0) {
+                setHasMore(false);
+            } else {
+                setRestaurants(prevRestaurants => 
+                    isLoadMore ? [...prevRestaurants, ...data] : data
+                );
+                setFilteredRestaurants(prevRestaurants =>
+                    isLoadMore ? [...prevRestaurants, ...data] : data
+                );
+                setPage(pageNumber);
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải dữ liệu nhà hàng:", error);
+        }
+
+        setLoading(false);
+        setLoadingMore(false);
+    };
+
     const handleSearch = (query) => {
         setSearch(query);
         if (query.length > 0) {
@@ -55,7 +75,11 @@ const HomeScreen = () => {
     const handelPress = () => {
         navigation.navigate('CartResScreen');
     };
-
+    const handleLoadMore =()=>{
+        if (!isSearch) {
+            fetchRestaurantData(page + 1, true);
+        }
+    }
     return (
         <SafeAreaView style={styles.mainContainer}>
             <View style={styles.headContainer}>
@@ -79,31 +103,46 @@ const HomeScreen = () => {
                 {loading ? (
                     <ActivityIndicator size="small" color="red" style={{ marginTop: 20 }} />
                 ) : (
-                    isSearch ? (
-                        <ScrollView>
-                            {filteredRestaurants.length > 0 ? (
-                                filteredRestaurants.map((restaurant) => (
-                                    <CardRestaurant key={restaurant.id} restaurant={restaurant} />
-                                ))
-                            ) : (
-                                <Text style={styles.textErrol}>Không tìm thấy kết quả</Text>
-                            )}
-                        </ScrollView>
-                    ) : (
-                        <ScrollView>
-                            <OfferSlider />
-                            <Categories />
-                            <CardSlider />
-                            {filteredRestaurants.length > 0 ? (
-                                filteredRestaurants.map((restaurant) => (
-                                    <CardRestaurant key={restaurant.id} restaurant={restaurant} />
-                                ))
-                            ) : (
-                                <Text style={styles.textErrol}>Không có nhà hàng nào</Text>
-                            )}
-                        </ScrollView>
-                    )
+                    // isSearch ? (
+                    //     <ScrollView>
+                    //         {filteredRestaurants.length > 0 ? (
+                    //             filteredRestaurants.map((restaurant) => (
+                    //                 <CardRestaurant key={restaurant.id} restaurant={restaurant} />
+                    //             ))
+                    //         ) : (
+                    //             <Text style={styles.textErrol}>Không tìm thấy kết quả</Text>
+                    //         )}
+                    //     </ScrollView>
+                    // ) : (
+                    //     <ScrollView>
+                    //         <OfferSlider />
+                    //         <Categories />
+                    //         <CardSlider />
+                    //         {filteredRestaurants.length > 0 ? (
+                    //             filteredRestaurants.map((restaurant) => (
+                    //                 <CardRestaurant key={restaurant.id} restaurant={restaurant} />
+                    //             ))
+                    //         ) : (
+                    //             <Text style={styles.textErrol}>Không có nhà hàng nào</Text>
+                    //         )}
+                    //     </ScrollView>
+                    <FlatList
+                    data={filteredRestaurants}
+                    keyExtractor={(item)=>item.id.toString()}
+                    renderItem={({item})=><CardRestaurant restaurant={item}/>}
+                    ListHeaderComponent={()=>(
+                        <>
+                        <OfferSlider />
+                        <Categories />
+                        <CardSlider />
+                    </>
                 )}
+                ListFooterComponent={()=>loadingMore && <ActivityIndicator size='small' color="red"/>}
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.1} // Cuộn đến 20% cuối danh sách sẽ gọi API
+                />
+                    )
+                }
             </View>
             <View style={styles.cartContainer}>
                 <TouchableOpacity onPress={handelPress}>

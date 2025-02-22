@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     scrollContainer: {
-        marginBottom: 110,
+        marginBottom: 95,
     },
     cartContainer: {
         width: 50,
