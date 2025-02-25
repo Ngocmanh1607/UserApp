@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import userApi from '../../api/userApi';
 import { useDispatch } from 'react-redux';
 import styles from '../../assets/css/SignUpRouterStyle';
+import Loading from '../../components/Loading';
 const SignUpRouter = () => {
     const navigation = useNavigation();
     const [loading,setLoading]= useState(false);
@@ -127,11 +128,7 @@ const SignUpRouter = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                {loading && (
-                    <View style={styles.loadingOverlay}>
-                        <ActivityIndicator size="small" color="#ffffff" />
-                    </View>
-                )}
+                {loading && (<Loading/>)}
             </View>
         </TouchableWithoutFeedback>
 

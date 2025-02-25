@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import Snackbar from 'react-native-snackbar';
 import styles from '../../assets/css/RegisterInfStyle';
+import Loading from '../../components/Loading';
 const RegisterInf = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -79,11 +80,7 @@ const RegisterInf = () => {
     return (
         <View style={styles.container}>
             {
-                isLoading ? (
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <ActivityIndicator size='large' color='#FF0000' />
-                    </View>
-                ) : (
+                isLoading ? (<Loading/>) : (
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={styles.avatarContainer}>
                             <TouchableOpacity style={styles.imageContainer} onPress={openImagePicker}>

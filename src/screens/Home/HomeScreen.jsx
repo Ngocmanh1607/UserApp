@@ -11,15 +11,15 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import restaurantApi from "../../api/restaurantApi";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import userApi from "../../api/userApi";
 import styles from "../../assets/css/HomeStyle";
+import Loading from "../../components/Loading";
 
 const HomeScreen = () => {
     const [search, setSearch] = useState('');
     const [restaurants, setRestaurants] = useState([]);
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
     const [isSearch, setIsSearch] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true); // Kiểm tra còn dữ liệu để tải không
@@ -28,7 +28,7 @@ const HomeScreen = () => {
     const address = useSelector(state => state.currentLocation);
     useEffect(() => {
         if (address.address && address.address !== 'Đang lấy vị trí...') {
-            fetchRestaurantData(1,false);
+            // fetchRestaurantData(1,false);
         }
     }, [address]);
     const fetchRestaurantData = async (pageNumber = 1, isLoadMore = false) => {
@@ -85,6 +85,7 @@ const HomeScreen = () => {
             <View style={styles.headContainer}>
                 <Headerbar />
             </View>
+            {loading ? (<Loading/> ) : (
             <View style={styles.scrollContainer}>
                 {/* Search box */}
                 <View style={styles.searchbox}>
@@ -98,34 +99,6 @@ const HomeScreen = () => {
                         onChangeText={handleSearch}
                     />
                 </View>
-
-                {/* Loading Indicator */}
-                {loading ? (
-                    <ActivityIndicator size="small" color="red" style={{ marginTop: 20 }} />
-                ) : (
-                    // isSearch ? (
-                    //     <ScrollView>
-                    //         {filteredRestaurants.length > 0 ? (
-                    //             filteredRestaurants.map((restaurant) => (
-                    //                 <CardRestaurant key={restaurant.id} restaurant={restaurant} />
-                    //             ))
-                    //         ) : (
-                    //             <Text style={styles.textErrol}>Không tìm thấy kết quả</Text>
-                    //         )}
-                    //     </ScrollView>
-                    // ) : (
-                    //     <ScrollView>
-                    //         <OfferSlider />
-                    //         <Categories />
-                    //         <CardSlider />
-                    //         {filteredRestaurants.length > 0 ? (
-                    //             filteredRestaurants.map((restaurant) => (
-                    //                 <CardRestaurant key={restaurant.id} restaurant={restaurant} />
-                    //             ))
-                    //         ) : (
-                    //             <Text style={styles.textErrol}>Không có nhà hàng nào</Text>
-                    //         )}
-                    //     </ScrollView>
                     <FlatList
                     data={filteredRestaurants}
                     keyExtractor={(item)=>item.id.toString()}
@@ -141,9 +114,8 @@ const HomeScreen = () => {
                 onEndReached={handleLoadMore}
                 onEndReachedThreshold={0.1} // Cuộn đến 20% cuối danh sách sẽ gọi API
                 />
-                    )
-                }
             </View>
+                                )}
             <View style={styles.cartContainer}>
                 <TouchableOpacity onPress={handelPress}>
                     <SimpleLineIcons name="handbag" size={35} color='black' />

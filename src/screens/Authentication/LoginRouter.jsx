@@ -6,6 +6,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../../assets/css/LoginRouterStyle';
 import userApi from '../../api/userApi';
+import Loading from '../../components/Loading';
 const LoginRouter = () => {
     const navigation = useNavigation();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -120,9 +121,7 @@ const LoginRouter = () => {
                     </TouchableOpacity>
                 </View>
                 {loading && (
-                    <View style={styles.loadingOverlay}>
-                        <ActivityIndicator size="small" color="#ffffff" />
-                    </View>
+                    <Loading/>
                 )}
             </View>
         </TouchableWithoutFeedback>
