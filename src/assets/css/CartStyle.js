@@ -7,7 +7,6 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        // backgroundColor: '#FFF',
     },
     headContainer: {
         margin: 5,
@@ -170,6 +169,12 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         height: 40,
         padding: 10,
+    },
+    overlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)", // Mờ nền
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
 export default styles;

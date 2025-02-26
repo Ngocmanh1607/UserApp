@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     cartContainer: {
         width: 50,
         height: 50,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
         position: 'absolute',
         zIndex: 1,
         right: 20,

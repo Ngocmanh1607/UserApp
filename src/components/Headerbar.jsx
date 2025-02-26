@@ -96,7 +96,7 @@ const Headerbar = () => {
                     <Ionicons name="location" size={25} color="#FF0000" style={{ paddingVertical: 6 }} />
                     <View>
                         <View>
-                            <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700' }}>Giao tới</Text>
+                            <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '600' }}>Giao tới</Text>
                         </View>
                         <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">
                             {error ? error : address}

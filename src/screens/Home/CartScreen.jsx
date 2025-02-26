@@ -12,6 +12,7 @@ import userApi from '../../api/userApi';
 import styles from '../../assets/css/CartStyle';
 import PaymentMethodScreen from '../Order/PaymentMethodScreen';
 import CouponPage from '../Order/CouponScreen';
+import Loading from '../../components/Loading';
 const CartScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
@@ -25,7 +26,6 @@ const CartScreen = () => {
 
     const [showCompleteOrder, setShowCompleteOrder] = useState(false);
     const items = useSelector(state => state.cart.carts[restaurantId]);
-    const userInfo = useSelector(state => state.user.userInfo);
     const address = useSelector(state => state.currentLocation);
     const error = useSelector(state => state.currentLocation.error);
     const [cost, setCost] = useState();
@@ -106,32 +106,43 @@ const CartScreen = () => {
     const handlePress = () => {
         navigation.navigate('MapScreen');
     };
-    const handleOrder = () => {
-        const fetchOrder = async (userInfo, address, items, selectedPaymentMethod, note) => {
-            setIsLoading(true)
-            const cuponid = discount?.id;
-            const response = await orderApi.orderApi(userInfo, address, items, selectedPaymentMethod = 'ZALOPAY', cost.totalPrice, cost.shippingCost, note, cuponid, navigation);
+    const handleOrder = async () => {
+        try {
+            setIsLoading(true);
+            const userInfoResponse = await userApi.getInfoUser(dispatch, navigation);
+            console.log(userInfoResponse);
+            if (!userInfoResponse?.profile.name || !userInfoResponse?.profile.phone_number) {
+                Alert.alert('Cập nhật thông tin', 'Vui lòng cập nhật thông tin để có thể đặt hàng', [
+                    { text: 'Huỷ', style: 'cancel' },
+                    { text: 'Ok', onPress: () => navigation.navigate('Thông tin') },
+                ]);
+                setIsLoading(false);
+                return;
+            }
+            const cuponid = coupon.id;
+            const response = await orderApi.orderApi(
+                userInfoResponse,
+                address,
+                items,
+                'ZALOPAY',
+                cost.totalPrice,
+                cost.shippingCost,
+                note,
+                cuponid,
+                navigation
+            );
+    
             setTransactionId(response.app_trans_id);
             console.log(response.url);
+    
             if (response.url) {
                 await Linking.openURL(response.url);
             }
-            setIsLoading(false)
-        };
-        const fetchUserInfo = async () => {
-            const response = await userApi.getInfoUser(dispatch, navigation);
-            console.log(response);
-        };
-
-        fetchUserInfo()
-        if (userInfo.name === '' || userInfo.phone_number === '' || userInfo === 'null') {
-            Alert.alert('Cập nhật thông tin ', 'Vui lòng cập nhật thông tin để có thể đặt hàng', [
-                { text: 'Huỷ', style: 'cancel' },
-                { text: 'Ok', onPress: () => navigation.navigate('Thông tin') },
-            ]);
-        }
-        else {
-            fetchOrder(userInfo, address, items, selectedPaymentMethod, note);
+        } catch (error) {
+            console.error('Lỗi đặt hàng:', error);
+            Alert.alert('Lỗi', 'Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại.');
+        } finally {
+            setIsLoading(false);
         }
     };
     const handlePayment = () => {
@@ -167,9 +178,12 @@ const CartScreen = () => {
     );
 
     return (
-        isLoading ? (<View style={styles.loaderContainer} >
-            <ActivityIndicator size="large" color="#FF0000" />
-        </View>
+        isLoading ? (
+            <Modal transparent={true} animationType="fade">
+                    <View style={styles.overlay}>
+                        <ActivityIndicator size="large" color="#f00" />
+                    </View>
+            </Modal>
         ) : (
             <SafeAreaView style={styles.container} >
                 <View style={styles.headContainer}>

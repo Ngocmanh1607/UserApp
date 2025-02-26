@@ -1,9 +1,6 @@
-import { Alert, Linking } from "react-native";
+import { Alert } from "react-native";
 import apiClient from "./apiClient";
-import axios from 'axios'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from '@react-navigation/native';
-import { useCallback, useState } from "react";
 const apiKey = '123'
 const orderApi = {
     orderApi: async (userInfo, address, cart, payMethod, price, fee, note, couponId, navigation) => {
@@ -20,9 +17,9 @@ const orderApi = {
                 }));
             };
             const listCartItem = convertCartToListCartItem(cart);
-            console.log(listCartItem);
             const userId = await AsyncStorage.getItem('userId');
             const accessToken = await AsyncStorage.getItem('accessToken');
+            console.log(userId + accessToken);
             if (!userId || !accessToken) {
                 Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
                 navigation.navigate("Đăng kí thông tin");

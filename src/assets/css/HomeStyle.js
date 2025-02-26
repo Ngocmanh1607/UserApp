@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
     cartContainer: {
         width: 50,
         height: 50,
-        backgroundColor: "#fff",
         position: 'absolute',
         zIndex: 1,
         right: 10,
@@ -39,6 +38,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         elevation: 5,
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
     },
     textErrol: {
         fontSize: 14,

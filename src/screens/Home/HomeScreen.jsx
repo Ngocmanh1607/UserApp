@@ -27,8 +27,9 @@ const HomeScreen = () => {
     const dispatch = useDispatch();
     const address = useSelector(state => state.currentLocation);
     useEffect(() => {
+        console.log('load do address')
         if (address.address && address.address !== 'Đang lấy vị trí...') {
-            // fetchRestaurantData(1,false);
+            fetchRestaurantData(1,false);
         }
     }, [address]);
     const fetchRestaurantData = async (pageNumber = 1, isLoadMore = false) => {
@@ -53,9 +54,10 @@ const HomeScreen = () => {
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu nhà hàng:", error);
         }
-
-        setLoading(false);
+        finally{
+            setLoading(false);
         setLoadingMore(false);
+        }
     };
 
     const handleSearch = (query) => {
