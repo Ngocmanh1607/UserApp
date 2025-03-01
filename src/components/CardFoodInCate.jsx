@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from '@react-navigation/native';
-import formatPrice from '../utils/formatPrice';
+import formatPrice from '../utils/format';
 import restaurantApi from '../api/restaurantApi';
 import { useSelector } from 'react-redux';
 

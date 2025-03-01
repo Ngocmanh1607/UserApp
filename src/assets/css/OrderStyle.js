@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         borderRadius: 10,
         height: 45,
+        marginBottom: 10,
     },
     input: {
         width: '90%',

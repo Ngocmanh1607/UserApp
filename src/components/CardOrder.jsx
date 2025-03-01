@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import formatPrice from '../utils/formatPrice';
+import {formatPrice,  formatDate } from '../utils/format';
 const CardOrder = ({ order }) => {
     const navigation = useNavigation();
     const getOrderStatus = (status) => {
@@ -21,7 +21,7 @@ const CardOrder = ({ order }) => {
         <View style={styles.orderItem}>
             {/* Order header with date and status */}
             <View style={styles.orderHeader}>
-                <Text style={styles.orderDate}>{order.order_date}</Text>
+                <Text style={styles.orderDate}>{formatDate(order.order_date)}</Text>
                 <TouchableOpacity onPress={() => handlePressOrder(order.id, order.order_status)}><Text style={[styles.orderStatus, { color: order.order_status === 'ORDER_CONFIRMED' ? "#28a745" : "#FF0000" }]}>
                     {getOrderStatus(order.order_status)}
                 </Text></TouchableOpacity>
@@ -41,7 +41,6 @@ const CardOrder = ({ order }) => {
                 </View>
             </View>
 
-            {/* Touchable area with the options to reorder or view details */}
             <TouchableOpacity
                 style={styles.reorderButtonContainer}
                 onPress={() => { navigation.navigate('DetailOrder', { order: order }) }}
@@ -62,10 +61,8 @@ const styles = StyleSheet.create({
     orderItem: {
         backgroundColor: '#fff',
         padding: 10,
-        borderRadius: 8,
+        borderRadius: 10,
         marginBottom: 10,
-        borderColor: '#ddd',
-        borderWidth: 1,
     },
     orderHeader: {
         flexDirection: 'row',
@@ -110,7 +107,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#FFF',
         padding: 5,
-        borderRadius: 4,
     },
     viewOrder: {
         fontSize: 14,
@@ -125,7 +121,7 @@ const styles = StyleSheet.create({
     viewReorder: {
         backgroundColor: '#FF0000',
         padding: 5,
-        borderRadius: 10,
+        borderRadius: 5,
         width: 75,
         alignItems: 'center',
         justifyContent: 'center'

@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#fff',
         borderRadius: 8,
-        marginBottom: 15,
+        marginBottom: 10,
     },
     orderCompleteText: {
         fontSize: 16,
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 15,
         borderRadius: 8,
-        marginBottom: 15,
+        marginBottom: 10,
     },
     licensePlate: {
         fontSize: 16,
@@ -74,17 +74,17 @@ const styles = StyleSheet.create({
     },
     orderItemContainer: {
         backgroundColor: '#fff',
-        padding: 15,
-        borderRadius: 8,
-        marginBottom: 15,
+        padding: 10,
+        borderRadius: 10,
+        marginBottom: 10,
     },
     orderItemDetails: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     orderItemImage: {
-        width: 60,
-        height: 60,
+        width: 80,
+        height: 80,
         borderRadius: 5,
         marginRight: 10,
     },
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 15,
         borderRadius: 8,
-        marginBottom: 15,
+        marginBottom: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
@@ -147,9 +147,8 @@ const styles = StyleSheet.create({
     },
     summaryContainer: {
         backgroundColor: '#FFFF',
-        borderRadius: 5,
+        borderRadius: 8,
         padding: 10,
-        marginVertical: 5,
         elevation: 10,
     },
     textBold: {

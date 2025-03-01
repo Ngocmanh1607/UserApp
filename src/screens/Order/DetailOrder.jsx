@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React from 'react';
-import formatPrice from '../../utils/formatPrice';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {formatPrice,formatDate} from '../../utils/format';
+import {  useRoute } from '@react-navigation/native';
 import styles from '../../assets/css/DetailOrderStyle';
 const OrderDetailScreen = () => {
     const route = useRoute();
@@ -38,7 +38,7 @@ const OrderDetailScreen = () => {
                 {/* Order ID */}
                 <View style={styles.orderIdContainer}>
                     <Text style={styles.orderId}>Mã đơn: {order.id}</Text>
-                    <Text style={styles.orderTime}>{order.order_date}</Text>
+                    <Text style={styles.orderTime}>{ formatDate(order.order_date)}</Text>
                 </View>
                 {/* Ordered Items */}
                 {order.listCartItem.map((item, index) => (
@@ -47,7 +47,7 @@ const OrderDetailScreen = () => {
                             <Image source={{ uri: item.image }} style={styles.orderItemImage} />
                             <View style={styles.orderItemText}>
                                 <Text style={styles.orderItemName}>{item.name}</Text>
-                                <Text style={styles.orderItemOption}>Mô tả: {item.descriptions}</Text>
+                                {item.descriptions && <Text style={styles.orderItemOption}>Mô tả: {item.descriptions}</Text>}
                                 {
                                     item.toppings && (item.toppings.map((option, optIndex) => (
                                         <Text key={optIndex} style={styles.orderItemOption}>{option.topping_name}</Text>

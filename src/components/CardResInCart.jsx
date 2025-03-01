@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import formatPrice from '../utils/formatPrice';
+import formatPrice from '../utils/format';
 import { useSelector } from 'react-redux';
 
 const CardResInCart = ({ restaurant, restaurantId }) => {
