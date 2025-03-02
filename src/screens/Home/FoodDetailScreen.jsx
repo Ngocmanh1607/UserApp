@@ -7,7 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { addItem } from '../../store/cartSlice';
 import Snackbar from 'react-native-snackbar';
-import formatPrice from '../../utils/format';
+import {formatPrice} from '../../utils/format';
 import { foodApi } from '../../api/foodApi';
 import styles from '../../assets/css/FoodDetailStyle';
 

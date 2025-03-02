@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-na
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Feather from 'react-native-vector-icons/Feather'
 import React, { useEffect, useState } from 'react'
-import formatPrice from '../utils/format'
+import {formatPrice }from '../utils/format'
 import { useDispatch } from 'react-redux'
 import { removeItem, updateQuantity } from '../store/cartSlice'
 import { useNavigation } from '@react-navigation/native'

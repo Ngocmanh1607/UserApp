@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import CompleteOrder from '../Order/CompleteOrderScreen';
 import { useDispatch, useSelector } from 'react-redux';
-import formatPrice from '../../utils/format';
+import {formatPrice} from '../../utils/format';
 import { orderApi } from '../../api/orderApi';
 import userApi from '../../api/userApi';
 import styles from '../../assets/css/CartStyle';
