@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         fontSize: 14,
-        color: 'black',
+        color: '#333',
         marginLeft: 10,
     },
     textContainer: {
@@ -30,6 +30,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'gray',
         marginTop: 10,
+    },
+    text: {
+        color: '#333',
+        fontSize: 16,
+        fontWeight: '300',
     },
 });
 export default styles;

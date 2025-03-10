@@ -92,13 +92,11 @@ const Headerbar = () => {
     return (
         <View style={styles.container}>
             <View style={styles.locationContainer}>
-                <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handlePress}>
-                    <Ionicons name="location" size={25} color="#FF0000" style={{ paddingVertical: 6 }} />
+                <TouchableOpacity style={styles.locationButton} onPress={handlePress}>
+                    <Ionicons name="location" size={25} color="#FF0000" style={styles.locationIcon} />
                     <View>
-                        <View>
-                            <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '600' }}>Giao tới</Text>
-                        </View>
-                        <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">
+                        <Text style={styles.deliveryText}>Giao tới</Text>
+                        <Text style={styles.addressText} numberOfLines={1} ellipsizeMode="tail">
                             {error ? error : address}
                         </Text>
                     </View>
@@ -111,23 +109,50 @@ const Headerbar = () => {
 export default Headerbar;
 
 const styles = StyleSheet.create({
-    locationContainer: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        height: 50,
-        padding: 10,
-    },
     container: {
         backgroundColor: '#FFFFFF',
         flexDirection: 'row',
-        paddingBottom: 10,
+        paddingVertical: 10,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
         margin: 5,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
     },
-    text: {
+    locationContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        height: 50,
+        padding: 10,
+        flex: 1,
+    },
+    locationButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    locationIcon: {
+        paddingVertical: 6,
+        marginRight: 8,
+    },
+    deliveryText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#222',
+        marginBottom: 2,
+    },
+    addressText: {
+        fontSize: 14,
+        color: '#666',
+        width: '95%',
         paddingRight: 10,
-        width: 340,
     }
 });

@@ -52,6 +52,7 @@ const OrderScreen = () => {
                     <TextInput
                         style={styles.input}
                         placeholder="Tìm kiếm theo tên nhà hàng"
+                        placeholderTextColor="#333"
                         value={search}
                         onChangeText={setSearch}
                     />

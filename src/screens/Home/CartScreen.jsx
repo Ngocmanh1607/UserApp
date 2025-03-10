@@ -189,7 +189,7 @@ const CartScreen = () => {
                             <Ionicons name="location" size={25} color="#FF0000" style={{ paddingVertical: 6 }} />
                             <View>
                                 <View>
-                                    <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700' }}>Giao tới</Text>
+                                    <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700', color: '#333' }}>Giao tới</Text>
                                 </View>
                                 <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{
                                     error ? error : address.address
@@ -207,11 +207,22 @@ const CartScreen = () => {
                         </ScrollView>
                     ) : (
                         <View style={styles.subContainer}>
-                            <Text style={{ fontSize: 16, fontWeight: '500' }}>Chưa có món ăn trong giỏ hàng</Text>
+                            <Text style={{ fontSize: 16, fontWeight: '500', color: '#333' }}>Chưa có món ăn trong giỏ hàng</Text>
                         </View>
                     )}
                     <View style={styles.noteContainer}>
-                        <TextInput placeholder='Ghi chú' style={[styles.row, { alignItems: 'center', justifyContent: 'center' }]} value={note} onChangeText={setNote}></TextInput>
+                        <TextInput
+                            placeholder='Ghi chú'
+                            placeholderTextColor="#7f8c8d"
+                            style={[styles.row, {
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#333',
+                                fontSize: 16
+                            }]}
+                            value={note}
+                            onChangeText={setNote}
+                        />
                     </View>
                     <TouchableOpacity style={styles.couponContainer} onPress={() => handleDiscount()}>
                         <Text style={styles.paymentText}>Mã giảm giá</Text>

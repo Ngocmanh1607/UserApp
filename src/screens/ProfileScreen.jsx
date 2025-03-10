@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from '../assets/css/ProfileStyle';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { TextInput } from 'react-native-paper';
+import { formatDate } from '../utils/format';
+
 const UserProfileScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -222,7 +224,7 @@ const UserProfileScreen = () => {
                                 label="Năm sinh"
                                 mode="outlined"
                                 style={styles.input}
-                                value={userInfo.date}
+                                value={formatDate(userInfo.date)}
                                 onChangeText={(text) => setUserInfo({ ...userInfo, date: text })}
                                 editable={isEditing}
                                 activeOutlineColor="#FF4B3A"

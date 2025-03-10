@@ -102,7 +102,7 @@ const MapScreen = () => {
                         style={styles.textContainer}
                         onPress={() => handlePress(item)}
                     >
-                        <Text>{item.address}</Text>
+                        <Text style={styles.text}>{item.address}</Text>
                     </TouchableOpacity>
                 )}
                 ListEmptyComponent={<Text style={styles.noResultsText}>Không tìm thấy địa chỉ nào</Text>}

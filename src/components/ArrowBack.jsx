@@ -16,7 +16,7 @@ export default ArrowBack
 const styles = StyleSheet.create({
     backButton: {
         position: 'absolute',
-        top: 70,
+        top: 20,
         left: 5,
         padding: 10,
         zIndex: 1,

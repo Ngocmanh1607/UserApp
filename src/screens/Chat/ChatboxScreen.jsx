@@ -143,6 +143,7 @@ const ChatboxScreen = () => {
                 <TextInput
                     style={styles.input}
                     placeholder="Bạn muốn ăn gì?"
+                    placeholderTextColor="#333"
                     value={message}
                     onChangeText={setMessage}
                 />

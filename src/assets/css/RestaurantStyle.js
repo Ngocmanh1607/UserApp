@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     },
     heartContainer: {
         position: 'absolute',
-        top: 80,
+        top: 20,
         right: 20,
     },
     headerContainer: {

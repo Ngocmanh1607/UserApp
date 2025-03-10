@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         height: 50,
         justifyContent: 'center',
+        marginTop: 10,
     },
     dropdown: {
         margin: 8,
@@ -176,6 +177,9 @@ const styles = StyleSheet.create({
     text: {
         paddingRight: 15,
         width: '90%',
+        color: '#333',
+        fontSize: 16,
+        fontWeight: '300',
     },
     paymentText: {
         fontSize: 16,

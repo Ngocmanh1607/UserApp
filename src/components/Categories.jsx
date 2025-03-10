@@ -132,7 +132,8 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         fontSize: 14,
         fontWeight: '500',
-        marginBottom: 10
+        marginBottom: 10,
+        color: '#333',
     },
     scrollContainer: {
         paddingHorizontal: 5,
