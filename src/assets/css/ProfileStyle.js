@@ -55,11 +55,8 @@ const styles = StyleSheet.create({
     },
     input: {
         backgroundColor: '#fff',
-        padding: 10,
-        borderRadius: 8,
-        marginBottom: 15,
-        borderWidth: 1,
-        borderColor: '#ddd',
+        borderRadius: 12,
+        marginBottom: 20,
     },
     buttonContainer: {
         justifyContent: 'space-between',

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from '@react-navigation/native';
-import {formatPrice} from '../utils/format';
+import { formatPrice } from '../utils/format';
 
 const CardFood2 = ({ food, restaurant }) => {
     console.log(food, restaurant);

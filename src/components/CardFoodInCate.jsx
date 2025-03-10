@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from '@react-navigation/native';
-import formatPrice from '../utils/format';
+import { formatPrice } from '../utils/format';
 import restaurantApi from '../api/restaurantApi';
 import { useSelector } from 'react-redux';
 
@@ -63,55 +63,73 @@ export default CardFood2;
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "#ffffff",
-        borderRadius: 10,
-        elevation: 5,
-        height: 120,
-        padding: 10,
+        borderRadius: 15,
+        elevation: 3,
+        height: 110,
+        padding: 12,
         flexDirection: 'row',
         alignItems: 'center',
-        margin: 5
+        margin: 8,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     mainContainer: {
-        width: "70 %"
+        flex: 1,
+        paddingLeft: 12
     },
     imageContainer: {
-        marginRight: 10,
+        marginRight: 12,
     },
     foodImage: {
         width: 90,
         height: 90,
-        borderRadius: 10,
+        borderRadius: 12,
     },
     foodNameContainer: {
-        marginBottom: 4,
+        marginBottom: 6,
     },
     foodName: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#333333',
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#2D2D2D',
     },
     foodDesContainer: {
-        marginBottom: 10,
-        width: '80%',
+        marginBottom: 8,
+        width: '90%',
     },
     foodDescription: {
-        fontSize: 13,
-        color: '#666666',
+        fontSize: 14,
+        color: '#757575',
+        lineHeight: 20
     },
     priceContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginTop: 10,
+        marginTop: 8,
+        paddingRight: 10
     },
     price: {
-        fontSize: 16,
-        color: '#FF0000',
-        fontWeight: 'bold',
+        fontSize: 18,
+        color: '#FF4B3A',
+        fontWeight: '800',
     },
     addButton: {
-        backgroundColor: '#FF0000',
-        borderRadius: 50,
-        padding: 6,
+        backgroundColor: '#FF4B3A',
+        borderRadius: 25,
+        padding: 8,
+        elevation: 2,
+        shadowColor: '#FF4B3A',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     }
 });

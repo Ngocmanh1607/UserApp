@@ -29,7 +29,7 @@ const HomeScreen = () => {
     useEffect(() => {
         console.log('load do address')
         if (address.address && address.address !== 'Đang lấy vị trí...') {
-            fetchRestaurantData(1,false);
+            fetchRestaurantData(1, false);
         }
     }, [address]);
     const fetchRestaurantData = async (pageNumber = 1, isLoadMore = false) => {
@@ -43,7 +43,7 @@ const HomeScreen = () => {
             if (data.length === 0) {
                 setHasMore(false);
             } else {
-                setRestaurants(prevRestaurants => 
+                setRestaurants(prevRestaurants =>
                     isLoadMore ? [...prevRestaurants, ...data] : data
                 );
                 setFilteredRestaurants(prevRestaurants =>
@@ -54,9 +54,9 @@ const HomeScreen = () => {
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu nhà hàng:", error);
         }
-        finally{
+        finally {
             setLoading(false);
-        setLoadingMore(false);
+            setLoadingMore(false);
         }
     };
 
@@ -77,7 +77,7 @@ const HomeScreen = () => {
     const handelPress = () => {
         navigation.navigate('CartResScreen');
     };
-    const handleLoadMore =()=>{
+    const handleLoadMore = () => {
         if (!isSearch) {
             fetchRestaurantData(page + 1, true);
         }
@@ -87,37 +87,37 @@ const HomeScreen = () => {
             <View style={styles.headContainer}>
                 <Headerbar />
             </View>
-            {loading ? (<Loading/> ) : (
-            <View style={styles.scrollContainer}>
-                {/* Search box */}
-                <View style={styles.searchbox}>
-                    <TouchableOpacity>
-                        <AntDesign name='search1' size={24} color="red" style={{ marginRight: 10 }} />
-                    </TouchableOpacity>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Tìm kiếm theo tên nhà hàng"
-                        value={search}
-                        onChangeText={handleSearch}
+            {loading ? (<Loading />) : (
+                <View style={styles.scrollContainer}>
+                    {/* Search box */}
+                    <View style={styles.searchbox}>
+                        <TouchableOpacity>
+                            <AntDesign name='search1' size={24} color="red" style={{ marginRight: 10 }} />
+                        </TouchableOpacity>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Tìm kiếm theo tên nhà hàng"
+                            value={search}
+                            onChangeText={handleSearch}
+                        />
+                    </View>
+                    <FlatList
+                        data={filteredRestaurants}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item }) => <CardRestaurant restaurant={item} />}
+                        ListHeaderComponent={() => (
+                            <>
+                                <OfferSlider />
+                                <Categories />
+                                <CardSlider />
+                            </>
+                        )}
+                        ListFooterComponent={() => loadingMore && <ActivityIndicator size='small' color="red" />}
+                        onEndReached={handleLoadMore}
+                        onEndReachedThreshold={0.1} // Cuộn đến 20% cuối danh sách sẽ gọi API
                     />
                 </View>
-                    <FlatList
-                    data={filteredRestaurants}
-                    keyExtractor={(item)=>item.id.toString()}
-                    renderItem={({item})=><CardRestaurant restaurant={item}/>}
-                    ListHeaderComponent={()=>(
-                        <>
-                        <OfferSlider />
-                        <Categories />
-                        <CardSlider />
-                    </>
-                )}
-                ListFooterComponent={()=>loadingMore && <ActivityIndicator size='small' color="red"/>}
-                onEndReached={handleLoadMore}
-                onEndReachedThreshold={0.1} // Cuộn đến 20% cuối danh sách sẽ gọi API
-                />
-            </View>
-                                )}
+            )}
             <View style={styles.cartContainer}>
                 <TouchableOpacity onPress={handelPress}>
                     <SimpleLineIcons name="handbag" size={35} color='black' />

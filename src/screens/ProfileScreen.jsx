@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, Image, TouchableOpacity, TextInput, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { Text, View, Image, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from '../assets/css/ProfileStyle';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { TextInput } from 'react-native-paper';
 const UserProfileScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -196,43 +197,56 @@ const UserProfileScreen = () => {
                         </View>
 
                         <View style={styles.infoContainer}>
-                            <Text style={styles.label}>Tên</Text>
                             <TextInput
+                                label="Tên"
+                                mode="outlined"
                                 style={styles.input}
                                 value={userInfo.name}
                                 onChangeText={(text) => setUserInfo({ ...userInfo, name: text })}
                                 editable={isEditing}
+                                activeOutlineColor="#FF4B3A"
                             />
 
-                            {/* <Text style={styles.label}>Email:</Text>
-                            <TextInput
+                            {/* <TextInput
+                                label="Email"
+                                mode="outlined" 
                                 style={styles.input}
                                 value={userInfo.email}
                                 onChangeText={(text) => setUserInfo({ ...userInfo, email: text })}
                                 editable={isEditing}
+                                outlineColor="#FF4B3A"
+                                activeOutlineColor="#FF4B3A"
                             /> */}
-                            <Text style={styles.label}>Năm sinh</Text>
+
                             <TextInput
+                                label="Năm sinh"
+                                mode="outlined"
                                 style={styles.input}
                                 value={userInfo.date}
                                 onChangeText={(text) => setUserInfo({ ...userInfo, date: text })}
                                 editable={isEditing}
+                                activeOutlineColor="#FF4B3A"
                             />
-                            <Text style={styles.label}>Số điện thoại</Text>
+
                             <TextInput
+                                label="Số điện thoại"
+                                mode="outlined"
                                 style={styles.input}
                                 value={userInfo.phone_number.toString()}
                                 onChangeText={(text) => setUserInfo({ ...userInfo, phone_number: text })}
                                 editable={isEditing}
+                                activeOutlineColor="#FF4B3A"
                             />
 
-                            <Text style={styles.label}>Địa chỉ:</Text>
-                            <TouchableOpacity
-                                style={styles.input}
-                                onPress={handlePressAddress}
-                            >
-                                <Text>{address.address_name}</Text>
-                            </TouchableOpacity>
+                            <TextInput
+                                label="Địa chỉ"
+                                mode="outlined"
+                                style={{ ...styles.input, height: 55 }}
+                                value={address.address_name}
+                                editable={false}
+                                onPressIn={handlePressAddress}
+                                activeOutlineColor="#FF4B3A"
+                            />
                         </View>
 
                         {isEditing ? (
