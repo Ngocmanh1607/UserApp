@@ -30,31 +30,42 @@ const OfferSlider = () => {
 export default OfferSlider
 const styles = StyleSheet.create({
     container: {
-        height: 180,
+        height: 200,
+        width: '95%',
         alignSelf: 'center',
-        marginTop: 5,
-        marginHorizontal:10,
+        marginVertical: 10,
+        borderRadius: 10,
+        backgroundColor: '#fff',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     image: {
         width: '100%',
         height: '100%',
         borderRadius: 10,
+        resizeMode: 'cover'
     },
     slide: {
-        width: '99%',
+        width: '100%',
         height: '100%',
-        justifyContent: 'center',
-        alignContent: 'center'
+        borderRadius: 10,
+        overflow: 'hidden'
     },
     nextButton: {
-        fontSize: 20,
-        fontWeight: '600',
-        backgroundColor: 'white',
-        borderRadius: 10,
-        width: 20,
-        height: 20,
+        fontSize: 24,
+        color: '#fff',
+        fontWeight: 'bold',
+        backgroundColor: 'rgba(0,0,0,0.3)',
+        borderRadius: 15,
+        width: 30,
+        height: 30,
         textAlign: 'center',
-        lineHeight: 20,
-
+        lineHeight: 30,
     }
 })

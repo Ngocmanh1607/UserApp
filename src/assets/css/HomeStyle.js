@@ -18,6 +18,13 @@ const styles = StyleSheet.create({
         elevation: 3,
         borderRadius: 10,
         height: 45,
+        shadowColor: '#000',
+        shadowOpacity: 0.3,
+        shadowRadius: 4.65,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
     },
     input: {
         width: '85%',

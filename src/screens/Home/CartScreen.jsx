@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import CompleteOrder from '../Order/CompleteOrderScreen';
 import { useDispatch, useSelector } from 'react-redux';
-import {formatPrice} from '../../utils/format';
+import { formatPrice } from '../../utils/format';
 import { orderApi } from '../../api/orderApi';
 import userApi from '../../api/userApi';
 import styles from '../../assets/css/CartStyle';
@@ -128,10 +128,10 @@ const CartScreen = () => {
                 cuponid,
                 navigation
             );
-    
+
             setTransactionId(response.app_trans_id);
             console.log(response.url);
-    
+
             if (response.url) {
                 await Linking.openURL(response.url);
             }
@@ -177,12 +177,12 @@ const CartScreen = () => {
     return (
         isLoading ? (
             <Modal transparent={true} animationType="fade">
-                    <View style={styles.overlay}>
-                        <ActivityIndicator size="large" color="#f00" />
-                    </View>
+                <View style={styles.overlay}>
+                    <ActivityIndicator size="large" color="#f00" />
+                </View>
             </Modal>
         ) : (
-            <SafeAreaView style={styles.container} >
+            <ScrollView style={styles.container} >
                 <View style={styles.headContainer}>
                     <View style={styles.locationContainer}>
                         <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handlePress}>
@@ -281,7 +281,7 @@ const CartScreen = () => {
                         </>
                     )
                 }
-            </SafeAreaView>
+            </ScrollView>
         )
     )
 }

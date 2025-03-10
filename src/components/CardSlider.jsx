@@ -77,46 +77,60 @@ export default CardSlider
 
 const styles = StyleSheet.create({
     container: {
-        
+        marginVertical: 10,
+        marginHorizontal: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.2,
     },
     cardhead: {
-        fontSize: 18,
-        fontWeight: '500',
-        marginHorizontal: 10,
-        paddingLeft: 5
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 10
     },
     cardimage: {
         width: '100%',
-        height: 100,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
+        height: 120,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        resizeMode: 'cover'
     },
     card: {
-        width: 250,
-        height: 150,
-        marginLeft: 10,
-        marginVertical:5,
-        borderRadius: 10,
-        elevation: 10,
+        width: 280,
+        height: 180,
+        marginRight: 15,
+        borderRadius: 15,
         backgroundColor: '#fff',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     cardin1: {
-        marginHorizontal: 3,
-        marginTop: 3,
+        padding: 10,
     },
     cardin1txt: {
-        fontSize: 16,
-        fontWeight: '600',
-        marginHorizontal: 5
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#000',
+        marginBottom: 5
     },
     cardin2: {
         flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        marginHorizontal: 6,
     },
     cardin2txt1: {
         fontSize: 14,
-        marginRight: 10,
+        color: '#666',
         fontWeight: '500'
     }
 })

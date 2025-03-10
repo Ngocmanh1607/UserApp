@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-na
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Feather from 'react-native-vector-icons/Feather'
 import React, { useEffect, useState } from 'react'
-import {formatPrice }from '../utils/format'
+import { formatPrice } from '../utils/format'
 import { useDispatch } from 'react-redux'
 import { removeItem, updateQuantity } from '../store/cartSlice'
 import { useNavigation } from '@react-navigation/native'
@@ -60,7 +60,7 @@ const ItemInCart = ({ food, restaurantId }) => {
                 </View>
                 <View style={styles.foodToppingContainer}>
                     {toppingName.map((topping_name) => {
-                        return <Text style={{ fontSize: 12 }}>{topping_name} </Text>
+                        return <Text style={styles.toppingText}>{topping_name} </Text>
                     })}
                 </View>
                 <View style={styles.handleContainer}>
@@ -88,63 +88,93 @@ const styles = StyleSheet.create({
     foodContainer: {
         backgroundColor: "#fff",
         borderRadius: 10,
-        elevation: 5,
+        elevation: 3,
         height: 100,
-        margin: 5,
+        marginVertical: 8,
+        marginHorizontal: 5,
         alignItems: 'center',
-        flex: 1,
         flexDirection: 'row',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     foodImage: {
         width: 80,
         height: 80,
-        borderRadius: 10
+        borderRadius: 10,
+        resizeMode: 'cover'
     },
     foodName: {
         fontSize: 16,
-        fontWeight: '600',
-        color: '#000000',
+        fontWeight: '700',
+        color: '#2c3e50',
         textAlign: 'left',
+        marginBottom: 4
     },
     priceContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
     },
     price: {
         fontSize: 16,
-        color: '#FF0000',
-        fontWeight: 'bold',
+        color: '#e74c3c',
+        fontWeight: '700',
     },
     addButton: {
-        backgroundColor: '#FF0000',
-        borderRadius: 10,
-        padding: 8,
+        backgroundColor: '#e74c3c',
+        borderRadius: 8,
+        padding: 6,
+        elevation: 2
     },
     imageContainer: {
-        marginHorizontal: 10
+        marginHorizontal: 12,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22
     },
     foodNameContainer: {
-        marginTop: 10
+        marginTop: 8
     },
     numberContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        paddingHorizontal: 4
     },
     handleContainer: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        marginTop: 8
     },
     infContainer: {
         flex: 1,
-        margin: 10
+        marginVertical: 10,
+        marginRight: 12
     },
     text: {
-        fontSize: 18,
-        color: '#000000',
-        margin: 10
+        fontSize: 16,
+        color: '#2c3e50',
+        fontWeight: '600',
+        marginHorizontal: 12
+    },
+    toppingText: {
+        fontSize: 12,
+        color: '#7f8c8d',
+        marginRight: 4
+    },
+    foodToppingContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap'
     }
 })

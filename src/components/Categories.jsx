@@ -119,12 +119,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 2,
-        backgroundColor: '#f3f3f2'
+        backgroundColor: '#f3f3f2',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     text: {
         marginLeft: 10,
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: '500',
+        marginBottom: 10
     },
     scrollContainer: {
         paddingHorizontal: 5,

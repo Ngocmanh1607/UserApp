@@ -27,6 +27,13 @@ const styles = StyleSheet.create({
         marginTop: -30,
         borderRadius: 10,
         elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 4.65,
     },
     summaryContainer: {
         width: '95%',
@@ -78,7 +85,14 @@ const styles = StyleSheet.create({
         elevation: 3,
         borderRadius: 10,
         height: 45,
-        margin: 10
+        margin: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 4.65,
     },
     input: {
         flex: 1,

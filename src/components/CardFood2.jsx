@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from '@react-navigation/native';
 import { formatPrice } from '../utils/format';
@@ -44,11 +44,18 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffffff",
         borderRadius: 10,
         elevation: 5,
-        height: 120,
+        height: 100,
         padding: 10,
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10
+        marginBottom: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 4.65,
     },
     mainContainer: {
         width: "70 %"
@@ -57,8 +64,8 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     foodImage: {
-        width: 90,
-        height: 90,
+        width: 80,
+        height: 80,
         borderRadius: 10,
     },
     foodNameContainer: {

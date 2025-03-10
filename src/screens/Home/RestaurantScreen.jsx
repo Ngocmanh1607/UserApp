@@ -44,32 +44,32 @@ const RestaurantScreen = ({ route }) => {
             setFilteredData(filtered);
         }
     }
-    const handlePress =()=>{
-        navigation.navigate('ReviewScreen');
+    const handlePress = () => {
+        navigation.navigate('ReviewScreen', { restaurantId: restaurant.id });
     }
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <SafeAreaView style={styles.container}>
                 <Image source={{ uri: restaurant.image }} style={styles.imageContainer} />
-                <ArrowBack navigation={navigation}/>
+                <ArrowBack navigation={navigation} />
                 <TouchableOpacity style={styles.heartContainer}>
-                            <Feather name="heart" size={20} style={styles.heart} color={'#fff'} />
+                    <Feather name="heart" size={20} style={styles.heart} color={'#fff'} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.headerContainer} onPress={handlePress}>
                     <View style={styles.summaryContainer}>
-                    <Text style={styles.text}>{restaurant.name}</Text>
-                    <View style={styles.bottomContainer}>
-                        <View style={styles.ratingContainer}>
-                            <MaterialIcons name="star" size={20} color="#FFA500" />
-                            <Text style={styles.ratingText}>{restaurant.rating || 5}</Text>
+                        <Text style={styles.text}>{restaurant.name}</Text>
+                        <View style={styles.bottomContainer}>
+                            <View style={styles.ratingContainer}>
+                                <MaterialIcons name="star" size={20} color="#FFA500" />
+                                <Text style={styles.ratingText}>{restaurant.rating || 5}</Text>
+                            </View>
+                            <View style={styles.disContainer}>
+                                <Text style={styles.textDis}>Khoảng cách: {(restaurant.distance || 0).toFixed(2)}Km</Text>
+                            </View>
                         </View>
-                        <View style={styles.disContainer}>
-                            <Text style={styles.textDis}>Khoảng cách: {(restaurant.distance || 0).toFixed(2)}Km</Text>
-                        </View>
-                    </View>
                     </View>
                     <View style={styles.iconContainer}>
-                    <FontAwesome name="chevron-right" size={16} color={'#555'} />
+                        <FontAwesome name="chevron-right" size={16} color={'#555'} />
                     </View>
                 </TouchableOpacity>
                 <View style={styles.mainInContainer}>
