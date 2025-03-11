@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import {formatPrice,  formatDate } from '../utils/format';
+import { formatPrice, formatDate } from '../utils/format';
 const CardOrder = ({ order }) => {
     const navigation = useNavigation();
     const getOrderStatus = (status) => {
@@ -60,34 +60,46 @@ export default CardOrder;
 const styles = StyleSheet.create({
     orderItem: {
         backgroundColor: '#fff',
-        padding: 10,
-        borderRadius: 10,
-        marginBottom: 10,
+        padding: 15,
+        borderRadius: 12,
+        marginBottom: 15,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     orderHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 5,
+        alignItems: 'center',
+        marginBottom: 10,
     },
     orderDate: {
         fontSize: 14,
-        color: '#555',
+        color: '#666',
+        fontWeight: '500',
     },
     orderStatus: {
         fontSize: 14,
+        fontWeight: '600',
     },
     orderContent: {
         flexDirection: 'row',
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0',
-        paddingBottom: 15
+        borderBottomColor: '#eee',
+        paddingBottom: 15,
+        marginBottom: 10
     },
     orderImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 4,
-        marginRight: 10,
+        width: 60,
+        height: 60,
+        borderRadius: 8,
+        marginRight: 15,
     },
     orderDetails: {
         flex: 1,
@@ -95,34 +107,35 @@ const styles = StyleSheet.create({
     orderRestaurant: {
         fontSize: 16,
         fontWeight: 'bold',
+        marginBottom: 5,
+        color: '#333',
     },
     orderInfo: {
         fontSize: 14,
-        color: '#777',
+        color: '#666',
         marginVertical: 2,
     },
     reorderButtonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#FFF',
-        padding: 5,
+        paddingTop: 10,
     },
     viewOrder: {
         fontSize: 14,
-        color: '#007bff',
-        fontWeight: '500',
+        color: '#0066cc',
+        fontWeight: '600',
     },
     reorderButtonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
+        fontSize: 14,
+        fontWeight: '600',
         color: '#FFF',
     },
     viewReorder: {
-        backgroundColor: '#FF0000',
-        padding: 5,
-        borderRadius: 5,
-        width: 75,
+        backgroundColor: '#ff4d4d',
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center'
     }

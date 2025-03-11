@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React from 'react';
-import {formatPrice,formatDate} from '../../utils/format';
-import {  useRoute } from '@react-navigation/native';
+import { formatPrice, formatDate } from '../../utils/format';
+import { useRoute } from '@react-navigation/native';
 import styles from '../../assets/css/DetailOrderStyle';
 const OrderDetailScreen = () => {
     const route = useRoute();
@@ -38,7 +38,7 @@ const OrderDetailScreen = () => {
                 {/* Order ID */}
                 <View style={styles.orderIdContainer}>
                     <Text style={styles.orderId}>Mã đơn: {order.id}</Text>
-                    <Text style={styles.orderTime}>{ formatDate(order.order_date)}</Text>
+                    <Text style={styles.orderTime}>{formatDate(order.order_date)}</Text>
                 </View>
                 {/* Ordered Items */}
                 {order.listCartItem.map((item, index) => (
@@ -53,7 +53,7 @@ const OrderDetailScreen = () => {
                                         <Text key={optIndex} style={styles.orderItemOption}>{option.topping_name}</Text>
                                     )))}
                                 <Text style={styles.orderItemOption}>Số lượng: {item.quantity}</Text>
-                                <Text style={styles.orderItemPrice}>Giá: {item.price}</Text>
+                                <Text style={styles.orderItemPrice}>Giá: {formatPrice(item.price)}</Text>
                             </View>
                         </View>
                     </View>

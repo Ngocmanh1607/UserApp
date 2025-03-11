@@ -160,7 +160,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingVertical: 5,
-        // height: 40
     },
     label: {
         fontWeight: '300',
@@ -181,5 +180,31 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: "#FFF"
     },
+    divider: {
+        height: 1,
+        backgroundColor: '#ddd',
+        marginVertical: 10
+    },
+    statusContainer: {
+        backgroundColor: '#fff',
+        padding: 15,
+        borderRadius: 8,
+        marginBottom: 10
+    },
+    statusText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#28a745'
+    },
+    addressContainer: {
+        backgroundColor: '#fff',
+        padding: 15,
+        borderRadius: 8,
+        marginBottom: 10
+    },
+    addressText: {
+        fontSize: 14,
+        color: '#333'
+    }
 });
 export default styles;
