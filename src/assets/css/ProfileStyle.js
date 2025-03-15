@@ -16,18 +16,32 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
+    mainContainer: {
+        margin: 10,
+        backgroundColor: '#fff',
+        borderRadius: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        marginTop: -40,
+    },
     avatarContainer: {
+        zIndex: 1,
         backgroundColor: '#FFF',
         width: 120,
         height: 120,
-        marginTop: 10,
+        marginTop: 20,
         justifyContent: 'center',
         alignItems: 'center',
         alignSelf: 'center',
         borderRadius: 15,
-        borderWidth: 2,
-        borderColor: '#FF0000',
-        elevation: 5
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     avatar: {
         width: 120,
@@ -45,8 +59,8 @@ const styles = StyleSheet.create({
         borderRadius: 15,
     },
     infoContainer: {
-        paddingHorizontal: 15,
-        marginTop: 20,
+        padding: 20,
+        marginTop: 60,
     },
     label: {
         fontSize: 16,
@@ -61,8 +75,8 @@ const styles = StyleSheet.create({
     buttonContainer: {
         justifyContent: 'space-between',
         flexDirection: 'row',
-        marginTop: 20,
         paddingHorizontal: 20,
+        marginBottom: 20,
     },
     editButton: {
         flexDirection: 'row',
@@ -112,6 +126,11 @@ const styles = StyleSheet.create({
         width: 120,
         height: 120,
         borderRadius: 60,
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
 });
 export default styles;

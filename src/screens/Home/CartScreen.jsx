@@ -1,4 +1,4 @@
-import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated, Alert, Linking, AppState, ActivityIndicator, Modal } from 'react-native';
+import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Animated, Alert, Linking, AppState, ActivityIndicator, Modal, FlatList } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import ItemInCart from '../../components/ItemInCart';
@@ -12,7 +12,6 @@ import userApi from '../../api/userApi';
 import styles from '../../assets/css/CartStyle';
 import PaymentMethodScreen from '../Order/PaymentMethodScreen';
 import CouponPage from '../Order/CouponScreen';
-import Loading from '../../components/Loading';
 const CartScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
@@ -32,7 +31,6 @@ const CartScreen = () => {
     const [note, setNote] = useState('');
     const [transactionId, setTransactionId] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const slideAnim = useRef(new Animated.Value(500)).current;
     const [foodData, setFoodData] = useState(() => {
         if (items)
             return items.map(item => ({
@@ -59,16 +57,7 @@ const CartScreen = () => {
             handleGetPrice();
         }
     }, [items]);
-    useEffect(() => {
-        const animation = Animated.timing(slideAnim, {
-            toValue: 0,
-            duration: 1000,
-            useNativeDriver: true,
-        });
-        animation.start();
-        // Clean up the animation
-        return () => animation.stop();
-    }, [slideAnim]);
+
     useEffect(() => {
         const unsubscribe = navigation.addListener('blur', () => {
             setShowCompleteOrder(false);
@@ -168,11 +157,6 @@ const CartScreen = () => {
             setIsLoading(false);
         }
     }
-    const CompleteOrderDisplay = () => (
-        <Animated.View style={[styles.card, { transform: [{ translateY: slideAnim }] }]}>
-            <CompleteOrder onComplete={() => setShowCompleteOrder(false)} restaurantId={restaurantId} />
-        </Animated.View>
-    );
 
     return (
         isLoading ? (
@@ -182,83 +166,120 @@ const CartScreen = () => {
                 </View>
             </Modal>
         ) : (
-            <ScrollView style={styles.container} >
-                <View style={styles.headContainer}>
-                    <View style={styles.locationContainer}>
-                        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handlePress}>
-                            <Ionicons name="location" size={25} color="#FF0000" style={{ paddingVertical: 6 }} />
-                            <View>
+            <SafeAreaView style={styles.container}>
+                <ScrollView style={[styles.container, { marginBottom: 165 }]} showsVerticalScrollIndicator={false} >
+                    <View style={styles.headContainer}>
+                        <View style={styles.locationContainer}>
+                            <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handlePress}>
+                                <Ionicons name="location" size={25} color="#FF0000" style={{ paddingVertical: 6 }} />
                                 <View>
-                                    <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700', color: '#333' }}>Giao tới</Text>
+                                    <View>
+                                        <Text style={{ paddingRight: 3, fontSize: 16, fontWeight: '700', color: '#333' }}>Giao tới</Text>
+                                    </View>
+                                    <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{
+                                        error ? error : address.address
+                                    }</Text>
                                 </View>
-                                <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{
-                                    error ? error : address.address
-                                }</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                <View style={styles.mainContainer}>
-                    {items && items.length > 0 ? (
-                        <ScrollView style={styles.scrollContainer}>
-                            {foodData.map((food) => (
-                                <ItemInCart food={food} key={food.uniqueId} restaurantId={restaurantId} />)
-                            )}
-                        </ScrollView>
-                    ) : (
-                        <View style={styles.subContainer}>
-                            <Text style={{ fontSize: 16, fontWeight: '500', color: '#333' }}>Chưa có món ăn trong giỏ hàng</Text>
+                            </TouchableOpacity>
                         </View>
-                    )}
-                    <View style={styles.noteContainer}>
-                        <TextInput
-                            placeholder='Ghi chú'
-                            placeholderTextColor="#7f8c8d"
-                            style={[styles.row, {
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                color: '#333',
-                                fontSize: 16
-                            }]}
-                            value={note}
-                            onChangeText={setNote}
-                        />
                     </View>
-                    <TouchableOpacity style={styles.couponContainer} onPress={() => handleDiscount()}>
-                        <Text style={styles.paymentText}>Mã giảm giá</Text>
-                        <Text style={styles.discountText}>{coupon ? coupon.cupon_code : 'Chọn mã giảm giá'}</Text>
-                    </TouchableOpacity>
+                    <View style={styles.mainContainer}>
+                        {items && items.length > 0 ? (
+                            <FlatList
+                                data={foodData}
+                                renderItem={({ item }) => (
+                                    <ItemInCart food={item} key={item.uniqueId} restaurantId={restaurantId} />
+                                )}
+                                keyExtractor={item => item.uniqueId}
+                            />
+                        ) : (
+                            <View style={styles.subContainer}>
+                                <Text style={{ fontSize: 16, fontWeight: '300', color: '#666' }}>Chưa có món ăn trong giỏ hàng</Text>
+                            </View>
+                        )}
+                        <View style={styles.noteContainer}>
+                            <TextInput
+                                placeholder='Ghi chú'
+                                placeholderTextColor="#7f8c8d"
+                                style={[styles.row, {
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#333',
+                                    fontSize: 16
+                                }]}
+                                value={note}
+                                onChangeText={setNote}
+                            />
+                        </View>
+                        <TouchableOpacity style={styles.couponContainer} onPress={() => handleDiscount()}>
+                            <Text style={styles.paymentText}>Mã giảm giá</Text>
+                            <Text style={styles.discountText}>{coupon ? coupon.cupon_code : 'Chọn mã giảm giá'}</Text>
+                        </TouchableOpacity>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={modalCoupon}
+                            onRequestClose={() => setModalCoupon(false)}
+                        >
+                            <TouchableOpacity
+                                style={{
+                                    position: 'absolute',
+                                    top: 20,
+                                    right: 20,
+                                    zIndex: 10,
+                                    backgroundColor: 'rgba(0,0,0,0.1)',
+                                    borderRadius: 20,
+                                    padding: 8
+                                }}
+                                onPress={() => setModalCoupon(false)}
+                            >
+                                <Ionicons name="close" size={24} color="#FF0000" />
+                            </TouchableOpacity>
+                            <CouponPage onSelectCoupon={handleSelectCoupon} />
+                        </Modal>
+
+                        <View style={styles.summaryContainer}>
+                            <Text style={styles.textBold}>Chi tiết thanh toán</Text>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Tạm tính</Text>
+                                <Text style={styles.value}>{formatPrice(cost ? cost.totalFoodPrice : 0)}</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Phí áp dụng</Text>
+                                <Text style={styles.value}>{formatPrice(cost ? cost.shippingCost : 0)}</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Giảm giá</Text>
+                                <Text style={styles.value}>{formatPrice(coupon && coupon.price)}</Text>
+                            </View>
+                        </View>
+                    </View>
+
                     <Modal
                         animationType="slide"
                         transparent={true}
-                        visible={modalCoupon}
-                        onRequestClose={() => setModalCoupon(false)}
+                        visible={showCompleteOrder}
+                        onRequestClose={() => setShowCompleteOrder(false)}
                     >
-
-                        <CouponPage onSelectCoupon={handleSelectCoupon} />
+                        <View style={styles.overlay}>
+                            <CompleteOrder onComplete={() => setShowCompleteOrder(false)} restaurantId={restaurantId} />
+                        </View>
                     </Modal>
 
-                    <View style={styles.summaryContainer}>
-                        <Text style={styles.textBold}>Chi tiết thanh toán</Text>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Tạm tính</Text>
-                            <Text style={styles.value}>{formatPrice(cost ? cost.totalFoodPrice : 0)}</Text>
-                        </View>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Phí áp dụng</Text>
-                            <Text style={styles.value}>{formatPrice(cost ? cost.shippingCost : 0)}</Text>
-                        </View>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Giảm giá</Text>
-                            <Text style={styles.value}>{formatPrice(coupon && coupon.price)}</Text>
-                        </View>
+                </ScrollView>
+                <View style={styles.footerContainer}>
+                    <View style={[styles.row, { borderBottomWidth: 1, padding: 10, borderBottomColor: '#666' }]}>
+                        <Text style={[styles.label, { fontWeight: '500' }]}>Tổng số tiền</Text>
+                        <Text style={[styles.value,]}>{formatPrice(cost ? (cost.totalPrice - (coupon?.price ?? 0)) : 0)}</Text>
                     </View>
+
                     <TouchableOpacity style={styles.methodPaymentContainer} onPress={handlePayment}>
                         <Text style={styles.paymentText}> Phương thức thanh toán</Text>
                         <TouchableOpacity style={styles.payment} onPress={handlePayment}>
                             <Text style={styles.paymentText}> {selectedPaymentMethod}</Text>
                         </TouchableOpacity>
                     </TouchableOpacity>
+
                     <Modal
                         animationType="slide"
                         transparent={true}
@@ -267,35 +288,13 @@ const CartScreen = () => {
                     >
                         <PaymentMethodScreen onSelectMethod={handleSelectPaymentMethod} />
                     </Modal>
-
-                    <View style={styles.footerContainer}>
-                        <View style={[styles.row, { borderBlockColor: '#FFFFFF', borderBottomWidth: 1 }]}>
-                            <Text style={[styles.label, { fontWeight: '500' }]}>Tổng số tiền</Text>
-                            <Text style={[styles.value, { fontWeight: '500' }]}>{formatPrice(cost ? (cost.totalPrice - (coupon?.price ?? 0)) : 0)}</Text>
-                        </View>
-                        <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
-                            <Text style={styles.buttonText}>Đặt món</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
+                        <Text style={styles.buttonText}>Đặt món</Text>
+                    </TouchableOpacity>
                 </View>
-
-                {
-                    showCompleteOrder && (
-                        <>
-                            <BlurView
-                                style={styles.absolute}
-                                blurType="light"
-                                blurAmount={1}
-                                reducedTransparencyFallbackColor="white"
-                            />
-                            <CompleteOrderDisplay />
-                        </>
-                    )
-                }
-            </ScrollView>
+            </SafeAreaView>
         )
     )
 }
 
 export default CartScreen;
-

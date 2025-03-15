@@ -18,7 +18,7 @@ const UserProfileScreen = () => {
     const [userInfo, setUserInfo] = useState({
         name: '',
         image: '',
-        email: '',
+        gender: '',
         phone_number: '',
         date: ''
     });
@@ -168,6 +168,8 @@ const UserProfileScreen = () => {
                 text: 'Đăng xuất',
                 onPress: async () => {
                     try {
+                        await AsyncStorage.removeItem('userId');
+                        await AsyncStorage.removeItem('userInfo');
                         navigation.reset({
                             index: 0,
                             routes: [{ name: 'Auth' }],
@@ -197,83 +199,81 @@ const UserProfileScreen = () => {
                                 ) : (<FontAwesome name="user" size={60} color="black" style={{ paddingVertical: 6 }} />)}
                             </TouchableOpacity>
                         </View>
+                        <View style={styles.mainContainer}>
+                            <View style={styles.infoContainer}>
+                                <TextInput
+                                    label="Tên"
+                                    mode="outlined"
+                                    style={styles.input}
+                                    value={userInfo.name}
+                                    onChangeText={(text) => setUserInfo({ ...userInfo, name: text })}
+                                    editable={isEditing}
+                                    activeOutlineColor="#FF4B3A"
+                                />
+                                <View style={styles.row}>
+                                    <TextInput
+                                        label="Năm sinh"
+                                        mode="outlined"
+                                        style={[styles.input, { width: '64%' }]}
+                                        value={formatDate(userInfo.date)}
+                                        onChangeText={(text) => setUserInfo({ ...userInfo, date: text })}
+                                        editable={isEditing}
+                                        activeOutlineColor="#FF4B3A"
+                                    />
+                                    <TextInput
+                                        label="Giới tính"
+                                        mode="outlined"
+                                        style={[styles.input, { width: '34%' }]}
+                                        value={userInfo.gender}
+                                        onChangeText={(text) => setUserInfo({ ...userInfo, gender: text })}
+                                        editable={isEditing}
+                                        activeOutlineColor="#FF4B3A"
+                                    />
+                                </View>
+                                <TextInput
+                                    label="Số điện thoại"
+                                    mode="outlined"
+                                    style={styles.input}
+                                    value={userInfo.phone_number.toString()}
+                                    onChangeText={(text) => setUserInfo({ ...userInfo, phone_number: text })}
+                                    editable={isEditing}
+                                    activeOutlineColor="#FF4B3A"
+                                />
 
-                        <View style={styles.infoContainer}>
-                            <TextInput
-                                label="Tên"
-                                mode="outlined"
-                                style={styles.input}
-                                value={userInfo.name}
-                                onChangeText={(text) => setUserInfo({ ...userInfo, name: text })}
-                                editable={isEditing}
-                                activeOutlineColor="#FF4B3A"
-                            />
-
-                            {/* <TextInput
-                                label="Email"
-                                mode="outlined" 
-                                style={styles.input}
-                                value={userInfo.email}
-                                onChangeText={(text) => setUserInfo({ ...userInfo, email: text })}
-                                editable={isEditing}
-                                outlineColor="#FF4B3A"
-                                activeOutlineColor="#FF4B3A"
-                            /> */}
-
-                            <TextInput
-                                label="Năm sinh"
-                                mode="outlined"
-                                style={styles.input}
-                                value={formatDate(userInfo.date)}
-                                onChangeText={(text) => setUserInfo({ ...userInfo, date: text })}
-                                editable={isEditing}
-                                activeOutlineColor="#FF4B3A"
-                            />
-
-                            <TextInput
-                                label="Số điện thoại"
-                                mode="outlined"
-                                style={styles.input}
-                                value={userInfo.phone_number.toString()}
-                                onChangeText={(text) => setUserInfo({ ...userInfo, phone_number: text })}
-                                editable={isEditing}
-                                activeOutlineColor="#FF4B3A"
-                            />
-
-                            <TextInput
-                                label="Địa chỉ"
-                                mode="outlined"
-                                style={{ ...styles.input, height: 55 }}
-                                value={address.address_name}
-                                editable={false}
-                                onPressIn={handlePressAddress}
-                                activeOutlineColor="#FF4B3A"
-                            />
+                                <TextInput
+                                    label="Địa chỉ"
+                                    mode="outlined"
+                                    style={{ ...styles.input, height: 55 }}
+                                    value={address.address_name}
+                                    editable={false}
+                                    onPressIn={handlePressAddress}
+                                    activeOutlineColor="#FF4B3A"
+                                />
+                            </View>
+                            {isEditing ? (
+                                <View style={styles.buttonContainer}>
+                                    <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+                                        <Text style={styles.buttonText}>Lưu</Text>
+                                        <Icon name="save" size={18} color="#fff" style={styles.logoutIcon} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+                                        <Text style={styles.buttonText}>Huỷ</Text>
+                                        <Icon name="times" size={18} color="#fff" style={styles.logoutIcon} />
+                                    </TouchableOpacity>
+                                </View>
+                            ) : (
+                                <View style={styles.buttonContainer}>
+                                    <TouchableOpacity style={styles.editButton} onPress={handleEditToggle}>
+                                        <Text style={styles.buttonText}>Chỉnh sửa</Text>
+                                        <Icon name="edit" size={18} color="#fff" style={styles.logoutIcon} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                                        <Text style={styles.buttonText}>Đăng xuất</Text>
+                                        <Icon name="sign-out-alt" size={18} color="#fff" style={styles.logoutIcon} />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
                         </View>
-
-                        {isEditing ? (
-                            <View style={styles.buttonContainer}>
-                                <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
-                                    <Text style={styles.buttonText}>Lưu</Text>
-                                    <Icon name="save" size={18} color="#fff" style={styles.logoutIcon} />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-                                    <Text style={styles.buttonText}>Huỷ</Text>
-                                    <Icon name="times" size={18} color="#fff" style={styles.logoutIcon} />
-                                </TouchableOpacity>
-                            </View>
-                        ) : (
-                            <View style={styles.buttonContainer}>
-                                <TouchableOpacity style={styles.editButton} onPress={handleEditToggle}>
-                                    <Text style={styles.buttonText}>Chỉnh sửa</Text>
-                                    <Icon name="edit" size={18} color="#fff" style={styles.logoutIcon} />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                                    <Text style={styles.buttonText}>Đăng xuất</Text>
-                                    <Icon name="sign-out-alt" size={18} color="#fff" style={styles.logoutIcon} />
-                                </TouchableOpacity>
-                            </View>
-                        )}
                     </ScrollView>
                 )
             }

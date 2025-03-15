@@ -14,7 +14,7 @@ const CompleteOrder = ({ onComplete, restaurantId }) => {
         navigation.navigate('Main');
     }
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.iconWrapper}>
                 <View style={styles.icon}>
                     <Text style={styles.iconText}>✔️</Text>
@@ -25,7 +25,7 @@ const CompleteOrder = ({ onComplete, restaurantId }) => {
             <TouchableOpacity style={styles.trackOrderButton} onPress={() => handleOrderComplete()} >
                 <Text style={styles.buttonText}>Quay lại trang chủ</Text>
             </TouchableOpacity>
-        </SafeAreaView>
+        </View>
     );
 };
 

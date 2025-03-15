@@ -28,11 +28,11 @@ const orderApi = {
             const orderData = {
                 order: {
                     listCartItem,
-                    receiver_name: userInfo.name,
+                    receiver_name: userInfo.profile.name,
                     address_receiver: address.address,
                     userLatitude: address.latitude,
                     userLongitude: address.longitude,
-                    phone_number: userInfo.phone_number,
+                    phone_number: userInfo.profile.phone_number,
                     order_pay: payMethod,
                     note: note,
                     price: price,

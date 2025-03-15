@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
         elevation: 3,
         height: 100,
         marginVertical: 8,
-        marginHorizontal: 5,
         alignItems: 'center',
         flexDirection: 'row',
         shadowColor: '#000',

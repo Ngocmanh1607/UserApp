@@ -29,14 +29,24 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 8,
         marginBottom: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     orderCompleteText: {
         fontSize: 16,
         fontWeight: 'bold',
+        color: '#333',
     },
     orderCompleteSubText: {
-        color: '#888',
+        color: '#666',
         marginTop: 5,
+        fontSize: 14,
     },
     orderCompleteIcon: {
         width: 40,
@@ -47,10 +57,19 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 8,
         marginBottom: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     licensePlate: {
         fontSize: 16,
         fontWeight: 'bold',
+        color: '#333',
     },
     driverDetails: {
         flexDirection: 'row',
@@ -58,35 +77,49 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     driverImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 5,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        borderWidth: 2,
+        borderColor: '#eee',
     },
     driverInfo: {
-        marginLeft: 10,
+        marginLeft: 15,
+        flex: 1,
     },
     driverName: {
         fontSize: 16,
         fontWeight: 'bold',
+        color: '#333',
     },
     driverRating: {
-        color: '#888',
+        color: '#666',
+        fontSize: 14,
+        marginTop: 2,
     },
     orderItemContainer: {
         backgroundColor: '#fff',
-        padding: 10,
+        padding: 15,
         borderRadius: 10,
         marginBottom: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     orderItemDetails: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     orderItemImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 5,
-        marginRight: 10,
+        width: 90,
+        height: 90,
+        borderRadius: 8,
+        marginRight: 15,
     },
     orderItemText: {
         flex: 1,
@@ -94,29 +127,43 @@ const styles = StyleSheet.create({
     orderItemName: {
         fontSize: 16,
         fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 5,
     },
     orderItemOption: {
-        color: '#888',
+        color: '#666',
         fontSize: 14,
     },
     orderItemPrice: {
         marginTop: 10,
         fontWeight: 'bold',
+        fontSize: 16,
+        color: '#FF0000',
     },
     paymentInfoContainer: {
         backgroundColor: '#fff',
         padding: 15,
         borderRadius: 8,
         marginBottom: 15,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     paymentMethod: {
         fontSize: 16,
         fontWeight: 'bold',
+        color: '#333',
     },
     orderTotal: {
         fontSize: 16,
         fontWeight: '500',
         marginTop: 5,
+        color: '#333',
     },
     orderIdContainer: {
         backgroundColor: '#fff',
@@ -125,20 +172,37 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     orderId: {
         fontSize: 14,
         fontWeight: 'bold',
+        color: '#333',
     },
     orderTime: {
         fontSize: 14,
-        color: '#888',
+        color: '#666',
     },
     reorderButton: {
         backgroundColor: '#FF0000',
         paddingVertical: 15,
         borderRadius: 8,
         alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     reorderButtonText: {
         fontSize: 16,
@@ -146,65 +210,91 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     summaryContainer: {
-        backgroundColor: '#FFFF',
+        backgroundColor: '#fff',
         borderRadius: 8,
         padding: 10,
-        elevation: 10,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        marginBottom: 10,
     },
     textBold: {
         fontSize: 18,
         fontWeight: '600',
-        color: '#000'
+        color: '#333',
     },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 5,
+        paddingVertical: 8,
     },
     label: {
-        fontWeight: '300',
+        fontWeight: '400',
         fontSize: 16,
-        color: '#000',
+        color: '#666',
     },
     value: {
-        fontWeight: '300',
+        fontWeight: '500',
         fontSize: 16,
-        color: '#000',
+        color: '#333',
     },
     totalLabel: {
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 18,
+        color: '#333',
     },
     totalValue: {
         fontWeight: 'bold',
-        fontSize: 18,
-        color: "#FFF"
+        fontSize: 20,
+        color: '#FF0000',
     },
     divider: {
         height: 1,
-        backgroundColor: '#ddd',
-        marginVertical: 10
+        backgroundColor: '#e0e0e0',
+        marginVertical: 12,
     },
     statusContainer: {
         backgroundColor: '#fff',
         padding: 15,
         borderRadius: 8,
-        marginBottom: 10
+        marginBottom: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     statusText: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#28a745'
+        color: '#28a745',
     },
     addressContainer: {
         backgroundColor: '#fff',
         padding: 15,
         borderRadius: 8,
-        marginBottom: 10
+        marginBottom: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     addressText: {
         fontSize: 14,
-        color: '#333'
+        color: '#333',
+        lineHeight: 20,
     }
 });
 export default styles;
