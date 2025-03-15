@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, FlatList } from "react-native";
+import { TextInput, TouchableOpacity, View, ActivityIndicator, FlatList } from "react-native";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Headerbar from "../../components/Headerbar";
 import CardSlider from "../../components/CardSlider";
