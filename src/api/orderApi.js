@@ -22,7 +22,7 @@ const orderApi = {
             console.log(userId + accessToken);
             if (!userId || !accessToken) {
                 Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
-                navigation.navigate("Đăng kí thông tin");
+                navigation.navigate("Auth");
                 return;
             }
             const orderData = {
@@ -37,7 +37,7 @@ const orderApi = {
                     note: note,
                     price: price,
                     delivery_fee: fee,
-                    cupon_id: couponId,
+                    coupon_id: couponId,
                     order_status: "PAID",
                     order_date: new Date().toString(),
                 }
@@ -78,7 +78,7 @@ const orderApi = {
                     await AsyncStorage.removeItem('accessToken');
                     await AsyncStorage.removeItem('userId');
                     Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
-                    navigation.navigate("Đăng kí thông tin");
+                    navigation.navigate("Auth");
                     return;
                 }
                 const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
@@ -111,7 +111,7 @@ const orderApi = {
     },
     getCoupon: async () => {
         try {
-            const messenger = await apiClient.get('cupon',
+            const messenger = await apiClient.get('coupon',
                 {
                     headers: {
                         "x-api-key": apiKey,
