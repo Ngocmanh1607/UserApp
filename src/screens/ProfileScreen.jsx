@@ -4,13 +4,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import userApi from '../api/userApi';
-import { uploadUserImage } from '../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from '../assets/css/ProfileStyle';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { TextInput } from 'react-native-paper';
 import { formatDate } from '../utils/format';
+import { uploadImageToCloudinary } from '../utils/cloudinaryUtils';
 
 const UserProfileScreen = () => {
     const navigation = useNavigation();
@@ -81,13 +81,13 @@ const UserProfileScreen = () => {
         }
     };
 
-    const uploadFirebase = async (image) => {
+    const uploadImage = async (image) => {
         try {
             const userId = await AsyncStorage.getItem('userId');
-            const imageUrl = await uploadUserImage(userId, image);
-            return imageUrl;
+            const downloadURL = await uploadImageToCloudinary(userId, image, 'avatar_user');
+            return downloadURL;
         } catch (error) {
-            console.error("Error uploading image:", error);
+            Alert.alert('Lỗi', error.message);
             return null;
         }
     };
@@ -128,11 +128,7 @@ const UserProfileScreen = () => {
                             setIsLoading(true);
                             let url = userInfo.image;
                             if (imageUri !== userInfo.image) {
-                                url = await uploadFirebase(imageUri);
-                                if (!url) {
-                                    Alert.alert('Lỗi', 'Không thể tải ảnh lên. Vui lòng thử lại.');
-                                    return;
-                                }
+                                url = await uploadImage(imageUri);
                             }
 
                             const profile = {
