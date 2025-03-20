@@ -5,6 +5,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import RatingCard from '../../components/RatingCard';
 import { io } from "socket.io-client";
 import styles from '../../assets/css/OrderStatusStyle';
+import MapboxGL from '@rnmapbox/maps';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const OrderStatusScreen = () => {
     const route = useRoute();
     const orderId = route.params?.orderId;
@@ -39,61 +41,48 @@ const OrderStatusScreen = () => {
                         <RatingCard order_id={orderId} />
                     </View>
                 ) : (
-                    <View style={styles.imageContainer}>
-                        <Image
-                            source={require('../../assets/Images/background2.png')}
-                            style={styles.chefImage}
-                            resizeMode="contain"
-                        />
-                    </View>
+                    orderStatus === 'PAID' ? (
+                        <View style={styles.imageContainer}>
+                            <Image
+                                source={require('../../assets/Images/background2.png')}
+                                style={styles.chefImage}
+                                resizeMode="contain"
+                            />
+                        </View>
+                    ) : (
+                        <MapboxGL.MapView style={styles.map} >
+                            <MapboxGL.Camera
+                                zoomLevel={13}
+                                centerCoordinate={restaurantLocation}
+                            />
+                            <MapboxGL.PointAnnotation coordinate={restaurantLocation} id="restaurant">
+                                <View style={styles.marker}>
+                                    <Ionicons name="restaurant" size={24} color="#FF6347" />
+                                </View>
+                            </MapboxGL.PointAnnotation>
+                            <MapboxGL.PointAnnotation coordinate={deliveryLocation} id="delivery">
+                                <View style={styles.marker}>
+                                    <MaterialCommunityIcons name="motorbike" size={24} color="#007AFF" />
+                                </View>
+                            </MapboxGL.PointAnnotation>
+                            {route && (
+                                <MapboxGL.ShapeSource id="routeSource" shape={{
+                                    type: 'Feature',
+                                    geometry: {
+                                        type: 'LineString',
+                                        coordinates: route.coordinates
+                                    }
+                                }}>
+                                    <MapboxGL.LineLayer
+                                        id="routeLayer"
+                                        style={{ lineWidth: 5, lineColor: '#007AFF' }}
+                                    />
+                                </MapboxGL.ShapeSource>
+                            )}
+                        </MapboxGL.MapView>
+                    )
                 )
             }
-            {/* {orderStatus === 'PAID' ? (
-                <View style={styles.imageContainer}>
-                    <Image
-                        source={require('../assets/Images/background2.png')}
-                        style={styles.chefImage}
-                        resizeMode="contain"
-                    />
-                </View>
-            ) : (
-                orderStatus === 'completed' && (
-                    <View style={styles.container}>
-                        <RatingCard />
-                    </View>
-                ))} */}
-
-            {/* <MapboxGL.MapView style={styles.map} >
-                <MapboxGL.Camera
-                    zoomLevel={13}
-                    centerCoordinate={restaurantLocation}
-                />
-                <MapboxGL.PointAnnotation coordinate={restaurantLocation} id="restaurant">
-                    <View style={styles.marker}>
-                        <Ionicons name="restaurant" size={24} color="#FF6347" />
-                    </View>
-                </MapboxGL.PointAnnotation>
-                <MapboxGL.PointAnnotation coordinate={deliveryLocation} id="delivery">
-                    <View style={styles.marker}>
-                        <MaterialCommunityIcons name="motorbike" size={24} color="#007AFF" />
-                    </View>
-                </MapboxGL.PointAnnotation>
-                {route && (
-                    <MapboxGL.ShapeSource id="routeSource" shape={{
-                        type: 'Feature',
-                        geometry: {
-                            type: 'LineString',
-                            coordinates: route.coordinates
-                        }
-                    }}>
-                        <MapboxGL.LineLayer
-                            id="routeLayer"
-                            style={{ lineWidth: 5, lineColor: '#007AFF' }}
-                        />
-                    </MapboxGL.ShapeSource>
-                )}
-            </MapboxGL.MapView> */}
-
 
             <View View style={styles.orderInfoContainer}>
                 <Text style={styles.orderStatus}>

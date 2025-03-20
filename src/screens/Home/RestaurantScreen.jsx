@@ -46,7 +46,7 @@ const RestaurantScreen = ({ route }) => {
         }
     }
     const handlePress = () => {
-        navigation.navigate('ReviewScreen', { restaurantId: restaurant.id });
+        navigation.navigate('ReviewScreen', { restaurantId });
     }
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
