@@ -13,14 +13,7 @@ const restaurantApi = {
             });
             return response.data.metadata;
         } catch (error) {
-            if (error.response) {
-                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
-                throw new Error(serverError);
-            } else if (error.request) {
-                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-            } else {
-                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
-            }
+            throw error;
         }
     },
     async getInfoRestaurants(restaurant_id) {
@@ -33,14 +26,7 @@ const restaurantApi = {
                 })
             return response.data.metadata;
         } catch (error) {
-            if (error.response) {
-                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
-                throw new Error(serverError);
-            } else if (error.request) {
-                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-            } else {
-                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
-            }
+            throw error;
         }
     },
     // API tìm kiếm nhà hàng
@@ -51,14 +37,7 @@ const restaurantApi = {
             });
             return response.data;
         } catch (error) {
-            if (error.response) {
-                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
-                throw new Error(serverError);
-            } else if (error.request) {
-                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-            } else {
-                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
-            }
+            throw error;
         }
     },
     async getFoodsRestaurant(restaurantId) {
@@ -71,14 +50,7 @@ const restaurantApi = {
             console.log('metadat', response.data.metadata)
             return response.data.metadata
         } catch (error) {
-            if (error.response) {
-                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
-                throw new Error(serverError);
-            } else if (error.request) {
-                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-            } else {
-                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
-            }
+            throw error;
         }
     },
     async getDistance(userLatitude, userLongtitude, restaurant_id) {
@@ -91,14 +63,7 @@ const restaurantApi = {
 
             return response.data.metadata
         } catch (error) {
-            if (error.response) {
-                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
-                throw new Error(serverError);
-            } else if (error.request) {
-                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-            } else {
-                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
-            }
+            throw error;
         }
     },
     async getReview(restaurantId) {
@@ -119,7 +84,7 @@ const restaurantApi = {
             );
             return response.data.metadata;
         } catch (error) {
-            console.error("Lỗi từ server: ", error.response.data);
+            throw error;
         }
     },
 };

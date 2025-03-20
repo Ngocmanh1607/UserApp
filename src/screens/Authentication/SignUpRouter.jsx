@@ -7,9 +7,10 @@ import userApi from '../../api/userApi';
 import { useDispatch } from 'react-redux';
 import styles from '../../assets/css/SignUpRouterStyle';
 import Loading from '../../components/Loading';
+import { HandleApiError } from '../../utils/handleError';
 const SignUpRouter = () => {
     const navigation = useNavigation();
-    const [loading,setLoading]= useState(false);
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -59,7 +60,7 @@ const SignUpRouter = () => {
                 navigation.navigate('RegisterInf');
             }
         } catch (error) {
-            Alert.alert('Đăng ký thất bại', error.message);
+            HandleApiError(error);
         } finally {
             setLoading(false); // Dừng loading
         }
@@ -124,11 +125,11 @@ const SignUpRouter = () => {
                     {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
                     <View style={styles.loginContainer}>
                         <TouchableOpacity style={styles.loginButtonContainer} onPress={handleSignUp}>
-                                <Text style={styles.textLogin}>Đăng ký</Text>
+                            <Text style={styles.textLogin}>Đăng ký</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-                {loading && (<Loading/>)}
+                {loading && (<Loading />)}
             </View>
         </TouchableWithoutFeedback>
 

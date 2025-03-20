@@ -4,12 +4,14 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import userApi from '../../api/userApi';
-import { uploadUserImage } from '../../utils/firebaseUtils';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import Snackbar from 'react-native-snackbar';
 import styles from '../../assets/css/RegisterInfStyle';
 import Loading from '../../components/Loading';
+import { uploadImageToCloudinary } from '../../utils/cloudinaryUtils';
+import { HandleApiError } from '../../utils/handleError';
 const RegisterInf = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -38,11 +40,10 @@ const RegisterInf = () => {
     const uploadFirebase = async (image) => {
         try {
             const userId = await AsyncStorage.getItem('userId');
-            const imageUrl = await uploadUserImage(userId, image);
+            const imageUrl = await uploadImageToCloudinary(userId, image, 'avatar_user');
             return imageUrl;
         } catch (error) {
-            console.error("Error uploading image:", error);
-            return null;
+            HandleApiError(error);
         }
     };
     const handlePressAddress = () => {
@@ -70,8 +71,7 @@ const RegisterInf = () => {
                 navigation.navigate('Main')
             }
         } catch (error) {
-            console.error('Error updating profile:', error);
-            Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.');
+            HandleApiError(error);
         } finally {
             setIsLoading(false);
         }
@@ -80,7 +80,7 @@ const RegisterInf = () => {
     return (
         <View style={styles.container}>
             {
-                isLoading ? (<Loading/>) : (
+                isLoading ? (<Loading />) : (
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={styles.avatarContainer}>
                             <TouchableOpacity style={styles.imageContainer} onPress={openImagePicker}>

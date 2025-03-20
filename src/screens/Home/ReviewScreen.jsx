@@ -5,6 +5,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
 import ReviewItem from '../../components/ReviewItem';
 import restaurantApi from '../../api/restaurantApi';
+import { HandleApiError } from '../../utils/handleError';
 const ReviewScreen = ({ restaurantId }) => {
     const [reviews, setReviews] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +17,7 @@ const ReviewScreen = ({ restaurantId }) => {
                 console.log(response);
                 setReviews(response);
             } catch (error) {
-                console.error('Error fetching reviews:', error);
+                HandleApiError(error);
             } finally {
                 setIsLoading(false);
             }

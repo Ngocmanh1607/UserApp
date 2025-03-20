@@ -1,6 +1,6 @@
 import apiClient from "./apiClient";
 
-const apiKey = '123'
+const apiKey = '123';
 const foodApi = {
     getCategories: async () => {
         try {
@@ -12,7 +12,7 @@ const foodApi = {
                 })
             return response.data.metadata;
         } catch (error) {
-            console.log(error)
+            throw error;
         }
     },
     getFoodInCate: async (cateId) => {
@@ -25,7 +25,7 @@ const foodApi = {
                 })
             return response.data.metadata.products
         } catch (error) {
-            console.log(error)
+            throw error;
         }
     },
     getFoodTopping: async (foodId) => {
@@ -38,7 +38,7 @@ const foodApi = {
                 })
             return response.data.metadata;
         } catch (error) {
-            console.log(error)
+            throw error;
         }
     }
 }

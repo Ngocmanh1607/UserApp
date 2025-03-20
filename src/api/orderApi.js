@@ -3,7 +3,7 @@ import apiClient from "./apiClient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const apiKey = '123'
 const orderApi = {
-    orderApi: async (userInfo, address, cart, payMethod, price, fee, note, couponId, navigation) => {
+    orderApi: async (userInfo, address, cart, payMethod, price, fee, note, couponId) => {
         try {
             const convertCartToListCartItem = (cart) => {
                 return cart.map(item => ({
@@ -19,11 +19,8 @@ const orderApi = {
             const listCartItem = convertCartToListCartItem(cart);
             const userId = await AsyncStorage.getItem('userId');
             const accessToken = await AsyncStorage.getItem('accessToken');
-            console.log(userId + accessToken);
             if (!userId || !accessToken) {
-                Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
-                navigation.navigate("Auth");
-                return;
+                throw new Error("Phiên hết hạn");
             }
             const orderData = {
                 order: {
@@ -73,21 +70,7 @@ const orderApi = {
                 })
             return response.data.metadata;
         } catch (error) {
-            if (error.response) {
-                if (error.response.status === 500) {
-                    await AsyncStorage.removeItem('accessToken');
-                    await AsyncStorage.removeItem('userId');
-                    Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
-                    navigation.navigate("Auth");
-                    return;
-                }
-                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
-                throw new Error(serverError);
-            } else if (error.request) {
-                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-            } else {
-                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
-            }
+            throw error;
         }
     },
     orderCheckStatus: async (app_trans_id) => {
@@ -123,14 +106,12 @@ const orderApi = {
             console.log(error)
         }
     },
-    getOrder: async (navigation) => {
+    getOrder: async () => {
         try {
             const userId = await AsyncStorage.getItem('userId');
             const accessToken = await AsyncStorage.getItem('accessToken');
             if (!userId || !accessToken) {
-                Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
-                navigation.navigate("Đăng kí thông tin");
-                return;
+                throw new Error("Phiên hết hạn");
             }
             console.log(userId, accessToken)
             const response = await apiClient.get('/customer/all/order',
@@ -143,21 +124,7 @@ const orderApi = {
                 })
             return response.data.metadata;
         } catch (error) {
-            if (error.response) {
-                if (error.response.status === 401) {
-                    await AsyncStorage.removeItem('accessToken');
-                    await AsyncStorage.removeItem('userId');
-                    Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
-                    navigation.navigate("Đăng kí thông tin");
-                    return;
-                }
-                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
-                throw new Error(serverError);
-            } else if (error.request) {
-                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-            } else {
-                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
-            }
+            throw error;
         }
     },
     getPrice: async (userLatitude, userLongitude, restaurant_id, listCartItem) => {
@@ -186,10 +153,10 @@ const orderApi = {
             return response.data.metadata;
         }
         catch (error) {
-            console.log(error)
+            throw error;
         }
     },
-    review: async (order_id, res_rating, res_comment, dri_rating, dri_comment,) => {
+    review: async (order_id, res_rating, res_comment, dri_rating, dri_comment) => {
         try {
             const userId = await AsyncStorage.getItem('userId');
             const accessToken = await AsyncStorage.getItem('accessToken');
@@ -215,7 +182,7 @@ const orderApi = {
             return response.data.metadata;
         }
         catch (error) {
-            console.log(error)
+            throw error;
         }
     }
 }

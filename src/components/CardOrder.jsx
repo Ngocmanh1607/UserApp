@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     },
     orderStatus: {
         fontSize: 14,
-        fontWeight: '600',
+        fontWeight: '500',
     },
     orderContent: {
         flexDirection: 'row',
@@ -119,7 +119,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingTop: 10,
     },
     viewOrder: {
         fontSize: 14,

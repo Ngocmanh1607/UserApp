@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     profileImage: {
         width: 120,
         height: 120,
-        borderRadius: 60,
+        borderRadius: 15,
     },
     row: {
         flexDirection: 'row',

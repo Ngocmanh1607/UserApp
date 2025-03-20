@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { cloudinaryConfig } from './cloudinaryConfig';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-export const uploadImageToCloudinary = async (imageUri, name) => {
-    const userId = await AsyncStorage.getItem('userId');
+export const uploadImageToCloudinary = async (userId, imageUri, name) => {
     const formData = new FormData();
 
     // Lấy tên file từ đường dẫn

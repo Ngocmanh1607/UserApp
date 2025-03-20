@@ -11,6 +11,7 @@ import styles from '../../assets/css/RestaurantStyle';
 import ArrowBack from '../../components/ArrowBack';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+import { HandleApiError } from '../../utils/handleError';
 const RestaurantScreen = ({ route }) => {
     const navigation = useNavigation();
     const { restaurant } = route.params;
@@ -28,7 +29,7 @@ const RestaurantScreen = ({ route }) => {
                 setFilteredData(data);
                 setLoading(false);
             } catch (error) {
-                console.log('Error searching restaurants:', error);
+                HandleApiError(error);
             }
         }
         fetchRestaurantData();

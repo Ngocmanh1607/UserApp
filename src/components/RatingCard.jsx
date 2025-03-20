@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome"
 import { orderApi } from "../api/orderApi";
-import { useRoute } from "@react-navigation/native";
 
 const RatingCard = ({ order_id }) => {
     const [restaurantRating, setRestaurantRating] = useState(0);
@@ -24,15 +23,16 @@ const RatingCard = ({ order_id }) => {
             ));
     };
 
-    const handleSubmit = () => {
-        const fetchReview = async () => {
+    const handleSubmit = async () => {
+        try {
             await orderApi.review(order_id, restaurantRating, commentRes, shipperRating, commentShipper);
+            Alert.alert("Cảm ơn bạn đã đánh giá!");
         }
-        fetchReview();
-        Alert.alert(
-            "Thông báo", // Title
-            "Cảm ơn bạn đã đánh giá!", // Message
-        );
+        catch (error) {
+            Alert.alert('Lỗi', error.message);
+        }
+        finally {
+        }
     };
 
     return (

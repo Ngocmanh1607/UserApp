@@ -3,7 +3,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         zIndex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     header: {
         flexDirection: 'row',
@@ -27,12 +27,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     orderInfoContainer: {
-
         backgroundColor: '#FFF',
-        borderRadius: 10,
+        borderRadius: 15,
         padding: 20,
-        elevation: 3,
-        borderWidth: 1
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        marginHorizontal: 10,
     },
     orderStatus: {
         fontSize: 18,
@@ -52,6 +55,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
         fontSize: 14,
         color: '#9E9E9E',
+        fontWeight: '500',
     },
     activeStep: {
         backgroundColor: '#E3F2FD',

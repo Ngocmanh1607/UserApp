@@ -39,14 +39,7 @@ const userApi = {
             await userApi.getInfoUser(dispatch);
             return true;
         } catch (error) {
-            if (error.response) {
-                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
-                throw new Error(serverError);
-            } else if (error.request) {
-                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-            } else {
-                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
-            }
+            throw error;
         }
     },
 
@@ -73,15 +66,7 @@ const userApi = {
             await userApi.getInfoUser(dispatch);
             return true;
         } catch (error) {
-            console.log(error.response.data);
-            if (error.response) {
-                const serverError = error.response.data?.message || "Có lỗi xảy";
-                throw new Error(serverError);
-            } else if (error.request) {
-                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-            } else {
-                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
-            }
+            throw error;
         }
     },
     logoutApi: async () => {
@@ -113,13 +98,11 @@ const userApi = {
         }
     },
 
-    getInfoUser: async (dispatch, navigation) => {
+    getInfoUser: async (dispatch,) => {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
         if (!userId || !accessToken) {
-            Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
-            navigation.navigate("Đăng kí thông tin");
-            return;
+            throw new Error("Phiên hết hạn");
         }
         try {
             const response = await apiClient.get(`/profile`,
@@ -134,21 +117,7 @@ const userApi = {
             dispatch(setUserInfo(response.data.metadata));
             return response.data.metadata;
         } catch (error) {
-            if (error.response) {
-                if (error.response.status === 401) {
-                    await AsyncStorage.removeItem('accessToken');
-                    await AsyncStorage.removeItem('userId');
-                    Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
-                    navigation.navigate("Đăng kí thông tin");
-                    return;
-                }
-                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
-                throw new Error(serverError);
-            } else if (error.request) {
-                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-            } else {
-                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
-            }
+            throw error;
         }
     },
 
@@ -189,21 +158,7 @@ const userApi = {
             const userInfo = await userApi.getInfoUser(dispatch);
             return response.data.metadata;
         } catch (error) {
-            if (error.response) {
-                if (error.response.status === 401) {
-                    await AsyncStorage.removeItem('accessToken');
-                    await AsyncStorage.removeItem('userId');
-                    Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
-                    navigation.navigate("Đăng kí thông tin");
-                    return;
-                }
-                const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
-                throw new Error(serverError);
-            } else if (error.request) {
-                throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-            } else {
-                throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
-            }
+            throw error;
         }
     }
 };

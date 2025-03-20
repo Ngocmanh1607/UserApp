@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, Image, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { Text, View, Image, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Modal } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { TextInput } from 'react-native-paper';
 import { formatDate } from '../utils/format';
 import { uploadImageToCloudinary } from '../utils/cloudinaryUtils';
-
+import { HandleApiError } from '../utils/handleError';
 const UserProfileScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -101,13 +101,6 @@ const UserProfileScreen = () => {
             Alert.alert('Lỗi', 'Tên không được để trống.');
             return;
         }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(userInfo.email)) {
-            Alert.alert('Lỗi', 'Email không hợp lệ.');
-            return;
-        }
-
         if (isNaN(userInfo.phone_number) || userInfo.phone_number.length < 10) {
             Alert.alert('Lỗi', 'Số điện thoại phải là số hợp lệ và ít nhất 10 ký tự.');
             return;
@@ -140,8 +133,7 @@ const UserProfileScreen = () => {
                             Alert.alert('Thành công', 'Thông tin của bạn đã được cập nhật.');
                             setIsEditing(false);
                         } catch (error) {
-                            // Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.');
-                            Alert.alert('Lỗi', error.message);
+                            HandleApiError(error);
                         } finally {
                             setIsLoading(false);
                         }
@@ -183,9 +175,11 @@ const UserProfileScreen = () => {
         <View style={styles.container}>
             {
                 isLoading ? (
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <ActivityIndicator size='large' color='#FF0000' />
-                    </View>
+                    <Modal transparent={true} animationType="fade">
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <ActivityIndicator size='large' color='#FF0000' />
+                        </View>
+                    </Modal>
                 ) : (
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={styles.avatarContainer}>

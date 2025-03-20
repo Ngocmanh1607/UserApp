@@ -2,7 +2,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-nat
 import React, { useEffect, useState } from 'react';
 import { foodApi } from '../../api/foodApi';
 import CardFoodInCate from '../../components/CardFoodInCate';
-
+import { HandleApiError } from '../../utils/handleError';
 const FoodCategory = ({ route }) => {
     const { categoryId } = route.params;
     const [isLoading, setIsLoading] = useState(true);
@@ -22,7 +22,7 @@ const FoodCategory = ({ route }) => {
                     setIsNull(true);
                 }
             } catch (error) {
-                console.error(error);
+                HandleApiError(error);
                 setFoodData([]);
                 setIsNull(true);
             } finally {

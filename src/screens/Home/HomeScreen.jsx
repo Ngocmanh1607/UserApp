@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../../assets/css/HomeStyle";
 import Loading from "../../components/Loading";
+import { HandleApiError } from "../../utils/handleError";
 
 const HomeScreen = () => {
     const [search, setSearch] = useState('');
@@ -52,7 +53,7 @@ const HomeScreen = () => {
                 setPage(pageNumber);
             }
         } catch (error) {
-            console.error("Lỗi khi tải dữ liệu nhà hàng:", error);
+            HandleApiError(error);
         }
         finally {
             setLoading(false);

@@ -7,10 +7,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../../assets/css/LoginRouterStyle';
 import userApi from '../../api/userApi';
 import Loading from '../../components/Loading';
+import { HandleApiError } from '../../utils/handleError';
 const LoginRouter = () => {
     const navigation = useNavigation();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
@@ -48,15 +49,15 @@ const LoginRouter = () => {
     const handleSubmit = async () => {
         if (validate()) {
             setLoading(true);
-            try{
+            try {
                 const data = await userApi.loginApi(email, password, dispatch);
                 if (data === true) {
                     navigation.navigate('Main');
                 }
-            }catch(error){
-                Alert.alert('Đăng nhập thất bại ',error.message);
+            } catch (error) {
+                HandleApiError(error);
             }
-            finally{
+            finally {
                 setLoading(false);
             }
         }
@@ -121,7 +122,7 @@ const LoginRouter = () => {
                     </TouchableOpacity>
                 </View>
                 {loading && (
-                    <Loading/>
+                    <Loading />
                 )}
             </View>
         </TouchableWithoutFeedback>
