@@ -67,6 +67,9 @@ const restaurantApi = {
         }
     },
     async getReview(restaurantId) {
+        if (!restaurantId) {
+            return [];
+        }
         try {
             const userId = await AsyncStorage.getItem('userId');
             const accessToken = await AsyncStorage.getItem('accessToken');
