@@ -22,41 +22,22 @@ const orderApi = {
             if (!userId || !accessToken) {
                 throw new Error("Phiên hết hạn");
             }
-            const orderData = {
-                order: {
-                    listCartItem,
-                    receiver_name: userInfo.profile.name,
-                    address_receiver: address.address,
-                    userLatitude: address.latitude,
-                    userLongitude: address.longitude,
-                    phone_number: userInfo.profile.phone_number,
-                    order_pay: payMethod,
-                    note: note,
-                    price: price,
-                    delivery_fee: fee,
-                    coupon_id: couponId,
-                    order_status: "PAID",
-                    order_date: new Date().toString(),
-                }
-            };
-
-            // Log order data before sending the request
-            console.log("Order data to send:", orderData);
+            const { name, phone_number } = userInfo.profile;
             const response = await apiClient.post('/payment',
                 {
                     order:
                     {
                         listCartItem,
-                        receiver_name: userInfo.name,
+                        receiver_name: name,
                         address_receiver: address.address,
                         userLatitude: address.latitude,
                         userLongitude: address.longitude,
-                        phone_number: userInfo.phone_number,
+                        phone_number: phone_number,
                         order_pay: payMethod,
                         note: note,
                         price: price,
                         delivery_fee: fee,
-                        cupon_id: couponId,
+                        coupon_id: couponId,
                         order_status: "PAID",
                         order_date: new Date().toString(),
                     }
