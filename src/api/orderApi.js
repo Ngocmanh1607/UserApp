@@ -73,12 +73,19 @@ const orderApi = {
         console.log(messenger.data)
         return messenger.data.metadata;
     },
-    getCoupon: async () => {
+    getCoupon: async (total) => {
         try {
-            const messenger = await apiClient.get('coupon',
+            const userId = await AsyncStorage.getItem('userId');
+            const accessToken = await AsyncStorage.getItem('accessToken');
+            if (!userId || !accessToken) {
+                throw new Error("Phiên hết hạn");
+            }
+            const messenger = await apiClient.get(`coupon/${total}`,
                 {
                     headers: {
                         "x-api-key": apiKey,
+                        "authorization": accessToken,
+                        "x-client-id": userId,
                     }
                 })
             return messenger.data.metadata;

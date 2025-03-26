@@ -12,6 +12,7 @@ import styles from '../../assets/css/CartStyle';
 import PaymentMethodScreen from '../Order/PaymentMethodScreen';
 import CouponPage from '../Order/CouponScreen';
 import { HandleApiError } from '../../utils/handleError';
+import { SearchBar } from 'react-native-screens';
 const CartScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
@@ -188,7 +189,7 @@ const CartScreen = () => {
                 </View>
                 <TouchableOpacity style={styles.couponContainer} onPress={() => handleDiscount()}>
                     <Text style={styles.paymentText}>Mã giảm giá</Text>
-                    <Text style={styles.discountText}>{coupon ? coupon.coupon_code : 0}</Text>
+                    <Text style={styles.discountText}>{coupon && coupon.coupon_code}</Text>
                 </TouchableOpacity>
 
                 <View style={styles.summaryContainer}>
@@ -234,7 +235,7 @@ const CartScreen = () => {
                     visible={modalCoupon}
                     onRequestClose={() => setModalCoupon(false)}
                 >
-                    <CouponPage onSelectCoupon={handleSelectCoupon} />
+                    <CouponPage onSelectCoupon={handleSelectCoupon} total={cost && cost.totalFoodPrice + cost.shippingCost} />
                 </Modal>
                 <Modal
                     animationType="slide"
@@ -249,7 +250,7 @@ const CartScreen = () => {
                 <View style={styles.footerContainer}>
                     <View style={[styles.row, { borderBottomWidth: 1, padding: 10, borderBottomColor: '#666' }]}>
                         <Text style={[styles.label, { fontWeight: '500' }]}>Tổng số tiền</Text>
-                        <Text style={[styles.value,]}>{formatPrice(cost ? (cost.totalPrice - (coupon?.discount_value ?? 0)) : 0)}</Text>
+                        <Text style={[styles.value,]}>{formatPrice(cost ? (cost.totalFoodPrice + cost.shippingCost - (coupon?.discount_value ?? 0)) : 0)}</Text>
                     </View>
 
                     <TouchableOpacity style={styles.methodPaymentContainer} onPress={handlePayment}>

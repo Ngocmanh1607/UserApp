@@ -21,8 +21,34 @@ const styles = StyleSheet.create({
         elevation: 5,
         maxHeight: '80%',
     },
+    title: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#333",
+
+    },
+    searchbox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#f0f0f0',
+        borderRadius: 10,
+        marginTop: 10,
+        padding: 2,
+        elevation: 3,
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+    },
+    input: {
+        flex: 1,
+        height: 40,
+        color: "#333",
+    },
     listContainer: {
-        marginTop: 40,
+        marginTop: 20,
         paddingBottom: 20,
     },
     couponCard: {
