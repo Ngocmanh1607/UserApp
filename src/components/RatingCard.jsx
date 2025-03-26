@@ -24,15 +24,11 @@ const RatingCard = ({ order_id }) => {
     };
 
     const handleSubmit = async () => {
-        try {
-            await orderApi.review(order_id, restaurantRating, commentRes, shipperRating, commentShipper);
-            Alert.alert("Cảm ơn bạn đã đánh giá!");
+        const response = await orderApi.review(order_id, restaurantRating, commentRes, shipperRating, commentShipper);
+        if (!response.success) {
+            return Alert.alert("Có lỗi xảy ra!", response.message);
         }
-        catch (error) {
-            Alert.alert('Lỗi', error.message);
-        }
-        finally {
-        }
+        Alert.alert("Cảm ơn bạn đã đánh giá!");
     };
 
     return (

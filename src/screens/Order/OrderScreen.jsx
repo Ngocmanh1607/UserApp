@@ -1,5 +1,5 @@
 // OrderScreen.js
-import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import CardOrder from '../../components/CardOrder';
@@ -15,9 +15,27 @@ const OrderScreen = () => {
         useCallback(() => {
             const fetchOrder = async () => {
                 const response = await orderApi.getOrder();
-                console.log(response);
-                setOrders(response);
-                setFilteredOrders(response);
+                if (response.success) {
+                    setOrders(response.data);
+                    setFilteredOrders(response.data);
+                } else {
+                    if (response.message === 500) {
+                        Alert.alert('Có lỗi xảy ra', 'Hết phiên làm việc, vui lòng đăng nhập lại', {
+                            text: 'Đăng nhập lại',
+                            onPress: () => {
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: 'Auth' }],
+                                });
+                            }
+                        });
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Auth' }],
+                        });
+                    }
+                    Alert.alert('Có lỗi xảy ra', response.message);
+                }
             };
             fetchOrder();
         }, [])

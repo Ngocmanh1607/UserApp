@@ -6,6 +6,7 @@ import { setUserId } from '../store/cartSlice';
 import { setUserInfo } from '../store/userSlice';
 import { useDispatch } from 'react-redux';
 import fetchFcmToken from '../utils/fcmToken';
+import handleApiError from './handleApiError';
 const apiKey = "123"
 const userApi = {
     signupApi: async (dispatch, email, password) => {
@@ -36,7 +37,6 @@ const userApi = {
                 ['userId', userId.toString()],
             ]);
             dispatch(setUserId(userId));
-            await userApi.getInfoUser(dispatch);
             return true;
         } catch (error) {
             throw error;
@@ -63,7 +63,6 @@ const userApi = {
                 ['userId', userId.toString()],
             ]);
             dispatch(setUserId(userId));
-            await userApi.getInfoUser(dispatch);
             return true;
         } catch (error) {
             throw error;
@@ -115,9 +114,12 @@ const userApi = {
                 }
             );
             dispatch(setUserInfo(response.data.metadata));
-            return response.data.metadata;
+            return {
+                success: true,
+                data: response.data.metadata
+            }
         } catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     },
 

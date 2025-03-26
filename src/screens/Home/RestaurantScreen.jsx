@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, TextInput, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CardFood2 from '../../components/CardFood2';
@@ -23,13 +23,15 @@ const RestaurantScreen = ({ route }) => {
 
     useEffect(() => {
         const fetchRestaurantData = async () => {
-            try {
-                const data = await restaurantApi.getFoodsRestaurant(restaurantId);
-                setRestaurantData(data);
-                setFilteredData(data);
-                setLoading(false);
-            } catch (error) {
-                HandleApiError(error);
+            setLoading(true);
+            const data = await restaurantApi.getFoodsRestaurant(restaurantId);
+            setLoading(false);
+            if (data.success) {
+                setRestaurantData(data.data);
+                setFilteredData(data.data);
+            }
+            else {
+                Alert.alert('Lỗi', data.message);
             }
         }
         fetchRestaurantData();

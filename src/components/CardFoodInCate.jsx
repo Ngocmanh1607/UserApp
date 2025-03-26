@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView, Alert } from 'react-native';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from '@react-navigation/native';
 import { formatPrice } from '../utils/format';
@@ -13,22 +13,22 @@ const CardFood2 = ({ food }) => {
     const [restaurant, setRestaurant] = useState({});
 
     const handelPress = async () => {
-        try {
-            // Gọi cả hai API đồng thời
-            const [restaurantInfo, distance] = await Promise.all([
-                restaurantApi.getInfoRestaurants(food.restaurantId),
-                restaurantApi.getDistance(address.latitude, address.longitude, food.restaurantId)
-            ]);
-            const dis = parseFloat(distance);
-            const updatedRestaurant = { ...restaurantInfo, distance: dis };
+        // Gọi cả hai API đồng thời
+        const [restaurantInfo, distance] = await Promise.all([
+            restaurantApi.getInfoRestaurants(food.restaurantId),
+            restaurantApi.getDistance(address.latitude, address.longitude, food.restaurantId)
+        ]);
 
+        if (restaurantInfo.success && distance.success) {
+            const dis = parseFloat(distance.data);
+            const updatedRestaurant = { ...restaurantInfo.data, distance: dis };
             navigation.navigate('RestaurantDetail', { restaurant: updatedRestaurant });
-
-
             setRestaurant(updatedRestaurant);
-        } catch (error) {
-            console.error('Error fetching restaurant or distance:', error);
         }
+        else {
+            Alert.alert('Lỗi', 'Không thể lấy thông tin nhà hàng');
+        }
+
     };
     return (
         <TouchableOpacity style={styles.container} onPress={() => { handelPress() }}>

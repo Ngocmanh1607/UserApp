@@ -1,8 +1,7 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { foodApi } from '../../api/foodApi';
 import CardFoodInCate from '../../components/CardFoodInCate';
-import { HandleApiError } from '../../utils/handleError';
 const FoodCategory = ({ route }) => {
     const { categoryId } = route.params;
     const [isLoading, setIsLoading] = useState(true);
@@ -11,46 +10,39 @@ const FoodCategory = ({ route }) => {
 
     useEffect(() => {
         const fetchFoodInCategory = async () => {
-            try {
-                setIsLoading(true);
-                const data = await foodApi.getFoodInCate(categoryId);
-                console.log(data);
-                if (data && Array.isArray(data) && data.length > 0) {
-                    setFoodData(data);
-                    setIsNull(false);
-                } else {
-                    setIsNull(true);
-                }
-            } catch (error) {
-                HandleApiError(error);
-                setFoodData([]);
-                setIsNull(true);
-            } finally {
-                setIsLoading(false);
+            setIsLoading(true);
+            const data = await foodApi.getFoodInCate(categoryId);
+            setIsLoading(false);
+            if (data.success) {
+                setFoodData(data.data.products);
+            } else {
+                Alert.alert('Lỗi', data.message);
             }
         };
-
         fetchFoodInCategory();
     }, [categoryId]);
-
+    const renderItem = ({ item }) => {
+        return <CardFoodInCate food={item} />;
+    }
     return (
         <View style={styles.container}>
             {isLoading ? (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color="red" />
                 </View>
-            ) : foodData.length > 0 ? (
-                <ScrollView style={styles.scrollContainer}>
-                    {foodData.map((food) => (
-                        <CardFoodInCate food={food} key={food.productId} />
-                    ))}
-                </ScrollView>
+            ) : foodData ? (
+                <FlatList
+                    data={foodData}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.productId}
+                />
             ) : (
                 <View style={styles.containerText}>
                     <Text style={styles.text}>Chưa có món nào trong danh mục này</Text>
                 </View>
-            )}
-        </View>
+            )
+            }
+        </View >
     );
 };
 

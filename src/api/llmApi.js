@@ -19,7 +19,7 @@ const llmApi = async (query) => {
                     "authorization": accessToken,
                     "x-client-id": userId,
                 }
-            })
+            });
         return response.data.metadata;
     }
     catch (error) {

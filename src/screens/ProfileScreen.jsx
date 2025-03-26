@@ -35,23 +35,32 @@ const UserProfileScreen = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             setIsLoading(true);
-            try {
-                const data = await userApi.getInfoUser(dispatch, navigation);
-                if (data.profile) {
-                    setUserInfo({
-                        name: data.profile.name,
-                        image: data.profile.image,
-                        email: data.profile.mail,
-                        phone_number: data.profile.phone_number,
-                        date: data.profile.date,
+            const response = await userApi.getInfoUser(dispatch, navigation);
+            setIsLoading(false);
+            if (!response.success) {
+                if (response.message === 500) {
+                    Alert.alert('Lỗi', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Auth' }],
                     });
-                    // setAddress(data.address[0]);
-                    setImageUri(data.profile.image);
                 }
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setIsLoading(false);
+                else {
+                    Alert.alert('Lỗi', response.message);
+                }
+                return;
+            }
+            if (response.data.profile) {
+                const data = response.data;
+                setUserInfo({
+                    name: data.profile.name,
+                    image: data.profile.image,
+                    email: data.profile.mail,
+                    phone_number: data.profile.phone_number,
+                    date: data.profile.date,
+                });
+                // setAddress(data.address[0]);
+                setImageUri(data.profile.image);
             }
         };
         fetchUserData();

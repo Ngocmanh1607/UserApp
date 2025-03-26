@@ -1,4 +1,5 @@
 import apiClient from "./apiClient";
+import handleApiError from "./handleApiError";
 
 const apiKey = '123';
 const foodApi = {
@@ -10,9 +11,12 @@ const foodApi = {
                         "x-api-key": apiKey,
                     }
                 })
-            return response.data.metadata;
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         } catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     },
     getFoodInCate: async (cateId) => {
@@ -23,9 +27,12 @@ const foodApi = {
                         "x-api-key": apiKey,
                     }
                 })
-            return response.data.metadata.products
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         } catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     },
     getFoodTopping: async (foodId) => {
@@ -36,9 +43,12 @@ const foodApi = {
                         "x-api-key": apiKey,
                     }
                 })
-            return response.data.metadata;
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         } catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     }
 }

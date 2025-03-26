@@ -62,7 +62,7 @@ const StackNavigator = () => {
             <Stack.Screen name="Main" component={TabNavigator} />
             <Stack.Screen name="FoodCategory" component={FoodCategory} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Category', headerBackTitle: 'Trang chủ' }} />
             <Stack.Screen name="CartResScreen" component={CartResScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Giỏ hàng', headerBackTitle: 'Quay lại' }} />
-            <Stack.Screen name="MapScreen" component={MapScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true }} />
+            <Stack.Screen name="MapScreen" component={MapScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Địa chỉ' }} />
             <Stack.Screen name="RestaurantDetail" component={RestaurantScreen} />
             <Stack.Screen name="DetailOrder" component={OrderDetailScreen} options={{ headerShown: true, headerBackButtonMenuEnabled: true, title: 'Chi tiết đơn hàng', headerBackTitle: 'Quay lại' }} />
             <Stack.Screen name="FoodDetail" component={FoodDetailScreen} options={{ headerShown: true, title: 'Chi tiết', headerBackTitle: 'Quay lại' }} />

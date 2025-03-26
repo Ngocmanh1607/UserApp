@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput } from "react-native";
+import { Alert, Text, View, FlatList, TouchableOpacity, TextInput } from "react-native";
 import { orderApi } from "../../api/orderApi";
 import styles from "../../assets/css/CouponStyle";
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -16,7 +16,10 @@ const CouponPage = ({ onSelectCoupon, total }) => {
     useEffect(() => {
         const fetchCoupon = async () => {
             const response = await orderApi.getCoupon(total);
-            setCoupons(response);
+            if (!response.success) {
+                return Alert.alert('Lỗi', response.message);
+            }
+            setCoupons(response.data);
         }
         fetchCoupon();
     }, [])

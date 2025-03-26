@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, TouchableOpacity, View, ActivityIndicator, FlatList } from "react-native";
+import { TextInput, TouchableOpacity, View, ActivityIndicator, FlatList, Alert } from "react-native";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Headerbar from "../../components/Headerbar";
 import CardSlider from "../../components/CardSlider";
@@ -38,26 +38,24 @@ const HomeScreen = () => {
 
         if (!isLoadMore) setLoading(true);
         else setLoadingMore(true);
-
-        try {
-            const data = await restaurantApi.getAllRestaurant(address, pageNumber);
-            if (data.length === 0) {
+        const response = await restaurantApi.getAllRestaurant(address, pageNumber);
+        setLoading(false);
+        setLoadingMore(false);
+        if (response.success) {
+            if (response.data.length === 0) {
                 setHasMore(false);
             } else {
                 setRestaurants(prevRestaurants =>
-                    isLoadMore ? [...prevRestaurants, ...data] : data
+                    isLoadMore ? [...prevRestaurants, ...response.data] : response.data
                 );
                 setFilteredRestaurants(prevRestaurants =>
-                    isLoadMore ? [...prevRestaurants, ...data] : data
+                    isLoadMore ? [...prevRestaurants, ...response.data] : response.data
                 );
                 setPage(pageNumber);
             }
-        } catch (error) {
-            HandleApiError(error);
         }
-        finally {
-            setLoading(false);
-            setLoadingMore(false);
+        else {
+            Alert.alert('Lỗi', response.message);
         }
     };
 

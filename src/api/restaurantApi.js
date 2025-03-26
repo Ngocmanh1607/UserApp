@@ -2,6 +2,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiClient from "./apiClient";
 import { Alert } from "react-native";
+import handleApiError from "./handleApiError";
 const apiKey = '123'
 const restaurantApi = {
     getAllRestaurant: async (address) => {
@@ -11,9 +12,12 @@ const restaurantApi = {
                     "x-api-key": apiKey,
                 }
             });
-            return response.data.metadata;
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         } catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     },
     async getInfoRestaurants(restaurant_id) {
@@ -24,9 +28,12 @@ const restaurantApi = {
                         "x-api-key": apiKey,
                     }
                 })
-            return response.data.metadata;
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         } catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     },
     // API tìm kiếm nhà hàng
@@ -47,10 +54,12 @@ const restaurantApi = {
                     "x-api-key": apiKey,
                 }
             })
-            console.log('metadat', response.data.metadata)
-            return response.data.metadata
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         } catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     },
     async getDistance(userLatitude, userLongtitude, restaurant_id) {
@@ -61,9 +70,12 @@ const restaurantApi = {
                 }
             })
 
-            return response.data.metadata
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         } catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     },
     async getReview(restaurantId) {
@@ -85,9 +97,12 @@ const restaurantApi = {
                     }
                 }
             );
-            return response.data.metadata;
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         } catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     },
 };

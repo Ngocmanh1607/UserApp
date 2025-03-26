@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {  Text, View, Image, TouchableOpacity, SafeAreaView, FlatList } from 'react-native';
+import { Text, View, Image, TouchableOpacity, SafeAreaView, FlatList, Alert } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -7,7 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { addItem } from '../../store/cartSlice';
 import Snackbar from 'react-native-snackbar';
-import {formatPrice} from '../../utils/format';
+import { formatPrice } from '../../utils/format';
 import { foodApi } from '../../api/foodApi';
 import styles from '../../assets/css/FoodDetailStyle';
 
@@ -25,11 +25,11 @@ const FoodDetailScreen = () => {
     const [toppings, setToppings] = useState([]);
     useEffect(() => {
         const fetchTopping = async () => {
-            try {
-                const data = await foodApi.getFoodTopping(food.id);
-                setToppings(data);
-            } catch (error) {
-
+            const data = await foodApi.getFoodTopping(food.id);
+            if (data.success) {
+                setToppings(data.data);
+            } else {
+                Alert.alert('Thông báo', data.message);
             }
         }
         fetchTopping();

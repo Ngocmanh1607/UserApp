@@ -1,6 +1,7 @@
 import { Alert } from "react-native";
 import apiClient from "./apiClient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import handleApiError from "./handleApiError";
 const apiKey = '123'
 const orderApi = {
     orderApi: async (userInfo, address, cart, payMethod, price, fee, note, couponId) => {
@@ -48,10 +49,13 @@ const orderApi = {
                         "authorization": accessToken,
                         "x-client-id": userId,
                     }
-                })
-            return response.data.metadata;
+                });
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         } catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     },
     orderCheckStatus: async (app_trans_id) => {
@@ -70,7 +74,6 @@ const orderApi = {
                 "x-client-id": userId,
             }
         })
-        console.log(messenger.data)
         return messenger.data.metadata;
     },
     getCoupon: async (total) => {
@@ -88,10 +91,13 @@ const orderApi = {
                         "x-client-id": userId,
                     }
                 })
-            return messenger.data.metadata;
+            return {
+                success: true,
+                data: messenger.data.metadata,
+            }
         }
         catch (error) {
-            console.log(error)
+            return handleApiError(error);
         }
     },
     getOrder: async () => {
@@ -110,14 +116,16 @@ const orderApi = {
                         "x-client-id": userId,
                     }
                 })
-            return response.data.metadata;
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         } catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     },
     getPrice: async (userLatitude, userLongitude, restaurant_id, listCartItem) => {
         try {
-
             const userId = await AsyncStorage.getItem('userId');
             const accessToken = await AsyncStorage.getItem('accessToken');
             if (!userId || !accessToken) {
@@ -138,10 +146,13 @@ const orderApi = {
                     }
                 })
             console.log(response.data.metadata);
-            return response.data.metadata;
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         }
         catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     },
     review: async (order_id, res_rating, res_comment, dri_rating, dri_comment) => {
@@ -167,10 +178,13 @@ const orderApi = {
                         "x-client-id": userId,
                     }
                 })
-            return response.data.metadata;
+            return {
+                success: true,
+                data: response.data.metadata,
+            }
         }
         catch (error) {
-            throw error;
+            return handleApiError(error);
         }
     }
 }

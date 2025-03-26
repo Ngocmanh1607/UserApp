@@ -88,40 +88,53 @@ const CartScreen = () => {
         navigation.navigate('MapScreen');
     };
     const handleOrder = async () => {
-        try {
-            setIsLoading(true);
-            const userInfoResponse = await userApi.getInfoUser(dispatch, navigation);
-            if (!userInfoResponse?.profile.name || !userInfoResponse?.profile.phone_number || !userInfoResponse) {
-                Alert.alert('Cập nhật thông tin', 'Vui lòng cập nhật thông tin để có thể đặt hàng', [
-                    { text: 'Huỷ', style: 'cancel' },
-                    { text: 'Ok', onPress: () => navigation.navigate('Thông tin') },
-                ]);
-                setIsLoading(false);
-                return;
+        setIsLoading(true);
+        const userInfoResponse = await userApi.getInfoUser(dispatch);
+        if (!userInfoResponse.success) {
+            if (userInfoResponse.message === 500) {
+                Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại',
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Auth' }]
+                            })
+                        }
+                    }
+                );
             }
-            const couponid = coupon.id;
-            const response = await orderApi.orderApi(
-                userInfoResponse,
-                address,
-                items,
-                'ZALOPAY',
-                cost.totalPrice,
-                cost.shippingCost,
-                note,
-                couponid
-            );
-
-            setTransactionId(response.app_trans_id);
-            console.log(response.url);
-
-            if (response.url) {
-                await Linking.openURL(response.url);
+            else {
+                Alert.alert('Lỗi', userInfoResponse.message);
             }
-        } catch (error) {
-            HandleApiError(error);
-        } finally {
             setIsLoading(false);
+            return;
         }
+
+        const couponid = coupon.id;
+        const info = userInfoResponse.data;
+        const response = await orderApi.orderApi(
+            info,
+            address,
+            items,
+            'ZALOPAY',
+            cost.totalPrice,
+            cost.shippingCost,
+            note,
+            couponid
+        );
+        setIsLoading(false);
+        if (!response.success) {
+            Alert.alert('Lỗi', response.message);
+            return;
+        }
+        setTransactionId(response.data.app_trans_id);
+        console.log(response.data.url);
+
+        if (response.data.url) {
+            await Linking.openURL(response.url);
+        }
+
     };
     const handlePayment = () => {
         setModalPayment(true);
@@ -140,16 +153,26 @@ const CartScreen = () => {
         setModalCoupon(false);
     };
     const handleGetPrice = async () => {
-        try {
-            setIsLoading(true);
-            const response = await orderApi.getPrice(address.latitude, address.longitude, restaurantId, items);
-            console.log(response);
-            setCost(response);
-        } catch (error) {
-            Alert.alert('Lỗi', error);
-        } finally {
-            setIsLoading(false);
+        setIsLoading(true);
+        const response = await orderApi.getPrice(address.latitude, address.longitude, restaurantId, items);
+        setIsLoading(false);
+        if (!response.success) {
+            if (response.message === 500) {
+                Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại',
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Auth' }]
+                            })
+                        }
+                    }
+                );
+            }
+            return Alert.alert('Lỗi', response.message);
         }
+        setCost(response.data);
     }
     const renderHeader = () => {
         return (

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, ActivityIndicator } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, ActivityIndicator, Alert } from "react-native";
 import { foodApi } from '../api/foodApi';
 import FoodCard from './CardFood';
 import { useNavigation } from '@react-navigation/native';
@@ -23,20 +23,16 @@ const Categories = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             setIsLoading(true);
-            try {
-                const data = await foodApi.getCategories();
-                if (data && Array.isArray(data)) {
-                    const filteredCategories = data.map(category => ({
-                        id: category.id,
-                        name: category.name
-                    }));
-                    setCategories(filteredCategories);
-                } else {
-                }
-            } catch (error) {
-                setCategories([]);
-            } finally {
-                setIsLoading(false);
+            const data = await foodApi.getCategories();
+            setIsLoading(false);
+            if (data.success && data.data && Array.isArray(data.data)) {
+                const filteredCategories = data.data.map(category => ({
+                    id: category.id,
+                    name: category.name
+                }));
+                setCategories(filteredCategories);
+            } else {
+                Alert.alert('Đã xảy ra lỗi', data.message);
             }
         };
 
