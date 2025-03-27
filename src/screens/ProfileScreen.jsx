@@ -11,7 +11,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { TextInput } from 'react-native-paper';
 import { formatDate } from '../utils/format';
 import { uploadImageToCloudinary } from '../utils/cloudinaryUtils';
-import { HandleApiError } from '../utils/handleError';
 const UserProfileScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -142,7 +141,8 @@ const UserProfileScreen = () => {
                             Alert.alert('Thành công', 'Thông tin của bạn đã được cập nhật.');
                             setIsEditing(false);
                         } catch (error) {
-                            HandleApiError(error);
+                            console.error('Error saving changes:', error);
+                            Alert.alert('Lỗi', 'Không thể cập nhật thông tin. Vui lòng thử lại.');
                         } finally {
                             setIsLoading(false);
                         }

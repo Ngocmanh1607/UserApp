@@ -88,6 +88,9 @@ const CartScreen = () => {
         navigation.navigate('MapScreen');
     };
     const handleOrder = async () => {
+        if (items.length === 0) {
+            return Alert.alert('Lỗi', 'Giỏ hàng của bạn đang trống');
+        }
         setIsLoading(true);
         const userInfoResponse = await userApi.getInfoUser(dispatch);
         if (!userInfoResponse.success) {
@@ -110,7 +113,7 @@ const CartScreen = () => {
             setIsLoading(false);
             return;
         }
-
+        const totalCost = cost.totalFoodPrice + cost.shippingCost - (coupon?.discount_value ?? 0);
         const couponid = coupon.id;
         const info = userInfoResponse.data;
         const response = await orderApi.orderApi(
@@ -118,7 +121,7 @@ const CartScreen = () => {
             address,
             items,
             'ZALOPAY',
-            cost.totalPrice,
+            cost.totalFoodPrice,
             cost.shippingCost,
             note,
             couponid
@@ -129,10 +132,8 @@ const CartScreen = () => {
             return;
         }
         setTransactionId(response.data.app_trans_id);
-        console.log(response.data.url);
-
         if (response.data.url) {
-            await Linking.openURL(response.url);
+            await Linking.openURL(response.data.url);
         }
 
     };
@@ -149,7 +150,6 @@ const CartScreen = () => {
     };
     const handleSelectCoupon = (coupon) => {
         setCoupon(coupon);
-        console.log(coupon);
         setModalCoupon(false);
     };
     const handleGetPrice = async () => {

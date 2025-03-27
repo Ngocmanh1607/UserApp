@@ -7,7 +7,6 @@ import userApi from '../../api/userApi';
 import { useDispatch } from 'react-redux';
 import styles from '../../assets/css/SignUpRouterStyle';
 import Loading from '../../components/Loading';
-import { HandleApiError } from '../../utils/handleError';
 const SignUpRouter = () => {
     const navigation = useNavigation();
     const [loading, setLoading] = useState(false);
@@ -60,7 +59,7 @@ const SignUpRouter = () => {
                 navigation.navigate('RegisterInf');
             }
         } catch (error) {
-            HandleApiError(error);
+            Alert.alert('Lỗi', 'Đăng ký thất bại');
         } finally {
             setLoading(false); // Dừng loading
         }

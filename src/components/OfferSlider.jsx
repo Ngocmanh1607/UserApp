@@ -1,7 +1,6 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from "react-native";
 import React from "react";
 import Swiper from 'react-native-swiper'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 const OfferSlider = () => {
     return (
         <View style={styles.container}>

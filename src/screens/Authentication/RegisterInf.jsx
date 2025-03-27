@@ -11,7 +11,6 @@ import Snackbar from 'react-native-snackbar';
 import styles from '../../assets/css/RegisterInfStyle';
 import Loading from '../../components/Loading';
 import { uploadImageToCloudinary } from '../../utils/cloudinaryUtils';
-import { HandleApiError } from '../../utils/handleError';
 const RegisterInf = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -43,7 +42,8 @@ const RegisterInf = () => {
             const imageUrl = await uploadImageToCloudinary(userId, image, 'avatar_user');
             return imageUrl;
         } catch (error) {
-            HandleApiError(error);
+            console.log('Error uploading image to firebase: ', error);
+            return null;
         }
     };
     const handlePressAddress = () => {
@@ -71,7 +71,8 @@ const RegisterInf = () => {
                 navigation.navigate('Main')
             }
         } catch (error) {
-            HandleApiError(error);
+            console.log('Error saving changes: ', error);
+            Alert.alert("Lỗi", "Không thể cập nhật thông tin. Vui lòng thử lại.");
         } finally {
             setIsLoading(false);
         }

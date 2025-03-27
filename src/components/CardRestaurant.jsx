@@ -9,7 +9,6 @@ const CardRestaurant = ({ restaurant }) => {
     const handlePress = () => {
         navigation.navigate('RestaurantDetail', { restaurant });
     };
-    console.log("restaurant", restaurant)
     return (
         <TouchableOpacity style={styles.container} onPress={handlePress}>
             <Image source={{ uri: restaurant.image }} style={styles.imageContainer} />

@@ -7,7 +7,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../../assets/css/LoginRouterStyle';
 import userApi from '../../api/userApi';
 import Loading from '../../components/Loading';
-import { HandleApiError } from '../../utils/handleError';
 const LoginRouter = () => {
     const navigation = useNavigation();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -55,7 +54,7 @@ const LoginRouter = () => {
                     navigation.navigate('Main');
                 }
             } catch (error) {
-                HandleApiError(error);
+                Alert.alert('Lỗi', 'Đăng nhập thất bại');
             }
             finally {
                 setLoading(false);

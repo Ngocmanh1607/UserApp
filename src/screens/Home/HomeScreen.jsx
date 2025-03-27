@@ -55,7 +55,11 @@ const HomeScreen = () => {
             }
         }
         else {
-            Alert.alert('Lỗi', response.message);
+            console.log(response.message);
+            if (response.message !== 500) {
+                Alert.alert('Lỗi', response.message);
+                return;
+            }
         }
     };
 

@@ -24,6 +24,22 @@ const orderApi = {
                 throw new Error("Phiên hết hạn");
             }
             const { name, phone_number } = userInfo.profile;
+            const order = {
+                listCartItem,
+                receiver_name: name,
+                address_receiver: address.address,
+                userLatitude: address.latitude,
+                userLongitude: address.longitude,
+                phone_number: phone_number,
+                order_pay: payMethod,
+                note: note,
+                price: price,
+                delivery_fee: fee,
+                coupon_id: couponId,
+                order_status: "PAID",
+                order_date: new Date().toString(),
+            }
+            console.log(order);
             const response = await apiClient.post('/payment',
                 {
                     order:
@@ -50,6 +66,7 @@ const orderApi = {
                         "x-client-id": userId,
                     }
                 });
+            console.log(response.data);
             return {
                 success: true,
                 data: response.data.metadata,
