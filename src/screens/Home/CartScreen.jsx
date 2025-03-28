@@ -93,6 +93,7 @@ const CartScreen = () => {
         }
         setIsLoading(true);
         const userInfoResponse = await userApi.getInfoUser(dispatch);
+        setIsLoading(false);
         if (!userInfoResponse.success) {
             if (userInfoResponse.message === 500) {
                 Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại',
@@ -106,12 +107,12 @@ const CartScreen = () => {
                         }
                     }
                 );
+                return;
             }
             else {
                 Alert.alert('Lỗi', userInfoResponse.message);
+                return;
             }
-            setIsLoading(false);
-            return;
         }
         const totalCost = cost.totalFoodPrice + cost.shippingCost - (coupon?.discount_value ?? 0);
         const couponid = coupon.id;
