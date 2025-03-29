@@ -67,21 +67,17 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     licensePlate: {
-        fontSize: 16,
-        fontWeight: 'bold',
+        fontSize: 14,
         color: '#333',
     },
     driverDetails: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 10,
     },
     driverImage: {
         width: 50,
         height: 50,
         borderRadius: 25,
-        borderWidth: 2,
-        borderColor: '#eee',
     },
     driverInfo: {
         marginLeft: 15,
@@ -92,10 +88,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
     },
-    driverRating: {
-        color: '#666',
-        fontSize: 14,
-        marginTop: 2,
+    driverBike: {
+        flexDirection: 'row',
+        marginTop: 5,
     },
     orderItemContainer: {
         backgroundColor: '#fff',

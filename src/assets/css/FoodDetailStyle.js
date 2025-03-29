@@ -72,7 +72,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 15,
         paddingVertical: 12,
         borderBottomWidth: 1,
         borderColor: '#eee',
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     },
     checkbox: {
         transform: [{ scaleX: 1 }, { scaleY: 1 }],
-        marginRight: 15,
+        marginRight: 2,
         tintColors: { true: '#FF0000', false: '#999' }
     },
     cardBottom: {
@@ -132,7 +131,8 @@ const styles = StyleSheet.create({
     },
     textAdd: {
         color: '#FFFFFF',
-        fontSize: 18,
+        fontSize: 16,
+        fontWeight: '500',
     },
     addButton: {
         backgroundColor: '#FF0000',

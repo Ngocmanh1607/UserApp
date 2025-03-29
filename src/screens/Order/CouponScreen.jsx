@@ -67,7 +67,7 @@ const CouponPage = ({ onSelectCoupon, total }) => {
             <FlatList
                 data={coupons}
                 renderItem={renderCoupon}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item, index) => (`${item.id} - ${index}`)}
                 contentContainerStyle={styles.listContainer}
             />
         </View>

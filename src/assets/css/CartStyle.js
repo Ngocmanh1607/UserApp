@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
+        marginTop: 10,
     },
     summaryContainer: {
         backgroundColor: '#fff',
@@ -147,6 +148,9 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
     },
+    footer: {
+        // marginBottom: 80,
+    },
     dropdown: {
         margin: 8,
         height: 45,
@@ -224,9 +228,9 @@ const styles = StyleSheet.create({
     },
     overlay: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.6)",
+        backgroundColor: "rgba(0,0,0,0.5)", // ⬅ Làm mờ nền
         justifyContent: "center",
         alignItems: "center",
-    }
+    },
 });
 export default styles;

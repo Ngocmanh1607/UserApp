@@ -5,9 +5,9 @@ import { Alert } from "react-native";
 import handleApiError from "./handleApiError";
 const apiKey = '123'
 const restaurantApi = {
-    getAllRestaurant: async (address) => {
+    getAllRestaurant: async (address, page) => {
         try {
-            const response = await apiClient.get(`/restaurants/${address.latitude}/${address.longitude}`, {
+            const response = await apiClient.get(`/restaurants/${address.latitude}/${address.longitude}/${page}`, {
                 headers: {
                     "x-api-key": apiKey,
                 }

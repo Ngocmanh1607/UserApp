@@ -9,28 +9,20 @@ const OrderDetailScreen = () => {
     return (
         <View style={styles.container}>
             <ScrollView >
-                {/* Order completion message */}
-                {/* <View style={styles.orderCompleteContainer}>
-                    <Text style={styles.orderCompleteText}>Đơn hàng của bạn đã hoàn tất</Text>
-                    <Image// Replace with a real image
-                        style={styles.orderCompleteIcon}
-                    />
-                </View> */}
-
+                {/* Header */}
                 {/* Driver Information */}
                 {
                     order.Driver && (
                         <View style={styles.driverInfoContainer}>
-                            <Text style={styles.licensePlate}>{order.Driver.license_plate}</Text>
-                            <Text>{order.Driver.car_name}</Text>
                             <View style={styles.driverDetails}>
-                                <Image source={{ uri: order.Driver.Profile.image }} style={styles.driverImage} />
-
+                                <Image source={{ uri: order.Driver.Profile.image || 'https://www.google.com/imgres?q=icon%20shipper%20png&imgurl=https%3A%2F%2Fimg.freepik.com%2Fpremium-vector%2Fcartoon-delivery-worker-with-scooter-bike_180868-5613.jpg&imgrefurl=https%3A%2F%2Fwww.freepik.com%2Fvectors%2Fdelivery-guy-png%2F7&docid=6GatJwZp5ACmKM&tbnid=EEfVdjJ0j6N55M&vet=12ahUKEwjH2b_NtK6MAxXVD1kFHeqkFgs4ChAzegQITxAA..i&w=626&h=626&hcb=2&itg=1&ved=2ahUKEwjH2b_NtK6MAxXVD1kFHeqkFgs4ChAzegQITxAA' }} style={styles.driverImage} />
                                 <View style={styles.driverInfo}>
                                     <Text style={styles.driverName}>{order.Driver.Profile.name}</Text>
-                                    <Text style={styles.driverRating}>⭐ 5</Text>
+                                    <View style={styles.driverBike}>
+                                        <Text style={styles.licensePlate}>{order.Driver.license_plate} - </Text>
+                                        <Text tyle={styles.licensePlate}>{order.Driver.car_name}</Text>
+                                    </View>
                                 </View>
-
                             </View>
                         </View>
                     )
@@ -58,10 +50,18 @@ const OrderDetailScreen = () => {
                         </View>
                     </View>
                 ))}
-
+                {/* Note */}
+                {
+                    order.note && (
+                        <View style={styles.noteContainer}>
+                            <Text style={styles.noteTitle}>Ghi chú</Text>
+                            <Text style={styles.noteText}>{order.note}</Text>
+                        </View>
+                    )
+                }
                 {/* Payment Information */}
                 <View style={styles.summaryContainer}>
-                    {/* <Text style={styles.textBold}>Chi tiết thanh toán</Text>
+                    <Text style={styles.textBold}>Chi tiết thanh toán</Text>
                     <View style={styles.row}>
                         <Text style={styles.label}>Tạm tính</Text>
                         <Text style={styles.value}>{formatPrice(order.price)}</Text>
@@ -73,7 +73,7 @@ const OrderDetailScreen = () => {
                     <View style={styles.row}>
                         <Text style={styles.label}>Giảm giá</Text>
                         <Text style={styles.value}>{formatPrice(0)}</Text>
-                    </View> */}
+                    </View>
                     <View style={styles.row}>
                         <Text style={styles.paymentMethod}>Trả qua: {order.order_pay}</Text>
                         <Text style={styles.orderTotal}>{formatPrice(order.price)}</Text>
