@@ -11,8 +11,7 @@ import userApi from '../../api/userApi';
 import styles from '../../assets/css/CartStyle';
 import PaymentMethodScreen from '../Order/PaymentMethodScreen';
 import CouponPage from '../Order/CouponScreen';
-import { HandleApiError } from '../../utils/handleError';
-import { SearchBar } from 'react-native-screens';
+import { cart } from '../../api/cartOrder';
 const CartScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
@@ -26,40 +25,48 @@ const CartScreen = () => {
     const [modalCoupon, setModalCoupon] = useState(false);
 
     const [showCompleteOrder, setShowCompleteOrder] = useState(false);
-    const items = useSelector(state => state.cart.carts[restaurantId]);
     const address = useSelector(state => state.currentLocation);
     const errorAddress = useSelector(state => state.currentLocation.error);
     const [cost, setCost] = useState();
     const [note, setNote] = useState('');
     const [transactionId, setTransactionId] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [foodData, setFoodData] = useState(() => {
-        if (items)
-            return items.map(item => ({
-                id: item.id,
-                name: item.name,
-                image: item.image,
-                quantity: item.quantity,
-                price: item.price,
-                toppings: item.toppings,
-                uniqueId: item.uniqueId
-            }));
-    });
+    const [isLoading, setIsLoading] = useState(true);
+    const [foodData, setFoodData] = useState([]);
+    const [cartID, setCartID] = useState(null);
     useEffect(() => {
-        if (items && items.length > 0) {
-            setFoodData(items.map(item => ({
-                id: item.id,
-                name: item.name,
-                image: item.image,
-                quantity: item.quantity,
-                price: item.price,
-                toppings: item.toppings,
-                uniqueId: item.uniqueId,
-            })));
-            handleGetPrice();
-        }
-    }, [items]);
-
+        const fetchCartData = async () => {
+            setIsLoading(true);
+            const cartData = await cart.getCart(restaurantId);
+            setIsLoading(false);
+            if (cartData.success) {
+                const items = cartData.data.map(item => item.description);
+                setCartID(cartData.cart_item_id);
+                setFoodData(items);
+            }
+            else {
+                if (cartData.message === 500) {
+                    Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại',
+                        {
+                            text: 'OK',
+                            onPress: () => {
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: 'Auth' }]
+                                })
+                            }
+                        }
+                    );
+                }
+                else {
+                    Alert.alert('Đã xảy ra lỗi', cartData.message);
+                }
+            }
+        };
+        fetchCartData();
+    }, []);
+    useEffect(() => {
+        handleGetPrice();
+    }, [foodData, address]);
     // Lắng nghe khi người dùng quay lại app bằng cách sử dụng AppState
     useEffect(() => {
         const handleAppStateChange = (nextAppState) => {
@@ -87,8 +94,20 @@ const CartScreen = () => {
     const handlePress = () => {
         navigation.navigate('MapScreen');
     };
+    // Thêm sản phẩm
+    const handleAdd = async (id, description) => {
+        setIsLoading(true);
+        const response = await cart.addItem(restaurantId, id, description);
+        setIsLoading(false);
+        if (response.success) {
+            const items = response.data.map(item => item.description);
+            setFoodData(items);
+        } else {
+            Alert.alert("Đã xảy ra lỗi", response.message);
+        }
+    }
     const handleOrder = async () => {
-        if (items.length === 0) {
+        if (foodData.length === 0) {
             return Alert.alert('Lỗi', 'Giỏ hàng của bạn đang trống');
         }
         setIsLoading(true);
@@ -120,9 +139,9 @@ const CartScreen = () => {
         const response = await orderApi.orderApi(
             info,
             address,
-            items,
+            foodData,
             'ZALOPAY',
-            cost.totalFoodPrice,
+            totalCost,
             cost.shippingCost,
             note,
             couponid
@@ -155,7 +174,7 @@ const CartScreen = () => {
     };
     const handleGetPrice = async () => {
         setIsLoading(true);
-        const response = await orderApi.getPrice(address.latitude, address.longitude, restaurantId, items);
+        const response = await orderApi.getPrice(address.latitude, address.longitude, restaurantId, foodData);
         setIsLoading(false);
         if (!response.success) {
             if (response.message === 500) {
@@ -170,6 +189,7 @@ const CartScreen = () => {
                         }
                     }
                 );
+                return;
             }
             return Alert.alert('Lỗi', response.message);
         }
@@ -196,7 +216,7 @@ const CartScreen = () => {
     };
     const renderFooter = () => {
         return (
-            <View >
+            <View style={styles.footer}>
                 <View style={styles.noteContainer}>
                     <TextInput
                         placeholder='Ghi chú'
@@ -235,70 +255,70 @@ const CartScreen = () => {
         );
     }
     return (
-        isLoading ? (
-            <Modal transparent={true} animationType="fade">
+        <SafeAreaView style={styles.container}>
+            <FlatList
+                ListHeaderComponent={renderHeader}
+                data={foodData}
+                renderItem={({ item }) => (
+                    <ItemInCart food={item} onAdd={handleAdd} restaurantId={restaurantId} />
+                )}
+                keyExtractor={(item, index) => `${item.id}-${index}`}
+                style={{ paddingHorizontal: 10, marginBottom: 175 }}
+                ListFooterComponent={renderFooter}
+            />
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalCoupon}
+                onRequestClose={() => setModalCoupon(false)}
+            >
+                <CouponPage onSelectCoupon={handleSelectCoupon} total={cost && cost.totalFoodPrice + cost.shippingCost} />
+            </Modal>
+            <View style={styles.footerContainer}>
+                <View style={[styles.row, { borderBottomWidth: 1, padding: 10, borderBottomColor: '#666' }]}>
+                    <Text style={[styles.label, { fontWeight: '500' }]}>Tổng số tiền</Text>
+                    <Text style={[styles.value,]}>{formatPrice(cost ? (cost.totalFoodPrice + cost.shippingCost - (coupon?.discount_value ?? 0)) : 0)}</Text>
+                </View>
+
+                <TouchableOpacity style={styles.methodPaymentContainer} onPress={handlePayment}>
+                    <Text style={styles.paymentText}> Phương thức thanh toán</Text>
+                    <TouchableOpacity style={styles.payment} onPress={handlePayment}>
+                        <Text style={styles.paymentText}> {selectedPaymentMethod}</Text>
+                    </TouchableOpacity>
+                </TouchableOpacity>
+                {/* Payment */}
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalPayment}
+                    onRequestClose={() => setModalPayment(false)}
+                >
+                    <PaymentMethodScreen onSelectMethod={handleSelectPaymentMethod} />
+                </Modal>
+
+                <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
+                    <Text style={styles.buttonText}>Đặt món</Text>
+                </TouchableOpacity>
+            </View>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={showCompleteOrder}
+                onRequestClose={() => setShowCompleteOrder(false)}
+            >
+                <View style={styles.overlay}>
+                    <CompleteOrder onComplete={() => setShowCompleteOrder(false)} restaurantId={restaurantId} />
+                </View>
+            </Modal>
+            <Modal transparent={true}
+                animationType="fade"
+                visible={isLoading}
+                onRequestClose={() => { }}>
                 <View style={styles.overlay}>
                     <ActivityIndicator size="large" color="#f00" />
                 </View>
-            </Modal>
-        ) : (
-            <SafeAreaView style={styles.container}>
-                <FlatList
-                    ListHeaderComponent={renderHeader}
-                    data={foodData}
-                    renderItem={({ item }) => (
-                        <ItemInCart food={item} key={item.uniqueId} restaurantId={restaurantId} />
-                    )}
-                    style={{ paddingHorizontal: 10 }}
-                    keyExtractor={item => item.uniqueId}
-                    ListFooterComponent={renderFooter}
-                />
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalCoupon}
-                    onRequestClose={() => setModalCoupon(false)}
-                >
-                    <CouponPage onSelectCoupon={handleSelectCoupon} total={cost && cost.totalFoodPrice + cost.shippingCost} />
-                </Modal>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={showCompleteOrder}
-                    onRequestClose={() => setShowCompleteOrder(false)}
-                >
-                    <View style={styles.overlay}>
-                        <CompleteOrder onComplete={() => setShowCompleteOrder(false)} restaurantId={restaurantId} />
-                    </View>
-                </Modal>
-                <View style={styles.footerContainer}>
-                    <View style={[styles.row, { borderBottomWidth: 1, padding: 10, borderBottomColor: '#666' }]}>
-                        <Text style={[styles.label, { fontWeight: '500' }]}>Tổng số tiền</Text>
-                        <Text style={[styles.value,]}>{formatPrice(cost ? (cost.totalFoodPrice + cost.shippingCost - (coupon?.discount_value ?? 0)) : 0)}</Text>
-                    </View>
-
-                    <TouchableOpacity style={styles.methodPaymentContainer} onPress={handlePayment}>
-                        <Text style={styles.paymentText}> Phương thức thanh toán</Text>
-                        <TouchableOpacity style={styles.payment} onPress={handlePayment}>
-                            <Text style={styles.paymentText}> {selectedPaymentMethod}</Text>
-                        </TouchableOpacity>
-                    </TouchableOpacity>
-
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={modalPayment}
-                        onRequestClose={() => setModalPayment(false)}
-                    >
-                        <PaymentMethodScreen onSelectMethod={handleSelectPaymentMethod} />
-                    </Modal>
-                    <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
-                        <Text style={styles.buttonText}>Đặt món</Text>
-                    </TouchableOpacity>
-                </View>
-            </SafeAreaView >
-        )
-    )
+            </Modal >
+        </SafeAreaView >);
 }
 
 export default CartScreen;

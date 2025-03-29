@@ -34,7 +34,7 @@ const UserProfileScreen = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             setIsLoading(true);
-            const response = await userApi.getInfoUser(dispatch, navigation);
+            const response = await userApi.getInfoUser(dispatch);
             setIsLoading(false);
             if (!response.success) {
                 if (response.message === 500) {

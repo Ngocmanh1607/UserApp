@@ -1,26 +1,21 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import Feather from 'react-native-vector-icons/Feather'
-import React, { useEffect, useState } from 'react'
-import { formatPrice } from '../utils/format'
-import { useDispatch } from 'react-redux'
-import { removeItem, updateQuantity } from '../store/cartSlice'
-import { useNavigation } from '@react-navigation/native'
+import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Feather from 'react-native-vector-icons/Feather';
+import React, { useEffect, useState } from 'react';
+import { formatPrice } from '../utils/format';
+import { useNavigation } from '@react-navigation/native';
 
-const ItemInCart = ({ food, restaurantId }) => {
+const ItemInCart = ({ food, onAdd }) => {
     const navigation = useNavigation();
-    const dispatch = useDispatch();
-    const toppingName = food.toppings.map((item) => item.topping_name)
-    const [quantity, setQuantity] = useState(food.quantity);
+    const toppingName = food.toppings?.map((item) => item.topping_name);
     const handleIncrement = () => {
-        setQuantity(prevQuantity => prevQuantity + 1);
+        const newFood = { ...food, quantity: 1 };
+        onAdd(food.id, newFood);
     };
-    useEffect(() => {
-        dispatch(updateQuantity({ restaurantId: restaurantId, uniqueId: food.uniqueId, quantity: quantity }));
-    }, [quantity]);
     const handleDecrement = () => {
-        if (quantity > 1) {
-            setQuantity(prevQuantity => prevQuantity - 1);
+        if (food.quantity > 1) {
+            const newFood = { ...food, quantity: -1 };
+            onAdd(food.id, newFood);
         }
         else {
             Alert.alert(
@@ -35,16 +30,17 @@ const ItemInCart = ({ food, restaurantId }) => {
                     {
                         text: "Đồng ý",
                         onPress: () => {
-                            dispatch(removeItem({ restaurantId: restaurantId, uniqueId: food.uniqueId }))
+                            const newFood = { ...food, quantity: -1 };
+                            onAdd(food.id, newFood);
                         },
                         style: "destructive"
-                    }
+                    },
                 ]
             );
         }
     };
     const handlePress = () => {
-        navigation.navigate('FoodDetail',)
+        navigation.navigate('FoodDetail');
     }
     return (
         <TouchableOpacity style={styles.foodContainer} >
@@ -59,7 +55,7 @@ const ItemInCart = ({ food, restaurantId }) => {
                     <Text style={styles.foodName}>{food.name}</Text>
                 </View>
                 <View style={styles.foodToppingContainer}>
-                    {toppingName.map((topping_name) => {
+                    {toppingName?.map((topping_name) => {
                         return <Text style={styles.toppingText}>{topping_name} </Text>
                     })}
                 </View>
@@ -71,7 +67,7 @@ const ItemInCart = ({ food, restaurantId }) => {
                         <TouchableOpacity style={styles.addButton} onPress={handleDecrement}>
                             <Feather name="minus" size={14} color="white" />
                         </TouchableOpacity>
-                        <Text style={styles.text}>{quantity}</Text>
+                        <Text style={styles.text}>{food.quantity}</Text>
                         <TouchableOpacity style={styles.addButton} onPress={handleIncrement}>
                             <MaterialIcons name="add" size={14} color="white" />
                         </TouchableOpacity>

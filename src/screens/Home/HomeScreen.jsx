@@ -118,7 +118,10 @@ const HomeScreen = () => {
                         )}
                         ListFooterComponent={() => loadingMore && <ActivityIndicator size='small' color="red" />}
                         onEndReached={handleLoadMore}
-                        onEndReachedThreshold={0.1} // Cuộn đến 20% cuối danh sách sẽ gọi API
+                        onEndReachedThreshold={0.2}
+                        initialNumToRender={10}  // Render trước 10 item
+                        maxToRenderPerBatch={10}  // Render theo batch 10 item
+                        windowSize={5}  // Chỉ giữ 5 * batch trong bộ nhớ
                     />
                 </View>
             )}

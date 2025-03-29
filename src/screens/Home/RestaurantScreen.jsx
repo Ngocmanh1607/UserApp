@@ -91,7 +91,7 @@ const RestaurantScreen = ({ route }) => {
                         <CardFood2 key={food.id} food={food} restaurant={restaurant} />
                     ))}
                 </ScrollView>
-                <TouchableOpacity style={styles.cartContainer} onPress={() => { navigation.navigate('CartScreen', { restaurantId }) }}>
+                <TouchableOpacity style={styles.cartContainer} onPress={() => { navigation.navigate('CartScreen', { restaurantId: restaurantId }) }}>
                     <SimpleLineIcons name="handbag" size={35} color='black' />
                 </TouchableOpacity>
             </SafeAreaView>

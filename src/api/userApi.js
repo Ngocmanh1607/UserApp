@@ -2,11 +2,9 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './apiClient';
 import { Alert } from 'react-native';
-import { setUserId } from '../store/cartSlice';
-import { setUserInfo } from '../store/userSlice';
-import { useDispatch } from 'react-redux';
 import fetchFcmToken from '../utils/fcmToken';
 import handleApiError from './handleApiError';
+import { setUserInfo } from '../store/userSlice';
 const apiKey = "123"
 const userApi = {
     signupApi: async (dispatch, email, password) => {
@@ -36,7 +34,6 @@ const userApi = {
                 ['userEmail', userEmail],
                 ['userId', userId.toString()],
             ]);
-            dispatch(setUserId(userId));
             return true;
         } catch (error) {
             throw error;
@@ -62,7 +59,6 @@ const userApi = {
                 ['userEmail', userEmail],
                 ['userId', userId.toString()],
             ]);
-            dispatch(setUserId(userId));
             return true;
         } catch (error) {
             throw error;
@@ -97,7 +93,7 @@ const userApi = {
         }
     },
 
-    getInfoUser: async (dispatch,) => {
+    getInfoUser: async (dispatch) => {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
         if (!userId || !accessToken) {
@@ -113,6 +109,7 @@ const userApi = {
                     }
                 }
             );
+            console.log(response.data);
             dispatch(setUserInfo(response.data.metadata));
             return {
                 success: true,

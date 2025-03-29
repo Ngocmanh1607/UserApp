@@ -4,22 +4,16 @@ import CheckBox from '@react-native-community/checkbox';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
-import { addItem } from '../../store/cartSlice';
 import Snackbar from 'react-native-snackbar';
 import { formatPrice } from '../../utils/format';
 import { foodApi } from '../../api/foodApi';
 import styles from '../../assets/css/FoodDetailStyle';
+import { cart } from '../../api/cartOrder';
 
 const FoodDetailScreen = () => {
     const route = useRoute();
     const { food, restaurant } = route.params;
     const navigation = useNavigation();
-    const restaurantInfo = {
-        name: restaurant.name,
-        image: restaurant.image,
-    };
-    const dispatch = useDispatch();
     const [foodDetails, setFoodDetails] = useState({ ...food, quantity: 1 });
     const [sum, setSum] = useState(food.price);
     const [toppings, setToppings] = useState([]);
@@ -33,7 +27,7 @@ const FoodDetailScreen = () => {
             }
         }
         fetchTopping();
-    }, [])
+    }, []);
     const handleIncrement = () => {
         setFoodDetails(prevDetails => {
             const newQuantity = prevDetails.quantity + 1;
@@ -69,19 +63,25 @@ const FoodDetailScreen = () => {
         const totalSum = (food.price + selectedToppingsPrice) * quantity;
         setSum(totalSum);
     };
-    const handleAddtoCart = () => {
+    const handleAddtoCart = async () => {
         try {
-            const selectedToppings = toppings.filter(topping => topping.selected)
+            const selectedToppings = toppings.filter(topping => topping.selected);
             const selectedToppingsPrice = selectedToppings.reduce((total, topping) => total + topping.price, 0);
-            const totalPrice = food.price + selectedToppingsPrice;
-            dispatch(addItem({ food: { ...foodDetails, price: totalPrice }, toppings: selectedToppings, restaurantInfo }))
-            Snackbar.show(
-                {
-                    text: 'Thêm vào giỏ hàng thành công !',
-                    duration: Snackbar.LENGTH_SHORT,
-                }
-            )
-            navigation.goBack();
+            const totalPrice = foodDetails.price + selectedToppingsPrice;
+            const food = { ...foodDetails, price: totalPrice, toppings: selectedToppings };
+            const response = await cart.addItem(restaurant.id, food.id, food);
+            if (response.success) {
+                Snackbar.show(
+                    {
+                        text: 'Thêm vào giỏ hàng thành công !',
+                        duration: Snackbar.LENGTH_SHORT,
+                    }
+                )
+                navigation.goBack();
+            }
+            else {
+                Alert.alert('Đã có lỗi xảy ra', response.message);
+            }
         } catch (error) {
             console.log(error);
         }

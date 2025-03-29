@@ -1,16 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDispatch } from 'react-redux';
-import { clearCart } from '../../store/cartSlice';
+import { View, Text, TouchableOpacity } from 'react-native';
 import styles from '../../assets/css/CompleteOrderStyle';
 
 const CompleteOrder = ({ onComplete, restaurantId }) => {
     const navigation = useNavigation();
-    const dispatch = useDispatch();
     const handleOrderComplete = () => {
-        dispatch(clearCart({ restaurantId }));
         navigation.navigate('Main');
     }
     return (
