@@ -53,35 +53,5 @@ export const cart = {
         } catch (error) {
             return handleApiError(error);
         }
-    },
-    removeItem: async (cartID) => {
-        try {
-            console.log("Đang xoá sản phẩm:", cartID);
-
-            const userId = await AsyncStorage.getItem('userId');
-            const accessToken = await AsyncStorage.getItem('accessToken');
-
-            if (!userId || !accessToken) {
-                throw new Error("Phiên hết hạn. Vui lòng đăng nhập lại.");
-            }
-            const response = await apiClient.put(
-                `/cart`,
-                { cart_item_id: cartID },
-                {
-                    headers: {
-                        "x-api-key": apiKey,
-                        "authorization": accessToken,
-                        "x-client-id": userId,
-                    },
-                }
-            );
-
-            return {
-                success: true,
-                data: response.data.metadata,
-            };
-        } catch (error) {
-            return handleApiError(error);
-        }
     }
 }
