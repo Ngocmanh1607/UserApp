@@ -2,7 +2,6 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        zIndex: 1,
         backgroundColor: '#fff',
     },
     header: {
@@ -27,6 +26,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     orderInfoContainer: {
+        position: 'absolute',
+        bottom: 20,
+        left: 10,
+        right: 10,
         backgroundColor: '#FFF',
         borderRadius: 15,
         padding: 20,
@@ -35,7 +38,6 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        marginHorizontal: 10,
     },
     orderStatus: {
         fontSize: 18,

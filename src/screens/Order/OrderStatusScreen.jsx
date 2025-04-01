@@ -28,6 +28,7 @@ const OrderStatusScreen = () => {
         socket.on("orderStatusUpdate", ({ orderId, status, detailDriver }) => {
             setDriverId(detailDriver.Profile.id);
             setOrderStatus(status);
+            console.log(status);
             if (status === "ORDER_CONFIRMED")
                 clearRoutesFromStorage();
         });
@@ -66,7 +67,7 @@ const OrderStatusScreen = () => {
             }
         };
         saveUpdatedRoutes();
-    }, [router]);
+    }, [router, shipperLocation]);
 
     // Khôi phục tuyến đường và vị trí từ bộ nhớ
     useEffect(() => {
@@ -98,13 +99,14 @@ const OrderStatusScreen = () => {
     };
     const getRoute = async (origin, destination) => {
         try {
-            if (shipperLocation !== null) {
+            if (origin !== null) {
                 const response = await axios.get(
                     `https://api.mapbox.com/directions/v5/mapbox/driving/${origin.longitude},${origin.latitude};${destination.longitude},${destination.latitude}?geometries=geojson&access_token=sk.eyJ1IjoibmdvY21hbmgxNjA3IiwiYSI6ImNtM2N5bzY5dDFxbDIyanIxbDEycXg0bGwifQ.M2rY0iFiThl6Crjp6kr_GQ`
                 );
                 const routeCoordinates = response.data.routes[0].geometry.coordinates.map(
                     (point) => ({ latitude: point[1], longitude: point[0] })
                 );
+
                 setRouter(routeCoordinates);
             }
         } catch (error) {
