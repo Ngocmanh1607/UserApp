@@ -12,9 +12,9 @@ const CardOrder = ({ order }) => {
 
         return statusMapping[status] || "Theo dõi đơn hàng";
     };
-    const handlePressOrder = (id, order_status) => {
+    const handlePressOrder = (id, order_status, customer_id) => {
         if (order_status !== 'ORDER_CANCELED') {
-            navigation.navigate('OrderStatus', { orderId: id })
+            navigation.navigate('OrderStatus', { orderId: id, customerId: customer_id })
         }
     }
     return (
@@ -22,7 +22,7 @@ const CardOrder = ({ order }) => {
             {/* Order header with date and status */}
             <View style={styles.orderHeader}>
                 <Text style={styles.orderDate}>{formatDate(order.order_date)}</Text>
-                <TouchableOpacity onPress={() => handlePressOrder(order.id, order.order_status)}><Text style={[styles.orderStatus, { color: order.order_status === 'ORDER_CONFIRMED' ? "#28a745" : "#FF0000" }]}>
+                <TouchableOpacity onPress={() => handlePressOrder(order.id, order.order_status, order.customer_id)}><Text style={[styles.orderStatus, { color: order.order_status === 'ORDER_CONFIRMED' ? "#28a745" : "#FF0000" }]}>
                     {getOrderStatus(order.order_status)}
                 </Text></TouchableOpacity>
             </View>

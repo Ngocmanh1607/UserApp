@@ -6,7 +6,6 @@ import CardOrder from '../../components/CardOrder';
 import { orderApi } from '../../api/orderApi';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import styles from '../../assets/css/OrderStyle';
-import { SafeAreaView } from 'react-native-safe-area-context';
 const OrderScreen = () => {
     const navigation = useNavigation();
     const [search, setSearch] = useState('');

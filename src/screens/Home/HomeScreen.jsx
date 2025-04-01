@@ -13,7 +13,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../../assets/css/HomeStyle";
 import Loading from "../../components/Loading";
-import { HandleApiError } from "../../utils/handleError";
 
 const HomeScreen = () => {
     const [search, setSearch] = useState('');
