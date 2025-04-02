@@ -3,124 +3,183 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F8F8',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#F7F8FA',
   },
-  imageContainer: {
+  restaurantHeaderContainer: {
     width: '100%',
-    height: 180,
+  },
+  restaurantImageWrapper: {
+    width: '100%',
+    height: 200,
+    position: 'relative',
+  },
+  restaurantImage: {
+    width: '100%',
+    height: '100%',
     resizeMode: 'cover',
   },
-  heartContainer: {
+  imageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  favoriteButton: {
     position: 'absolute',
     top: 20,
     right: 20,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    width: '95%',
-    backgroundColor: '#ffffff',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 15,
-    marginTop: -30,
-    borderRadius: 10,
-    elevation: 5,
+  },
+  heart: {
+    opacity: 0.9,
+  },
+  heartFilled: {
+    opacity: 1,
+  },
+  restaurantInfoCard: {
+    marginHorizontal: 16,
+    marginTop: -40,
+    backgroundColor: '#FFF',
+    borderRadius: 16,
+    padding: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 2,
     },
-    shadowOpacity: 0.2,
-    shadowRadius: 4.65,
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  summaryContainer: {
-    width: '95%',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+  restaurantName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
   },
-  iconContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
+  restaurantDes: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
   },
-  text: {
-    fontSize: 22,
-    fontWeight: '500',
-    color: '#000',
-  },
-  bottomContainer: {
+  ratingRow: {
     flexDirection: 'row',
-    marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 20,
   },
   ratingText: {
     marginLeft: 4,
-    fontSize: 16,
-    color: '#000',
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
   },
-  disContainer: {
-    justifyContent: 'center',
+  distanceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  textDis: {
-    fontSize: 16,
+  distanceText: {
+    marginLeft: 4,
+    fontSize: 14,
     color: '#666',
   },
-  heart: {
-    justifyContent: 'flex-end',
-    marginLeft: 20,
-  },
-  searchbox: {
-    flex: 1,
+  reviewButton: {
     flexDirection: 'row',
-    backgroundColor: '#FFF',
     alignItems: 'center',
-    marginVertical: 5,
-    alignSelf: 'center',
-    elevation: 3,
-    borderRadius: 10,
-    height: 45,
-    margin: 10,
+    backgroundColor: '#F0F8FF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  reviewButtonText: {
+    color: '#007AFF',
+    fontSize: 14,
+    fontWeight: '500',
+    marginRight: 4,
+  },
+  searchBarContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  searchInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    height: 46,
+    paddingHorizontal: 12,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 1,
     },
-    shadowOpacity: 0.2,
-    shadowRadius: 4.65,
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  input: {
+  searchIcon: {
+    marginRight: 8,
+  },
+  clearIcon: {
+    marginLeft: 8,
+  },
+  searchInput: {
     flex: 1,
     height: '100%',
     fontSize: 16,
     color: '#333',
   },
-  mainInContainer: {
-    flexDirection: 'row',
+  foodListContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 80,
+  },
+  emptyContainer: {
+    padding: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cartContainer: {
-    width: 50,
-    height: 50,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+  emptyText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#999',
+    textAlign: 'center',
+  },
+  cartButton: {
     position: 'absolute',
-    zIndex: 1,
-    right: 20,
-    bottom: 20,
+    right: 24,
+    bottom: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 10,
+    backgroundColor: '#FF3B30',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
-    elevation: 5,
-  },
-  foodScrollView: {
-    flex: 1,
-    marginHorizontal: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 6,
   },
 });
+
 export default styles;

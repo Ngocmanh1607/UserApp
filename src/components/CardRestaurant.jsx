@@ -1,29 +1,41 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-
+import getRatingReview from '../utils/getRatingReview';
 const CardRestaurant = ({ restaurant }) => {
+  const [res, setRes] = useState(restaurant);
   const navigation = useNavigation();
   const handlePress = () => {
-    navigation.navigate('RestaurantDetail', { restaurant });
+    navigation.navigate('RestaurantDetail', { restaurant: res });
   };
+  useEffect(() => {
+    const fetchReview = async () => {
+      try {
+        const ratingReview = await getRatingReview(res.id);
+        setRes({ ...restaurant, rating: ratingReview });
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    fetchReview();
+  }, []);
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
-      <Image source={{ uri: restaurant.image }} style={styles.imageContainer} />
+      <Image source={{ uri: res.image }} style={styles.imageContainer} />
       <View style={styles.mainContainer}>
         <View style={styles.textContainer}>
-          <Text style={styles.text}>{restaurant.name}</Text>
-          <Text style={styles.textSubTitle}>{restaurant.description}</Text>
+          <Text style={styles.text}>{res.name}</Text>
+          <Text style={styles.textSubTitle}>{res.description}</Text>
           <View style={styles.bottomContainer}>
             <View style={styles.ratingContainer}>
-              <Text style={styles.ratingText}>{restaurant.rating}</Text>
+              <Text style={styles.ratingText}>{res.rating}</Text>
               <MaterialIcons name="star" size={20} color="#FFA500" />
             </View>
             <View style={styles.disContainer}>
               <Text style={styles.textDis}>
-                Khoảng cách: {restaurant.distance.toFixed(2)}Km
+                Khoảng cách: {res.distance.toFixed(2)}Km
               </Text>
             </View>
           </View>
