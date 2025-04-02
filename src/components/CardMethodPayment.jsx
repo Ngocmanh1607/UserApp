@@ -1,14 +1,14 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
 
 const CardMethodPayment = () => {
-    return (
-        <View>
-            <Text>CardMethodPayment</Text>
-        </View>
-    )
-}
+  return (
+    <View>
+      <Text>CardMethodPayment</Text>
+    </View>
+  );
+};
 
-export default CardMethodPayment
+export default CardMethodPayment;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});
