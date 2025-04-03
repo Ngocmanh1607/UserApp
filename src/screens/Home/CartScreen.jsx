@@ -207,93 +207,124 @@ const CartScreen = () => {
     }
     setCost(response.data);
   };
+
+  // Enhanced header component
   const renderHeader = () => {
     return (
       <View style={styles.headContainer}>
-        <View style={styles.locationContainer}>
-          <TouchableOpacity
-            style={{ flexDirection: 'row' }}
-            onPress={handlePress}>
-            <Ionicons
-              name="location"
-              size={25}
-              color="#FF0000"
-              style={{ paddingVertical: 6 }}
-            />
-            <View>
-              <View>
-                <Text
-                  style={{
-                    paddingRight: 3,
-                    fontSize: 16,
-                    fontWeight: '700',
-                    color: '#333',
-                  }}>
-                  Giao tới
-                </Text>
-              </View>
-              <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">
+        <Text style={styles.sectionTitle}>Địa chỉ giao hàng</Text>
+        <TouchableOpacity style={styles.addressButton} onPress={handlePress}>
+          <View style={styles.addressContent}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="location" size={22} color="#e74c3c" />
+            </View>
+            <View style={styles.addressTextContainer}>
+              <Text
+                style={styles.addressText}
+                numberOfLines={1}
+                ellipsizeMode="tail">
                 {errorAddress ? errorAddress : address.address}
               </Text>
             </View>
-          </TouchableOpacity>
-        </View>
+            <Ionicons name="chevron-forward" size={18} color="#7f8c8d" />
+          </View>
+        </TouchableOpacity>
       </View>
     );
   };
+
+  // Enhanced footer component
   const renderFooter = () => {
     return (
       <View style={styles.footer}>
+        {/* Note Input */}
         <View style={styles.noteContainer}>
-          <TextInput
-            placeholder="Ghi chú"
-            placeholderTextColor="#7f8c8d"
-            style={[
-              styles.row,
-              {
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#333',
-                fontSize: 16,
-              },
-            ]}
-            value={note}
-            onChangeText={setNote}
-          />
+          <View style={styles.noteInputWrapper}>
+            <Ionicons
+              name="create-outline"
+              size={20}
+              color="#7f8c8d"
+              style={styles.noteIcon}
+            />
+            <TextInput
+              placeholder="Ghi chú cho đơn hàng"
+              placeholderTextColor="#7f8c8d"
+              style={styles.noteInput}
+              value={note}
+              onChangeText={setNote}
+            />
+          </View>
         </View>
+
+        {/* Coupon Button */}
         <TouchableOpacity
           style={styles.couponContainer}
-          onPress={() => handleDiscount()}>
-          <Text style={styles.paymentText}>Mã giảm giá</Text>
-          <Text style={styles.discountText}>
-            {coupon && coupon.coupon_code}
-          </Text>
+          onPress={handleDiscount}>
+          <View style={styles.couponLeftContent}>
+            <Ionicons
+              name="ticket-outline"
+              size={20}
+              color="#e74c3c"
+              style={styles.couponIcon}
+            />
+            <Text style={styles.paymentText}>Mã giảm giá</Text>
+          </View>
+          <View style={styles.couponRightContent}>
+            {coupon ? (
+              <Text style={styles.discountText}>{coupon.coupon_code}</Text>
+            ) : (
+              <Text style={styles.noCouponText}>Chọn hoặc nhập mã</Text>
+            )}
+            <Ionicons name="chevron-forward" size={18} color="#7f8c8d" />
+          </View>
         </TouchableOpacity>
 
+        {/* Order Summary */}
         <View style={styles.summaryContainer}>
-          <Text style={styles.textBold}>Chi tiết thanh toán</Text>
-          <View style={styles.row}>
-            <Text style={styles.label}>Tạm tính</Text>
-            <Text style={styles.value}>
+          <Text style={styles.summaryTitle}>Chi tiết thanh toán</Text>
+
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Tạm tính</Text>
+            <Text style={styles.summaryValue}>
               {formatPrice(cost ? cost.totalFoodPrice : 0)}
             </Text>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Phí áp dụng</Text>
-            <Text style={styles.value}>
+
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Phí vận chuyển</Text>
+            <Text style={styles.summaryValue}>
               {formatPrice(cost ? cost.shippingCost : 0)}
             </Text>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Giảm giá</Text>
-            <Text style={styles.value}>
-              {formatPrice(coupon && coupon.discount_value)}
+
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Giảm giá</Text>
+            <Text style={styles.discountValue}>
+              {coupon && coupon.discount_value
+                ? `- ${formatPrice(coupon.discount_value)}`
+                : formatPrice(0)}
+            </Text>
+          </View>
+
+          <View style={styles.divider}></View>
+
+          <View style={styles.totalSummaryRow}>
+            <Text style={styles.totalSummaryLabel}>Tổng thanh toán</Text>
+            <Text style={styles.totalSummaryValue}>
+              {formatPrice(
+                cost
+                  ? cost.totalFoodPrice +
+                      cost.shippingCost -
+                      (coupon?.discount_value ?? 0)
+                  : 0
+              )}
             </Text>
           </View>
         </View>
       </View>
     );
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
@@ -307,9 +338,12 @@ const CartScreen = () => {
           />
         )}
         keyExtractor={(item, index) => `${item.id}-${index}`}
-        style={{ paddingHorizontal: 10, marginBottom: 175 }}
+        style={styles.flatListContainer}
         ListFooterComponent={renderFooter}
+        showsVerticalScrollIndicator={false}
       />
+
+      {/* Coupon Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -320,16 +354,12 @@ const CartScreen = () => {
           total={cost && cost.totalFoodPrice + cost.shippingCost}
         />
       </Modal>
+
+      {/* Footer Container with Order Summary */}
       <View style={styles.footerContainer}>
-        <View
-          style={[
-            styles.row,
-            { borderBottomWidth: 1, padding: 10, borderBottomColor: '#666' },
-          ]}>
-          <Text style={[styles.label, { fontWeight: '500' }]}>
-            Tổng số tiền
-          </Text>
-          <Text style={[styles.value]}>
+        <View style={styles.totalRow}>
+          <Text style={styles.totalLabel}>Tổng số tiền</Text>
+          <Text style={styles.totalValue}>
             {formatPrice(
               cost
                 ? cost.totalFoodPrice +
@@ -340,15 +370,31 @@ const CartScreen = () => {
           </Text>
         </View>
 
+        {/* Payment Method Selection */}
         <TouchableOpacity
           style={styles.methodPaymentContainer}
           onPress={handlePayment}>
-          <Text style={styles.paymentText}> Phương thức thanh toán</Text>
-          <TouchableOpacity style={styles.payment} onPress={handlePayment}>
-            <Text style={styles.paymentText}> {selectedPaymentMethod}</Text>
-          </TouchableOpacity>
+          <View style={styles.couponLeftContent}>
+            <Ionicons
+              name="wallet-outline"
+              size={20}
+              color="#2c3e50"
+              style={styles.couponIcon}
+            />
+            <Text style={styles.paymentText}>Phương thức thanh toán</Text>
+          </View>
+          <View style={styles.couponRightContent}>
+            <Text style={styles.paymentText}>{selectedPaymentMethod}</Text>
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color="#7f8c8d"
+              style={{ marginLeft: 6 }}
+            />
+          </View>
         </TouchableOpacity>
-        {/* Payment */}
+
+        {/* Payment Modal */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -357,10 +403,13 @@ const CartScreen = () => {
           <PaymentMethodScreen onSelectMethod={handleSelectPaymentMethod} />
         </Modal>
 
+        {/* Order Button */}
         <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
           <Text style={styles.buttonText}>Đặt món</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Complete Order Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -373,13 +422,15 @@ const CartScreen = () => {
           />
         </View>
       </Modal>
+
+      {/* Loading Overlay */}
       <Modal
         transparent={true}
         animationType="fade"
         visible={isLoading}
         onRequestClose={() => {}}>
         <View style={styles.overlay}>
-          <ActivityIndicator size="large" color="#f00" />
+          <ActivityIndicator size="large" color="#e74c3c" />
         </View>
       </Modal>
     </SafeAreaView>

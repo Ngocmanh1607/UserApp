@@ -6,23 +6,22 @@ import {
   ActivityIndicator,
   FlatList,
   Alert,
+  Text,
+  SafeAreaView,
 } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Headerbar from '../../components/Headerbar';
 import CardSlider from '../../components/CardSlider';
 import OfferSlider from '../../components/OfferSlider';
 import Categories from '../../components/Categories';
 import CardRestaurant from '../../components/CardRestaurant';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import restaurantApi from '../../api/restaurantApi';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from '../../assets/css/HomeStyle';
-import Loading from '../../components/Loading';
-
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 const HomeScreen = () => {
-  const [search, setSearch] = useState('');
+  const [searchText, setSearchText] = useState('');
   const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
@@ -91,59 +90,95 @@ const HomeScreen = () => {
     }
   };
   return (
-    <SafeAreaView style={styles.mainContainer}>
-      <View style={styles.headContainer}>
+    <SafeAreaView style={styles.container}>
+      {/* Header*/}
+      <View style={styles.header}>
         <Headerbar />
       </View>
+      {/* Nội dung chính */}
       {loading ? (
-        <Loading />
-      ) : (
-        <View style={styles.scrollContainer}>
-          {/* Search box */}
-          <View style={styles.searchbox}>
-            <TouchableOpacity>
-              <AntDesign
-                name="search1"
-                size={24}
-                color="red"
-                style={{ marginRight: 10 }}
-              />
-            </TouchableOpacity>
-            <TextInput
-              style={styles.input}
-              placeholder="Tìm kiếm theo tên nhà hàng"
-              placeholderTextColor="#333"
-              value={search}
-              onChangeText={handleSearch}
-            />
-          </View>
-          <FlatList
-            data={filteredRestaurants}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <CardRestaurant restaurant={item} />}
-            ListHeaderComponent={() => (
-              <>
-                <OfferSlider />
-                <Categories />
-                <CardSlider />
-              </>
-            )}
-            ListFooterComponent={() =>
-              loadingMore && <ActivityIndicator size="small" color="red" />
-            }
-            onEndReached={handleLoadMore}
-            onEndReachedThreshold={0.2}
-            initialNumToRender={10} // Render trước 10 item
-            maxToRenderPerBatch={10} // Render theo batch 10 item
-            windowSize={5} // Chỉ giữ 5 * batch trong bộ nhớ
-          />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#007AFF" />
         </View>
+      ) : (
+        <FlatList
+          data={filteredRestaurants} // Giữ nguyên data của bạn
+          ListHeaderComponent={() => (
+            <>
+              {/* Phần tìm kiếm */}
+              <View style={styles.searchContainer}>
+                <View style={styles.searchbox}>
+                  <Icon name="search" size={22} color="#999" />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Tìm kiếm sản phẩm..."
+                    placeholderTextColor="#999"
+                    value={searchText}
+                    onChangeText={setSearchText}
+                  />
+                  {searchText ? (
+                    <TouchableOpacity onPress={() => setSearchText('')}>
+                      <Icon name="close" size={22} color="#999" />
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              </View>
+              {/* Banner Slider */}
+              <View style={styles.section}>
+                <OfferSlider />
+              </View>
+
+              {/* Categories */}
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>Danh mục</Text>
+                </View>
+                <Categories />
+              </View>
+
+              {/* Popular Products */}
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>
+                    Nhà hàng bạn yêu thích
+                  </Text>
+                </View>
+                <CardSlider />
+              </View>
+
+              {/* Latest Products */}
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>Các quán gần đây</Text>
+                </View>
+              </View>
+            </>
+          )}
+          renderItem={({ item }) => <CardRestaurant restaurant={item} />}
+          keyExtractor={(item) => item.id.toString()}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.2}
+          initialNumToRender={10} // Render trước 10 item
+          maxToRenderPerBatch={10} // Render trước 10 item
+          windowSize={5} // Chỉ giữ 5 * batch trong bộ nhớ
+          ListFooterComponent={() =>
+            loadingMore && (
+              <View style={styles.loadingMoreContainer}>
+                <ActivityIndicator size="small" color="#007AFF" />
+              </View>
+            )
+          }
+          contentContainerStyle={styles.flatListContent}
+        />
       )}
-      <View style={styles.cartContainer}>
-        <TouchableOpacity onPress={handelPress}>
-          <SimpleLineIcons name="handbag" size={35} color="black" />
-        </TouchableOpacity>
-      </View>
+
+      {/* Floating Cart Button */}
+      <TouchableOpacity style={styles.cartContainer}>
+        <SimpleLineIcons name="handbag" size={24} color="#FFF" />
+        <View style={styles.cartBadge}>
+          <Text style={styles.cartBadgeText}>3</Text>
+        </View>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };

@@ -21,6 +21,7 @@ import CardFood2 from '../../components/CardFood2';
 import { useNavigation } from '@react-navigation/native';
 import restaurantApi from '../../api/restaurantApi';
 import styles from '../../assets/css/RestaurantStyle';
+import getQuantity from '../../utils/getQuantityInCart';
 
 const RestaurantScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -31,15 +32,17 @@ const RestaurantScreen = ({ route }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
-
+  const [quantityItem, setQuantityItem] = useState(0);
   useEffect(() => {
     const fetchRestaurantData = async () => {
       setLoading(true);
       try {
         const data = await restaurantApi.getFoodsRestaurant(restaurantId);
+        const quantity = getQuantity(restaurantId);
         setLoading(false);
         if (data.success) {
           setRestaurantData(data.data);
+          setQuantityItem(quantity);
           setFilteredData(data.data);
         } else {
           Alert.alert('Lỗi', data.message);
@@ -185,6 +188,9 @@ const RestaurantScreen = ({ route }) => {
             navigation.navigate('CartScreen', { restaurantId: restaurantId });
           }}>
           <SimpleLineIcons name="handbag" size={24} color="#FFF" />
+          <View style={styles.cartBadge}>
+            <Text style={styles.cartBadgeText}>{quantityItem}</Text>
+          </View>
         </TouchableOpacity>
       </SafeAreaView>
     </TouchableWithoutFeedback>

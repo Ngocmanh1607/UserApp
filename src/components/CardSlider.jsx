@@ -12,7 +12,6 @@ import React from 'react';
 const CardSlider = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.cardhead}>Các quán gần đây</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <TouchableOpacity style={styles.card}>
           <View>

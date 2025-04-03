@@ -16,19 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 const Categories = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState();
   const [categories, setCategories] = useState([]);
-  const categoryIcons = {
-    1: require('../assets/Images/icon_1.jpg'),
-    2: require('../assets/Images/icon_2.jpg'),
-    3: require('../assets/Images/icon_3.jpg'),
-    4: require('../assets/Images/icon_4.jpg'),
-    5: require('../assets/Images/icon_5.png'),
-    6: require('../assets/Images/icon_6.jpg'),
-    7: require('../assets/Images/icon_7.jpg'),
-    8: require('../assets/Images/icon_8.jpg'),
-    9: require('../assets/Images/icon_9.jpg'),
-  };
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoading(true);
@@ -38,6 +26,7 @@ const Categories = () => {
         const filteredCategories = data.data.map((category) => ({
           id: category.id,
           name: category.name,
+          icon: category.thumnail,
         }));
         setCategories(filteredCategories);
       } else {
@@ -48,16 +37,9 @@ const Categories = () => {
     fetchCategories();
   }, []);
 
-  const handleCategoryPress = (index, categoryId) => {
-    setSelectedIndex(index);
+  const handleCategoryPress = (categoryId) => {
     navigation.navigate('FoodCategory', { categoryId });
   };
-  const LoadingSpinner = () => (
-    <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#FF0000" />
-    </View>
-  );
-
   return (
     <View style={styles.container}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -65,8 +47,8 @@ const Categories = () => {
           <TouchableOpacity
             key={category.id}
             style={styles.box}
-            onPress={() => handleCategoryPress(index, category.id)}>
-            <Image source={categoryIcons[category.id]} style={styles.image} />
+            onPress={() => handleCategoryPress(category.id)}>
+            <Image source={{ uri: category.icon }} style={styles.image} />
             <Text style={styles.text}>{category.name}</Text>
           </TouchableOpacity>
         ))}
@@ -106,8 +88,8 @@ const styles = StyleSheet.create({
   box: {
     width: 100,
     flexDirection: 'column',
-    marginHorizontal: 5,
-    marginVertical: 10,
+    marginHorizontal: 10,
+    marginVertical: 5,
     padding: 0,
     borderRadius: 10,
     alignItems: 'center',

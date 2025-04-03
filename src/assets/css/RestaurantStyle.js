@@ -180,6 +180,23 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 6,
   },
+  cartBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  cartBadgeText: {
+    color: '#FF3B30',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;
