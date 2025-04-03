@@ -13,11 +13,13 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Snackbar from 'react-native-snackbar';
+import { useDispatch } from 'react-redux';
+
 import { formatPrice } from '../../utils/format';
 import { foodApi } from '../../api/foodApi';
 import styles from '../../assets/css/FoodDetailStyle';
 import { cart } from '../../api/cartOrder';
-
+import { fetchCartCount } from '../../store/cartSlice';
 const FoodDetailScreen = () => {
   const route = useRoute();
   const { food, restaurant } = route.params;
@@ -25,6 +27,7 @@ const FoodDetailScreen = () => {
   const [foodDetails, setFoodDetails] = useState({ ...food, quantity: 1 });
   const [sum, setSum] = useState(food.price);
   const [toppings, setToppings] = useState([]);
+  const dispatch = useDispatch();
   useEffect(() => {
     const fetchTopping = async () => {
       const data = await foodApi.getFoodTopping(food.id);
@@ -92,6 +95,9 @@ const FoodDetailScreen = () => {
           text: 'Thêm vào giỏ hàng thành công !',
           duration: Snackbar.LENGTH_SHORT,
         });
+
+        // Gọi lại API để cập nhật số lượng giỏ hàng
+        dispatch(fetchCartCount(restaurant.id));
         navigation.goBack();
       } else {
         Alert.alert('Đã có lỗi xảy ra', response.message);

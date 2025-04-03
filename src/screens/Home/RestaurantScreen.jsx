@@ -9,7 +9,6 @@ import {
   Keyboard,
   Alert,
   FlatList,
-  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -21,28 +20,27 @@ import CardFood2 from '../../components/CardFood2';
 import { useNavigation } from '@react-navigation/native';
 import restaurantApi from '../../api/restaurantApi';
 import styles from '../../assets/css/RestaurantStyle';
-import getQuantity from '../../utils/getQuantityInCart';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCartCount } from '../../store/cartSlice';
 const RestaurantScreen = ({ route }) => {
   const navigation = useNavigation();
   const { restaurant } = route.params;
   const restaurantId = restaurant.id;
   const [loading, setLoading] = useState(true);
   const [restaurantData, setRestaurantData] = useState([]);
+  const dispatch = useDispatch();
+  const { cartCount } = useSelector((state) => state.cart);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [quantityItem, setQuantityItem] = useState(0);
   useEffect(() => {
     const fetchRestaurantData = async () => {
       setLoading(true);
       try {
         const data = await restaurantApi.getFoodsRestaurant(restaurantId);
-        const quantity = getQuantity(restaurantId);
         setLoading(false);
         if (data.success) {
           setRestaurantData(data.data);
-          setQuantityItem(quantity);
           setFilteredData(data.data);
         } else {
           Alert.alert('Lỗi', data.message);
@@ -53,6 +51,7 @@ const RestaurantScreen = ({ route }) => {
       }
     };
     fetchRestaurantData();
+    dispatch(fetchCartCount(restaurantId));
   }, [restaurantId]);
 
   const handleSearch = (query) => {
@@ -189,7 +188,7 @@ const RestaurantScreen = ({ route }) => {
           }}>
           <SimpleLineIcons name="handbag" size={24} color="#FFF" />
           <View style={styles.cartBadge}>
-            <Text style={styles.cartBadgeText}>{quantityItem}</Text>
+            <Text style={styles.cartBadgeText}>{cartCount}</Text>
           </View>
         </TouchableOpacity>
       </SafeAreaView>

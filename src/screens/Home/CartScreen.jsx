@@ -26,6 +26,7 @@ import styles from '../../assets/css/CartStyle';
 import PaymentMethodScreen from '../Order/PaymentMethodScreen';
 import CouponPage from '../Order/CouponScreen';
 import { cart } from '../../api/cartOrder';
+import { fetchCartCount } from '../../store/cartSlice';
 const CartScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -113,6 +114,7 @@ const CartScreen = () => {
     setIsLoading(false);
     if (response.success) {
       const items = response.data.map((item) => item.description);
+      dispatch(fetchCartCount(restaurantId));
       setFoodData(items);
     } else {
       Alert.alert('Đã xảy ra lỗi', response.message);

@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react';
 import { formatPrice } from '../utils/format';
 import { useNavigation } from '@react-navigation/native';
 
-const ItemInCart = ({ food, onAdd }) => {
+const ItemInCart = ({ food, onAdd, restaurantId }) => {
   const navigation = useNavigation();
   const toppingName = food.toppings?.map((item) => item.topping_name);
 
@@ -29,7 +29,6 @@ const ItemInCart = ({ food, onAdd }) => {
       Alert.alert('Xoá sản phẩm', 'Bạn muốn xoá sản phẩm này khỏi giỏ hàng?', [
         {
           text: 'Huỷ',
-          onPress: () => console.log('Người dùng đã huỷ xoá'),
           style: 'cancel',
         },
         {
