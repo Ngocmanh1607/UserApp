@@ -9,6 +9,7 @@ import {
   Keyboard,
   Alert,
   FlatList,
+  SectionList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -22,6 +23,7 @@ import restaurantApi from '../../api/restaurantApi';
 import styles from '../../assets/css/RestaurantStyle';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartCount } from '../../store/cartSlice';
+import CardFoodCateInRes from '../../components/CardFoodCateInRes';
 const RestaurantScreen = ({ route }) => {
   const navigation = useNavigation();
   const { restaurant } = route.params;
@@ -37,17 +39,36 @@ const RestaurantScreen = ({ route }) => {
     const fetchRestaurantData = async () => {
       setLoading(true);
       try {
-        const data = await restaurantApi.getFoodsRestaurant(restaurantId);
-        const data2 = await restaurantApi.getFoodsCateInRes(restaurantId);
-        console.log(data2.data.products);
-
-        setLoading(false);
+        // const data = await restaurantApi.getFoodsRestaurant(restaurantId);
+        const data = await restaurantApi.getFoodsCateInRes(restaurantId);
         if (data.success) {
-          setRestaurantData(data.data);
-          setFilteredData(data.data);
+          const sections = data.data.map((category) => ({
+            title: category.category_name,
+            data: category.products.map((product) => ({
+              id: product.product_id,
+              name: product.product_name,
+              price: product.product_price,
+              image: product.image,
+              descriptions: product.product_description,
+              quantity: product.product_quantity,
+              toppings: product.toppings,
+            })),
+            // data: category.products,
+          }));
+
+          // setResData(sections);
+          setRestaurantData(sections);
+          // setFilteredData(data.data);
         } else {
           Alert.alert('Lỗi', data.message);
         }
+        setLoading(false);
+        // if (data.success) {
+        //   setRestaurantData(data.data);
+        //   setFilteredData(data.data);
+        // } else {
+        //   Alert.alert('Lỗi', data.message);
+        // }
       } catch (error) {
         setLoading(false);
         HandleApiError(error);
@@ -161,11 +182,16 @@ const RestaurantScreen = ({ route }) => {
   );
 
   const renderFoodList = () => (
-    <FlatList
-      data={filteredData}
-      keyExtractor={(item) => item.id.toString()}
+    <SectionList
+      sections={restaurantData}
+      keyExtractor={(item, index) => item.id + index}
       renderItem={({ item }) => (
         <CardFood2 food={item} restaurant={restaurant} />
+      )}
+      renderSectionHeader={({ section: { title } }) => (
+        <View style={styles.sectionHeaderContainer}>
+          <Text style={styles.sectionTitle}>{title}</Text>
+        </View>
       )}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.foodListContainer}

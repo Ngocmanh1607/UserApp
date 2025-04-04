@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
   },
   restaurantDes: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: '400',
+    color: '#666',
   },
   ratingRow: {
     flexDirection: 'row',
@@ -150,16 +150,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 80,
   },
+  sectionHeaderContainer: {
+    backgroundColor: 'rgba(248, 249, 250, 0.7)',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
   emptyContainer: {
-    padding: 40,
+    padding: 60,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 20,
   },
   emptyText: {
-    marginTop: 12,
+    marginTop: 16,
     fontSize: 16,
-    color: '#999',
+    color: '#757575',
     textAlign: 'center',
+    fontWeight: '500',
   },
   cartButton: {
     position: 'absolute',

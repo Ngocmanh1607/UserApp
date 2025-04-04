@@ -4,8 +4,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import { formatPrice } from '../utils/format';
 
-const CardFood2 = ({ food, restaurant }) => {
+const CardFoodCateInRes = ({ food, restaurant }) => {
   const navigation = useNavigation();
+  console.log('food', food);
+
   return (
     <TouchableOpacity
       style={styles.container}
@@ -18,16 +20,16 @@ const CardFood2 = ({ food, restaurant }) => {
       <View style={styles.mainContainer}>
         <View style={styles.foodNameContainer}>
           <Text style={styles.foodName} numberOfLines={1}>
-            {food.name}
+            {food.product_name}
           </Text>
         </View>
         <View style={styles.foodDesContainer}>
           <Text style={styles.foodDescription} numberOfLines={2}>
-            {food.descriptions}
+            {food.product_description}
           </Text>
         </View>
         <View style={styles.priceContainer}>
-          <Text style={styles.price}>{formatPrice(food.price)}</Text>
+          <Text style={styles.price}>{formatPrice(food.product_price)}</Text>
           <TouchableOpacity style={styles.addButton}>
             <MaterialIcons name="add" size={16} color="white" />
           </TouchableOpacity>
@@ -37,7 +39,7 @@ const CardFood2 = ({ food, restaurant }) => {
   );
 };
 
-export default CardFood2;
+export default CardFoodCateInRes;
 
 const styles = StyleSheet.create({
   container: {
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     paddingLeft: 12,
-    // height: '100%',
+    height: '100%',
     justifyContent: 'space-between',
   },
   imageContainer: {
@@ -89,6 +91,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   foodDesContainer: {
+    marginBottom: 6,
     width: '95%',
   },
   foodDescription: {

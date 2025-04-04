@@ -26,7 +26,9 @@ const CardRestaurant = ({ restaurant }) => {
       <View style={styles.mainContainer}>
         <View style={styles.textContainer}>
           <Text style={styles.text}>{res.name}</Text>
-          <Text style={styles.textSubTitle}>{res.description}</Text>
+          <Text style={styles.textSubTitle} numberOfLines={2}>
+            {res.description}
+          </Text>
           <View style={styles.bottomContainer}>
             <View style={styles.ratingContainer}>
               <Text style={styles.ratingText}>{res.rating}</Text>
