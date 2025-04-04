@@ -146,9 +146,39 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  categoryListContainer: {
+    paddingHorizontal: 8,
+    backgroundColor: '#F7F8FA',
+    marginBottom: 16,
+  },
+  categoryItem: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#e8f4ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 25,
+    marginRight: 12,
+    height: 40,
+  },
+  activeCategoryItem: {
+    backgroundColor: '#f0f0f0',
+    borderBottomWidth: 2,
+    borderBottomColor: '#FF6347',
+  },
+  activeCategoryText: {
+    fontWeight: 'bold',
+    color: '#FF6347',
+  },
+  categoryText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#0066cc',
+  },
   foodListContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 80,
+    paddingBottom: 400,
+    backgroundColor: '#F7F8FA',
   },
   sectionHeaderContainer: {
     backgroundColor: 'rgba(248, 249, 250, 0.7)',

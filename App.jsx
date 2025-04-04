@@ -1,5 +1,5 @@
 // src/App.js
-import React from 'react';
+import React, { StrictMode } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import StackNavigator from './src/navigation/StackNavigator';
 import { Provider } from 'react-redux';
@@ -13,11 +13,13 @@ Mapbox.setAccessToken(
 LogBox.ignoreAllLogs(true);
 const App = () => {
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <StackNavigator />
-      </NavigationContainer>
-    </Provider>
+    <StrictMode>
+      <Provider store={store}>
+        <NavigationContainer>
+          <StackNavigator />
+        </NavigationContainer>
+      </Provider>
+    </StrictMode>
   );
 };
 

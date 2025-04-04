@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Text,
   View,
@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
-  FlatList,
+  ScrollView,
   SectionList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,52 +23,73 @@ import restaurantApi from '../../api/restaurantApi';
 import styles from '../../assets/css/RestaurantStyle';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartCount } from '../../store/cartSlice';
-import CardFoodCateInRes from '../../components/CardFoodCateInRes';
 const RestaurantScreen = ({ route }) => {
   const navigation = useNavigation();
   const { restaurant } = route.params;
   const restaurantId = restaurant.id;
-  const [loading, setLoading] = useState(true);
-  const [restaurantData, setRestaurantData] = useState([]);
   const dispatch = useDispatch();
   const { cartCount } = useSelector((state) => state.cart);
+
+  const [loading, setLoading] = useState(true);
+  const [restaurantData, setRestaurantData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const MemoizedCardFood2 = React.memo(CardFood2);
+  const [activeCategory, setActiveCategory] = useState(0);
+
+  // Tạo ref cho SectionList
+  const sectionListRef = useRef();
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50,
+  };
+
+  // Tạo biến trực tiếp - không dùng useRef
+  const onViewableItemsChanged = ({ viewableItems }) => {
+    if (viewableItems.length > 0 && viewableItems[0].section) {
+      const sectionIndex = restaurantData.findIndex(
+        (section) => section.title === viewableItems[0].section.title
+      );
+      if (sectionIndex !== -1) {
+        // QUAN TRỌNG: Không kiểm tra === activeCategory
+        setActiveCategory(sectionIndex);
+        console.log('Section Index:', sectionIndex);
+      }
+    }
+  };
+  // state lấy dữ liêu từ api
   useEffect(() => {
     const fetchRestaurantData = async () => {
       setLoading(true);
+      const cate = [];
       try {
-        // const data = await restaurantApi.getFoodsRestaurant(restaurantId);
         const data = await restaurantApi.getFoodsCateInRes(restaurantId);
         if (data.success) {
-          const sections = data.data.map((category) => ({
-            title: category.category_name,
-            data: category.products.map((product) => ({
-              id: product.product_id,
-              name: product.product_name,
-              price: product.product_price,
-              image: product.image,
-              descriptions: product.product_description,
-              quantity: product.product_quantity,
-              toppings: product.toppings,
-            })),
-            // data: category.products,
-          }));
-
-          // setResData(sections);
+          const sections = data.data.map((category) => {
+            cate.push({
+              id: category.category_id,
+              name: category.category_name,
+            });
+            return {
+              title: category.category_name,
+              data: category.products.map((product) => ({
+                id: product.product_id,
+                name: product.product_name,
+                price: product.product_price,
+                image: product.image,
+                descriptions: product.product_description,
+                quantity: product.product_quantity,
+                toppings: product.toppings,
+              })),
+            };
+          });
           setRestaurantData(sections);
-          // setFilteredData(data.data);
+          setCategories(cate);
         } else {
           Alert.alert('Lỗi', data.message);
         }
         setLoading(false);
-        // if (data.success) {
-        //   setRestaurantData(data.data);
-        //   setFilteredData(data.data);
-        // } else {
-        //   Alert.alert('Lỗi', data.message);
-        // }
       } catch (error) {
         setLoading(false);
         HandleApiError(error);
@@ -77,7 +98,6 @@ const RestaurantScreen = ({ route }) => {
     fetchRestaurantData();
     dispatch(fetchCartCount(restaurantId));
   }, [restaurantId]);
-
   const handleSearch = (query) => {
     setSearchQuery(query);
     if (query === '') {
@@ -181,29 +201,71 @@ const RestaurantScreen = ({ route }) => {
     </View>
   );
 
-  const renderFoodList = () => (
-    <SectionList
-      sections={restaurantData}
-      keyExtractor={(item, index) => item.id + index}
-      renderItem={({ item }) => (
-        <CardFood2 food={item} restaurant={restaurant} />
-      )}
-      renderSectionHeader={({ section: { title } }) => (
-        <View style={styles.sectionHeaderContainer}>
-          <Text style={styles.sectionTitle}>{title}</Text>
-        </View>
-      )}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.foodListContainer}
-      ListEmptyComponent={
-        <View style={styles.emptyContainer}>
-          <Feather name="alert-circle" size={50} color="#ccc" />
-          <Text style={styles.emptyText}>Không tìm thấy món ăn nào</Text>
-        </View>
-      }
-    />
+  const renderItem = ({ item }) => (
+    <MemoizedCardFood2 food={item} restaurant={restaurant} />
   );
+  const handleCategoryPress = (index) => {
+    if (index !== activeCategory) {
+      setActiveCategory(index);
 
+      if (sectionListRef.current) {
+        sectionListRef.current.scrollToLocation({
+          sectionIndex: index,
+          itemIndex: 0,
+          animated: true,
+          viewPosition: 0,
+        });
+      }
+    }
+  };
+  const renderFoodList = () => (
+    <View style={styles.foodListContainer}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.categoryListContainer}>
+        {categories.map((item, index) => (
+          <TouchableOpacity
+            key={item.id.toString()}
+            style={[
+              styles.categoryItem,
+              activeCategory === index && styles.activeCategoryItem,
+            ]}
+            onPress={() => handleCategoryPress(index)}>
+            <Text
+              style={[
+                styles.categoryText,
+                activeCategory === index && styles.activeCategoryText,
+              ]}>
+              {item.name}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <SectionList
+        ref={sectionListRef}
+        sections={restaurantData}
+        keyExtractor={(item, index) => item.id + index}
+        renderItem={renderItem}
+        renderSectionHeader={({ section: { title } }) => (
+          <View style={styles.sectionHeaderContainer}>
+            <Text style={styles.sectionTitle}>{title}</Text>
+          </View>
+        )}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Feather name="alert-circle" size={50} color="#ccc" />
+            <Text style={styles.emptyText}>Không tìm thấy món ăn nào</Text>
+          </View>
+        }
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+        stickySectionHeadersEnabled={false}
+      />
+    </View>
+  );
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>

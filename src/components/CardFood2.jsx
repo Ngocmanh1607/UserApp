@@ -41,7 +41,7 @@ export default CardFood2;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fff',
     borderRadius: 15,
     elevation: 4,
     height: 110,
