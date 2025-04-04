@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 import { formatPrice } from '../utils/format';
 
 const CardFood2 = ({ food, restaurant }) => {
-  console.log(food, restaurant);
   const navigation = useNavigation();
   return (
     <TouchableOpacity

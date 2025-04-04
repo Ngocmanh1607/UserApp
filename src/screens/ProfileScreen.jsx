@@ -39,7 +39,6 @@ const UserProfileScreen = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [imageUri, setImageUri] = useState(userInfo.image);
-
   useEffect(() => {
     const fetchUserData = async () => {
       setIsLoading(true);
@@ -67,7 +66,7 @@ const UserProfileScreen = () => {
           image: data.profile.image,
           email: data.profile.mail,
           phone_number: data.profile.phone_number,
-          date: data.profile.date,
+          date: formatDate(data.profile.date),
         });
         // setAddress(data.address[0]);
         setImageUri(data.profile.image);
@@ -242,7 +241,7 @@ const UserProfileScreen = () => {
                   label="Năm sinh"
                   mode="outlined"
                   style={[styles.input, { width: '64%' }]}
-                  value={formatDate(userInfo.date)}
+                  value={userInfo.date}
                   onChangeText={(text) =>
                     setUserInfo({ ...userInfo, date: text })
                   }

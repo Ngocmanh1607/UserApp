@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -6,11 +6,9 @@ import {
   TouchableOpacity,
   View,
   Image,
-  ActivityIndicator,
   Alert,
 } from 'react-native';
 import { foodApi } from '../api/foodApi';
-import FoodCard from './CardFood';
 import { useNavigation } from '@react-navigation/native';
 
 const Categories = () => {
@@ -95,7 +93,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 2,
-    backgroundColor: '#f3f3f2',
+    backgroundColor: '#fafafa',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

@@ -66,6 +66,28 @@ const restaurantApi = {
       return handleApiError(error);
     }
   },
+  async getFoodsCateInRes(restaurantId) {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (!userId || !accessToken) {
+        throw new Error('User not logged in');
+      }
+      const response = await apiClient.get(`/products/${restaurantId}`, {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      });
+      return {
+        success: true,
+        data: response.data.metadata,
+      };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
   async getDistance(userLatitude, userLongtitude, restaurant_id) {
     try {
       const response = await apiClient.get(

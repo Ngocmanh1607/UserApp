@@ -38,6 +38,9 @@ const RestaurantScreen = ({ route }) => {
       setLoading(true);
       try {
         const data = await restaurantApi.getFoodsRestaurant(restaurantId);
+        const data2 = await restaurantApi.getFoodsCateInRes(restaurantId);
+        console.log(data2.data.products);
+
         setLoading(false);
         if (data.success) {
           setRestaurantData(data.data);

@@ -14,7 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { formatPrice } from '../utils/format';
 import restaurantApi from '../api/restaurantApi';
 import { useSelector } from 'react-redux';
-
+import getRatingReview from '../utils/getRatingReview';
 const CardFood2 = ({ food }) => {
   const navigation = useNavigation();
   const address = useSelector((state) => state.currentLocation);
@@ -22,18 +22,22 @@ const CardFood2 = ({ food }) => {
 
   const handelPress = async () => {
     // Gọi cả hai API đồng thời
-    const [restaurantInfo, distance] = await Promise.all([
+    const [restaurantInfo, distance, ratingReview] = await Promise.all([
       restaurantApi.getInfoRestaurants(food.restaurantId),
       restaurantApi.getDistance(
         address.latitude,
         address.longitude,
         food.restaurantId
       ),
+      getRatingReview(food.restaurantId),
     ]);
-
     if (restaurantInfo.success && distance.success) {
       const dis = parseFloat(distance.data);
-      const updatedRestaurant = { ...restaurantInfo.data, distance: dis };
+      const updatedRestaurant = {
+        ...restaurantInfo.data,
+        distance: dis,
+        rating: ratingReview,
+      };
       navigation.navigate('RestaurantDetail', {
         restaurant: updatedRestaurant,
       });
@@ -54,8 +58,6 @@ const CardFood2 = ({ food }) => {
       <View style={styles.mainContainer}>
         <View style={styles.foodNameContainer}>
           <Text style={styles.foodName}>{food.productName}</Text>
-        </View>
-        <View style={styles.foodDesContainer}>
           <Text style={styles.foodDescription} numberOfLines={2}>
             {food.productDescription}
           </Text>
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
-    paddingLeft: 12,
+    padding: 8,
   },
   imageContainer: {
     marginRight: 12,
@@ -107,14 +109,11 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   foodName: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '600',
     color: '#2D2D2D',
   },
-  foodDesContainer: {
-    marginBottom: 8,
-    width: '90%',
-  },
+  foodDesContainer: {},
   foodDescription: {
     fontSize: 14,
     color: '#757575',
@@ -124,7 +123,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 8,
     paddingRight: 10,
   },
   price: {

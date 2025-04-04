@@ -104,7 +104,7 @@ const Headerbar = () => {
   };
 
   return (
-    <View style={styles.addressContent}>
+    <TouchableOpacity style={styles.addressContent} onPress={handlePress}>
       <View style={styles.iconContainer}>
         <Ionicons name="location" size={22} color="#e74c3c" />
       </View>
@@ -115,7 +115,7 @@ const Headerbar = () => {
         </Text>
       </View>
       <Ionicons name="chevron-forward" size={18} color="#7f8c8d" />
-    </View>
+    </TouchableOpacity>
   );
 };
 

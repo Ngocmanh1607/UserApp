@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Feather from 'react-native-vector-icons/Feather';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import getRatingReview from '../utils/getRatingReview';
@@ -33,16 +32,14 @@ const CardRestaurant = ({ restaurant }) => {
               <Text style={styles.ratingText}>{res.rating}</Text>
               <MaterialIcons name="star" size={20} color="#FFA500" />
             </View>
-            <View style={styles.disContainer}>
-              <Text style={styles.textDis}>
-                Khoảng cách: {res.distance.toFixed(2)}Km
+            <View style={styles.distanceContainer}>
+              <MaterialIcons name="place" size={18} color="#666" />
+              <Text style={styles.distanceText}>
+                {(restaurant.distance || 0).toFixed(2)} km
               </Text>
             </View>
           </View>
         </View>
-        <TouchableOpacity style={styles.heartContainer}>
-          <Feather name="heart" size={20} style={styles.heart} />
-        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -101,7 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 10,
-    paddingRight: 15,
+    paddingRight: 8,
     borderRightWidth: 1,
     borderRightColor: '#DDDDDD',
   },
@@ -116,17 +113,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 5,
   },
-  disContainer: {
-    marginLeft: 15,
+  distanceContainer: {
+    paddingLeft: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  textDis: {
+  distanceText: {
+    marginLeft: 4,
     fontSize: 14,
-    color: '#666666',
-  },
-  heartContainer: {
-    padding: 8,
-  },
-  heart: {
-    color: '#FF6B6B',
+    color: '#666',
   },
 });
