@@ -36,28 +36,40 @@ const RestaurantScreen = ({ route }) => {
   const [filteredData, setFilteredData] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
   const [categories, setCategories] = useState([]);
-  const MemoizedCardFood2 = React.memo(CardFood2);
   const [activeCategory, setActiveCategory] = useState(0);
 
-  // Tạo ref cho SectionList
+  const scrollRef = useRef(null);
   const sectionListRef = useRef();
+  const itemLayouts = useRef({}); // lưu toạ độ x và width của từng item (theo index)
   const viewabilityConfig = {
     itemVisiblePercentThreshold: 50,
   };
-
-  // Tạo biến trực tiếp - không dùng useRef
+  // Hàm này sẽ được gọi khi các mục trong SectionList thay đổi trạng thái hiển thị
   const onViewableItemsChanged = ({ viewableItems }) => {
     if (viewableItems.length > 0 && viewableItems[0].section) {
       const sectionIndex = restaurantData.findIndex(
         (section) => section.title === viewableItems[0].section.title
       );
       if (sectionIndex !== -1) {
-        // QUAN TRỌNG: Không kiểm tra === activeCategory
         setActiveCategory(sectionIndex);
-        console.log('Section Index:', sectionIndex);
+        const layout = itemLayouts.current[sectionIndex];
+        console.log(itemLayouts.current);
+
+        if (layout) {
+          scrollRef.current?.scrollTo({
+            x: layout.x - 20,
+            animated: true,
+          });
+        }
       }
     }
   };
+  // Dùng onLayout để lấy x và width từng item khi nó được render lần đầu.
+  const handleLayout = (event, index) => {
+    const { x } = event.nativeEvent.layout;
+    itemLayouts.current[index] = { x };
+  };
+
   // state lấy dữ liêu từ api
   useEffect(() => {
     const fetchRestaurantData = async () => {
@@ -202,12 +214,18 @@ const RestaurantScreen = ({ route }) => {
   );
 
   const renderItem = ({ item }) => (
-    <MemoizedCardFood2 food={item} restaurant={restaurant} />
+    <CardFood2 food={item} restaurant={restaurant} />
   );
   const handleCategoryPress = (index) => {
     if (index !== activeCategory) {
       setActiveCategory(index);
-
+      const layout = itemLayouts.current[index];
+      if (layout) {
+        scrollRef.current?.scrollTo({
+          x: layout.x - 20, // scroll hơi lệch trái cho đẹp
+          animated: true,
+        });
+      }
       if (sectionListRef.current) {
         sectionListRef.current.scrollToLocation({
           sectionIndex: index,
@@ -221,12 +239,14 @@ const RestaurantScreen = ({ route }) => {
   const renderFoodList = () => (
     <View style={styles.foodListContainer}>
       <ScrollView
+        ref={scrollRef}
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.categoryListContainer}>
         {categories.map((item, index) => (
           <TouchableOpacity
             key={item.id.toString()}
+            onLayout={(event) => handleLayout(event, index)}
             style={[
               styles.categoryItem,
               activeCategory === index && styles.activeCategoryItem,

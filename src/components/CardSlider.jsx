@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
     marginHorizontal: 10,
+    backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

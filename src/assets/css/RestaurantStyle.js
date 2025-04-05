@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   },
   restaurantImageWrapper: {
     width: '100%',
-    height: 200,
+    height: 180,
     position: 'relative',
   },
   restaurantImage: {
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   },
   restaurantInfoCard: {
     marginHorizontal: 16,
-    marginTop: -40,
+    marginTop: -80,
     backgroundColor: '#FFF',
     borderRadius: 16,
     padding: 16,

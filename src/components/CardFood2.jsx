@@ -4,7 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import { formatPrice } from '../utils/format';
 
-const CardFood2 = ({ food, restaurant }) => {
+const CardFood2 = React.memo(({ food, restaurant }) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
@@ -35,7 +35,7 @@ const CardFood2 = ({ food, restaurant }) => {
       </View>
     </TouchableOpacity>
   );
-};
+});
 
 export default CardFood2;
 
@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
       height: 2,
     },
     shadowOpacity: 0.23,
-    shadowRadius: 2.62,
   },
   mainContainer: {
     flex: 1,
@@ -66,6 +65,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     elevation: 3,
+    backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

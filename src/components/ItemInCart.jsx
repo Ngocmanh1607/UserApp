@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     marginHorizontal: 12,
+    backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
