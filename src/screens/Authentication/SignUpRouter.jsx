@@ -64,9 +64,9 @@ const SignUpRouter = () => {
     }
     setLoading(true); // Bắt đầu loading
     try {
-      const data = await userApi.signupApi(dispatch, email, password);
+      const data = await userApi.signupApi(email, password);
       if (data === true) {
-        navigation.navigate('RegisterInf');
+        navigation.navigate('ConfirmEmail');
       }
     } catch (error) {
       Alert.alert('Lỗi', 'Đăng ký thất bại');

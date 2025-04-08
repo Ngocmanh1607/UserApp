@@ -7,10 +7,10 @@ import handleApiError from './handleApiError';
 import { setUserInfo } from '../store/userSlice';
 const apiKey = '123';
 const userApi = {
-  signupApi: async (dispatch, email, password) => {
+  signupApi: async (email, password) => {
     try {
       const fcmToken = await fetchFcmToken();
-      const response = await apiClient.post(
+      await apiClient.post(
         '/user/signup',
         { email, password, fcmToken, role: 'user' },
         {
@@ -19,26 +19,9 @@ const userApi = {
           },
         }
       );
-      const { message, metadata } = response.data;
-      if (!message || !metadata) {
-        console.error('Thiếu dữ liệu từ phản hồi đăng ký:', {
-          message,
-          metadata,
-        });
-        return false;
-      }
-
-      const { accessToken, refreshToken } = metadata.tokens;
-      const { email: userEmail, id: userId } = metadata.user;
-
-      await AsyncStorage.multiSet([
-        ['accessToken', accessToken],
-        ['refreshToken', refreshToken],
-        ['userEmail', userEmail],
-        ['userId', userId.toString()],
-      ]);
       return true;
     } catch (error) {
+      console.log(error.message);
       throw error;
     }
   },
@@ -56,6 +39,7 @@ const userApi = {
       );
       const { accessToken, refreshToken } = response.data.metadata.tokens;
       const { email: userEmail, id: userId } = response.data.metadata.user;
+      console.log(response);
       await AsyncStorage.multiSet([
         ['accessToken', accessToken],
         ['refreshToken', refreshToken],
@@ -110,7 +94,6 @@ const userApi = {
           'x-client-id': userId,
         },
       });
-      console.log(response.data);
       dispatch(setUserInfo(response.data.metadata));
       return {
         success: true,

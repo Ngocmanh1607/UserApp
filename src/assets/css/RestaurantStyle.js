@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   categoryListContainer: {
     paddingHorizontal: 8,
     backgroundColor: '#F7F8FA',
-    marginBottom: 16,
+    // marginBottom: 16,
   },
   categoryItem: {
     paddingVertical: 8,
@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginRight: 12,
     height: 40,
+    marginBottom: 8,
   },
   activeCategoryItem: {
     backgroundColor: '#f0f0f0',
@@ -176,8 +177,9 @@ const styles = StyleSheet.create({
     color: '#0066cc',
   },
   foodListContainer: {
+    flex: 1,
     paddingHorizontal: 16,
-    paddingBottom: 400,
+    // paddingBottom: 400,
     backgroundColor: '#F7F8FA',
   },
   sectionHeaderContainer: {

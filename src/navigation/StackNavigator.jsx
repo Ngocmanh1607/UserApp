@@ -20,6 +20,8 @@ import RestaurantScreen from '../screens/Home/RestaurantScreen';
 import FoodCategory from '../screens/Home/FoodCategory';
 import CartResScreen from '../screens/Home/CartResScreen';
 import ReviewScreen from '../screens/Home/ReviewScreen';
+import ConfirmEmailScreen from '../screens/Authentication/ConfirmEmailScreen';
+import UserProfileScreen from '../screens/ProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -161,6 +163,16 @@ const StackNavigator = () => {
         options={{
           headerShown: true,
           title: 'Đánh giá',
+          headerBackTitle: 'Quay lại',
+        }}
+      />
+      <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
+      <Stack.Screen
+        name="Profile"
+        component={UserProfileScreen}
+        options={{
+          headerShown: true,
+          title: 'Thông tin',
           headerBackTitle: 'Quay lại',
         }}
       />

@@ -53,8 +53,6 @@ const RestaurantScreen = ({ route }) => {
       if (sectionIndex !== -1) {
         setActiveCategory(sectionIndex);
         const layout = itemLayouts.current[sectionIndex];
-        console.log(itemLayouts.current);
-
         if (layout) {
           scrollRef.current?.scrollTo({
             x: layout.x - 20,
@@ -218,7 +216,7 @@ const RestaurantScreen = ({ route }) => {
   );
   const handleCategoryPress = (index) => {
     if (index !== activeCategory) {
-      setActiveCategory(index);
+      // setActiveCategory(index);
       const layout = itemLayouts.current[index];
       if (layout) {
         scrollRef.current?.scrollTo({

@@ -17,6 +17,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../../assets/css/LoginRouterStyle';
 import userApi from '../../api/userApi';
 import Loading from '../../components/Loading';
+import extractErrorMessageFromHTML from '../../utils/errorHTML';
 const LoginRouter = () => {
   const navigation = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -64,7 +65,10 @@ const LoginRouter = () => {
           navigation.navigate('Main');
         }
       } catch (error) {
-        Alert.alert('Lỗi', 'Đăng nhập thất bại');
+        // Trường hợp backend trả HTML (text)
+        const html = error.response.data;
+        const errorMsg = extractErrorMessageFromHTML(html);
+        Alert.alert('Lỗi', errorMsg);
       } finally {
         setLoading(false);
       }
@@ -133,9 +137,8 @@ const LoginRouter = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.horizontalLine} />
-
-        <View>
+        {/* <View style={styles.horizontalLine} /> */}
+        {/* <View>
           <TouchableOpacity style={styles.googleButtonContainer}>
             <Image
               source={require('../../assets/Images/ic_google.png')}
@@ -143,7 +146,7 @@ const LoginRouter = () => {
             />
             <Text style={styles.textLoginGoogle}>Đăng nhập với Google</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
         {loading && <Loading />}
       </View>
     </TouchableWithoutFeedback>

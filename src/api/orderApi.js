@@ -82,6 +82,8 @@ const orderApi = {
         data: response.data.metadata,
       };
     } catch (error) {
+      console.log(error);
+
       return handleApiError(error);
     }
   },

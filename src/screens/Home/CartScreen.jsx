@@ -127,6 +127,17 @@ const CartScreen = () => {
     setIsLoading(true);
     const userInfoResponse = await userApi.getInfoUser(dispatch);
     setIsLoading(false);
+    if (!userInfoResponse.data.profile) {
+      Alert.alert('Lỗi', 'Vui lòng cập nhật thông tin cá nhân', [
+        {
+          text: 'OK',
+          onPress: () => {
+            navigation.navigate('Profile');
+          },
+        },
+      ]);
+      return;
+    }
     if (!userInfoResponse.success) {
       if (userInfoResponse.message === 500) {
         Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
