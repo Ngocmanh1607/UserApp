@@ -43,7 +43,10 @@ const FoodDetailScreen = () => {
     setFoodDetails((prevDetails) => {
       const newQuantity = prevDetails.quantity + 1;
       calculateTotal(toppings, newQuantity);
-      return { ...prevDetails, quantity: newQuantity };
+      return {
+        ...prevDetails,
+        quantity: newQuantity,
+      };
     });
   };
 
@@ -88,6 +91,7 @@ const FoodDetailScreen = () => {
         ...foodDetails,
         price: totalPrice,
         toppings: selectedToppings,
+        restaurant_id: restaurant.id,
       };
       const response = await cart.addItem(restaurant.id, food.id, food);
       if (response.success) {

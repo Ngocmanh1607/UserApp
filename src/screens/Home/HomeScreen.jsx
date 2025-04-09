@@ -106,7 +106,7 @@ const HomeScreen = () => {
           ListHeaderComponent={() => (
             <>
               {/* Phần tìm kiếm */}
-              <View style={styles.searchContainer}>
+              {/* <View style={styles.searchContainer}>
                 <View style={styles.searchbox}>
                   <Icon name="search" size={22} color="#999" />
                   <TextInput
@@ -122,7 +122,7 @@ const HomeScreen = () => {
                     </TouchableOpacity>
                   ) : null}
                 </View>
-              </View>
+              </View> */}
               {/* Banner Slider */}
               <View style={styles.section}>
                 <OfferSlider />

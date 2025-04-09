@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   categoryListContainer: {
     paddingHorizontal: 8,
     backgroundColor: '#F7F8FA',
-    // marginBottom: 16,
+    marginVertical: 8,
   },
   categoryItem: {
     paddingVertical: 8,

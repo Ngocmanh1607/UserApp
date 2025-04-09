@@ -17,7 +17,9 @@ const ItemInCart = ({ food, onAdd, restaurantId }) => {
   const toppingName = food.toppings?.map((item) => item.topping_name);
 
   const handleIncrement = () => {
-    const newFood = { ...food, quantity: 1 };
+    const newFood = { ...food, quantity: 1, restaurant_id: restaurantId };
+    console.log('newfood', newFood);
+
     onAdd(food.id, newFood);
   };
 

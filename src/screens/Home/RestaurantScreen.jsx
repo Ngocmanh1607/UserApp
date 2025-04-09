@@ -288,7 +288,7 @@ const RestaurantScreen = ({ route }) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
         {renderRestaurantHeader()}
-        {renderSearchBar()}
+        {/* {renderSearchBar()} */}
         {renderFoodList()}
         <TouchableOpacity
           style={styles.cartButton}
