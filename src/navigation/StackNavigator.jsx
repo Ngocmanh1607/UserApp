@@ -91,6 +91,7 @@ const StackNavigator = () => {
           headerShown: true,
           headerBackButtonMenuEnabled: true,
           title: 'Địa chỉ',
+          headerBackTitle: 'Trang chủ',
         }}
       />
       <Stack.Screen name="RestaurantDetail" component={RestaurantScreen} />
