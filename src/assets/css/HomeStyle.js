@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { overlay } from 'react-native-paper';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,30 +34,25 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   searchContainer: {
-    padding: 12,
-    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBlockColor: '#f5f5f5',
   },
   searchbox: {
     flexDirection: 'row',
-    backgroundColor: '#F5F5F5',
     alignItems: 'center',
-    paddingHorizontal: 12,
+    backgroundColor: '#f5f5f5',
     borderRadius: 8,
-    height: 42,
+    paddingHorizontal: 10,
+    height: 40,
   },
-  input: {
+  searchPlaceholder: {
     flex: 1,
-    fontSize: 15,
-    color: '#333333',
-    marginLeft: 8,
-    height: 42,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#999',
   },
   section: {
     backgroundColor: '#FFFFFF',
@@ -120,6 +116,12 @@ const styles = StyleSheet.create({
     color: '#FF3B30',
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 export default styles;

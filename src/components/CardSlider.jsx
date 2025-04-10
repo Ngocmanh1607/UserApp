@@ -92,15 +92,8 @@ export default CardSlider;
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
-    marginHorizontal: 10,
+    marginVertical: 8,
     backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.2,
   },
   cardhead: {
     fontSize: 20,
@@ -129,6 +122,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    marginBottom: 8,
   },
   cardin1: {
     padding: 10,

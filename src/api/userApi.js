@@ -142,7 +142,61 @@ const userApi = {
           },
         }
       );
-      const userInfo = await userApi.getInfoUser(dispatch);
+      await userApi.getInfoUser(dispatch);
+      return response.data.metadata;
+    } catch (error) {
+      throw error;
+    }
+  },
+  handleFavorite: async (restaurantId, navigation) => {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    if (!userId || !accessToken) {
+      Alert.alert(
+        'Thông báo',
+        'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
+      );
+      navigation.navigate('Đăng kí thông tin');
+      return;
+    }
+    try {
+      await apiClient.post(
+        `/customer/favoriteres`,
+        {
+          restaurant_id: restaurantId,
+        },
+        {
+          headers: {
+            'x-api-key': apiKey,
+            authorization: accessToken,
+            'x-client-id': userId,
+          },
+        }
+      );
+      return;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getListFavoRes: async () => {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    if (!userId || !accessToken) {
+      Alert.alert(
+        'Thông báo',
+        'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
+      );
+      navigation.navigate('Đăng kí thông tin');
+      return;
+    }
+    try {
+      const response = await apiClient.get(`/customer/favoriteres`, {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      });
       return response.data.metadata;
     } catch (error) {
       throw error;

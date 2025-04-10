@@ -22,6 +22,7 @@ import CartResScreen from '../screens/Home/CartResScreen';
 import ReviewScreen from '../screens/Home/ReviewScreen';
 import ConfirmEmailScreen from '../screens/Authentication/ConfirmEmailScreen';
 import UserProfileScreen from '../screens/ProfileScreen';
+import SearchScreen from '../screens/Home/SearchScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,7 +49,7 @@ const StackNavigator = () => {
   if (isFirstLaunch === null) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#f00" />
       </View>
     );
   }
@@ -176,6 +177,7 @@ const StackNavigator = () => {
           headerBackTitle: 'Quay lại',
         }}
       />
+      <Stack.Screen name="SearchScreen" component={SearchScreen} />
     </Stack.Navigator>
   );
 };

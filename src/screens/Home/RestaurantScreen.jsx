@@ -23,6 +23,8 @@ import restaurantApi from '../../api/restaurantApi';
 import styles from '../../assets/css/RestaurantStyle';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartCount } from '../../store/cartSlice';
+import userApi from '../../api/userApi';
+import Snackbar from 'react-native-snackbar';
 const RestaurantScreen = ({ route }) => {
   const navigation = useNavigation();
   const { restaurant } = route.params;
@@ -34,7 +36,7 @@ const RestaurantScreen = ({ route }) => {
   const [restaurantData, setRestaurantData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState();
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(0);
 
@@ -108,6 +110,14 @@ const RestaurantScreen = ({ route }) => {
     fetchRestaurantData();
     dispatch(fetchCartCount(restaurantId));
   }, [restaurantId]);
+  //check Favorite
+  useEffect(() => {
+    const fetchFavorite = async () => {
+      const result = await restaurantApi.checkResInFavo(restaurantId);
+      setIsFavorite(result);
+    };
+    fetchFavorite();
+  }, [restaurantId]);
   const handleSearch = (query) => {
     setSearchQuery(query);
     if (query === '') {
@@ -120,8 +130,22 @@ const RestaurantScreen = ({ route }) => {
     }
   };
 
-  const handleFavoriteToggle = () => {
-    setIsFavorite(!isFavorite);
+  const handleFavoriteToggle = async () => {
+    try {
+      setLoading(true);
+      await userApi.handleFavorite(restaurantId, navigation);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      Snackbar.show({
+        text: isFavorite
+          ? 'Đã xóa khỏi danh sách yêu thích'
+          : 'Đã thêm vào danh sách yêu thích',
+        duration: Snackbar.LENGTH_SHORT,
+      });
+      setLoading(false);
+      setIsFavorite(!isFavorite);
+    }
   };
 
   const handlePress = () => {

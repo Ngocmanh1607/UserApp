@@ -13,13 +13,11 @@ Mapbox.setAccessToken(
 LogBox.ignoreAllLogs(true);
 const App = () => {
   return (
-    <StrictMode>
-      <Provider store={store}>
-        <NavigationContainer>
-          <StackNavigator />
-        </NavigationContainer>
-      </Provider>
-    </StrictMode>
+    <Provider store={store}>
+      <NavigationContainer>
+        <StackNavigator />
+      </NavigationContainer>
+    </Provider>
   );
 };
 

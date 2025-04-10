@@ -124,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Categories;
+export default React.memo(Categories);

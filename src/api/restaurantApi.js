@@ -135,6 +135,28 @@ const restaurantApi = {
       return handleApiError(error);
     }
   },
+  async checkResInFavo(restaurantId) {
+    if (!restaurantId) {
+      return false;
+    }
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (!userId || !accessToken) {
+        throw new Error('User not logged in');
+      }
+      const result = await apiClient.get(`/customer/${restaurantId}/favorite`, {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      });
+      return result.data.metadata;
+    } catch (error) {
+      return false;
+    }
+  },
 };
 
 export default restaurantApi;
