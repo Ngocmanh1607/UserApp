@@ -9,8 +9,9 @@ const RenderListFavorite = () => {
       try {
         const response = await userApi.getListFavoRes();
         setListFavorite(response);
-        console.log(response);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error.message);
+      }
     };
     fetchLisFavorite();
   }, []);

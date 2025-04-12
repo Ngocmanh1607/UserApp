@@ -1,10 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './apiClient';
-import { Alert } from 'react-native';
 import handleApiError from './handleApiError';
 const apiKey = '123';
 const restaurantApi = {
   getAllRestaurant: async (address, page) => {
+    console.log('Address call:', address.latitude, address.longitude);
+
     try {
       const response = await apiClient.get(
         `/restaurants/${address.latitude}/${address.longitude}/${page}`,

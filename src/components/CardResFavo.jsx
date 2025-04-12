@@ -31,7 +31,11 @@ const CardResFavo = ({ restaurant }) => {
         <Text style={styles.cardin1txt}>{res.name}</Text>
 
         <View style={styles.cardin2}>
-          <Text style={styles.cardin2txt1}>{res.description}</Text>
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.cardin2txt1} numberOfLines={1}>
+              {res.description}
+            </Text>
+          </View>
           <View style={styles.ratingContainer}>
             <MaterialIcons name="star" size={20} color="#FFA500" />
             <Text style={styles.cardin2txt1}>{res.rating}</Text>
@@ -92,5 +96,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 10,
     paddingRight: 8,
+  },
+  descriptionContainer: {
+    width: '85%',
   },
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -23,52 +23,31 @@ import { useNavigation } from '@react-navigation/native';
 const HomeScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const address = useSelector((state) => state.currentLocation);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    if (address.address && address.address !== 'Đang lấy vị trí...') {
-      fetchRestaurantData(1, false);
-    }
-  }, [address]);
-
-  const fetchRestaurantData = async (pageNumber = 1, isLoadMore = false) => {
+  const fetchRestaurantData = useCallback(async () => {
     try {
-      if (!hasMore || loadingMore) return;
-      if (!isLoadMore) setLoading(true);
-      else setLoadingMore(true);
+      if (!address || !address.address) return;
+      setLoading(true);
 
-      const response = await restaurantApi.getAllRestaurant(
-        address,
-        pageNumber
-      );
-
+      const response = await restaurantApi.getAllRestaurant(address);
       setLoading(false);
-      setLoadingMore(false);
 
       if (response.success) {
-        if (response.data.length === 0) {
-          setHasMore(false);
-        } else {
-          setRestaurants((prevRestaurants) =>
-            isLoadMore ? [...prevRestaurants, ...response.data] : response.data
-          );
-          setPage(pageNumber);
-        }
+        setRestaurants(response.data);
       }
     } catch (error) {
       setLoading(false);
-      setLoadingMore(false);
-      setHasMore(false);
+      console.error('Lỗi khi tải dữ liệu nhà hàng:', error);
     }
-  };
+  }, [address]);
 
-  const handleLoadMore = () => {
-    fetchRestaurantData(page + 1, true);
-  };
+  useEffect(() => {
+    if (address && address.address && address.address !== 'Đang lấy vị trí...') {
+      fetchRestaurantData();
+    }
+  }, [address, fetchRestaurantData]);
 
   const goToSearchScreen = () => {
     navigation.navigate('SearchScreen');
@@ -128,19 +107,10 @@ const HomeScreen = () => {
         ListHeaderComponent={<HeaderComponent />}
         renderItem={({ item }) => <CardRestaurant restaurant={item} />}
         keyExtractor={(item) => item.id.toString()}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.2}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         windowSize={5}
         removeClippedSubviews={true}
-        ListFooterComponent={() =>
-          loadingMore && (
-            <View style={styles.loadingMoreContainer}>
-              <ActivityIndicator size="small" color="#007AFF" />
-            </View>
-          )
-        }
         contentContainerStyle={styles.flatListContent}
       />
 
