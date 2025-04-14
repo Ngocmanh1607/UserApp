@@ -30,7 +30,7 @@ const userApi = {
     try {
       const response = await apiClient.post(
         '/user/login',
-        { email, password },
+        { email, password, role: 'user' },
         {
           headers: {
             'x-api-key': apiKey,

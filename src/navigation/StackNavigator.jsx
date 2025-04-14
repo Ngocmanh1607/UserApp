@@ -11,7 +11,7 @@ import ReviewScreen1 from '../screens/Authentication/Thumbnail1';
 import CompleteOrder from '../screens/Order/CompleteOrderScreen';
 import OrderStatusScreen from '../screens/Order/OrderStatusScreen';
 import { ActivityIndicator, View } from 'react-native';
-import MessageScreen from '../screens/Chat/Message';
+import MessageScreen from '../screens/Order/ChatWithDriver';
 import MapScreen from '../screens/Home/MapScreen';
 import PaymentMethodScreen from '../screens/Order/PaymentMethodScreen';
 import RegisterInf from '../screens/Authentication/RegisterInf';
@@ -179,6 +179,15 @@ const StackNavigator = () => {
         }}
       />
       <Stack.Screen name="SearchScreen" component={SearchScreen} />
+      <Stack.Screen
+        name="ChatWithDriver"
+        component={MessageScreen}
+        options={{
+          headerShown: true,
+          title: 'Tin nhắn',
+          headerBackTitle: 'Quay lại',
+        }}
+      />
     </Stack.Navigator>
   );
 };

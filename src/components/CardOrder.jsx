@@ -125,11 +125,24 @@ const CardOrder = ({ order }) => {
               <Text style={styles.trackButtonText}>Theo dõi</Text>
             </TouchableOpacity>
           )}
-
-          {/* <TouchableOpacity style={styles.reorderButton}>
+        </View>
+        {/* Nút điều hướng sang chat với tài xế */}
+        {order.driver_id && (
+          <TouchableOpacity
+            style={styles.chatButton}
+            onPress={() =>
+              navigation.navigate('ChatWithDriver', {
+                driverId: order.driver_id,
+                customerId: order.customer_id,
+              })
+            }>
+            <MaterialIcons name="chat" size={16} color={COLORS.secondary} />
+            <Text style={styles.chatButtonText}>Nhắn tài xế</Text>
+          </TouchableOpacity>
+        )}
+        {/* <TouchableOpacity style={styles.reorderButton}>
             <Text style={styles.reorderButtonText}>Đặt lại</Text>
           </TouchableOpacity> */}
-        </View>
       </View>
     </View>
   );
@@ -262,6 +275,16 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
     fontSize: 14,
+  },
+  chatButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  chatButtonText: {
+    color: COLORS.secondary,
+    fontWeight: '600',
+    fontSize: 14,
+    marginLeft: 4,
   },
 });
 
