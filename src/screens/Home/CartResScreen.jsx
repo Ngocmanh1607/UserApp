@@ -1,22 +1,43 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { StyleSheet, Text, View, Alert, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import CardResInCart from '../../components/CardResInCart';
+import { cart } from '../../api/cartOrder';
+import { useNavigation } from '@react-navigation/native';
 
 const CartResScreen = () => {
-  const carts = useSelector((state) => state.cart.totalAmount);
-
+  const [loading, setLoading] = useState();
+  const [carts, setCarts] = useState();
+  const navigation = useNavigation();
+  useEffect(() => {
+    const fetchCartData = async () => {
+      setLoading(true);
+      const cartData = await cart.getAllCart();
+      setLoading(false);
+      if (cartData.success) {
+        setCarts(cartData.data.metadata);
+      } else {
+        if (cartData.message === 500) {
+          Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
+            text: 'OK',
+            onPress: () => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Auth' }],
+              });
+            },
+          });
+        } else {
+          Alert.alert('Đã xảy ra lỗi', cartData.message);
+        }
+      }
+    };
+    fetchCartData();
+  }, [])
   return (
     <View style={styles.container}>
-      {carts.length > 0 ? (
-        Object.entries(carts).map(([id, restaurant]) => (
-          <CardResInCart key={id} restaurant={restaurant} restaurantId={id} />
-        ))
-      ) : (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Chưa có món nào trong giỏ hàng</Text>
-        </View>
-      )}
+      <FlatList keyExtractor={(item, index) => `${item.restaurant_id + index}`}
+        data={carts}
+        renderItem={({ item }) => <CardResInCart restaurant={item.restaurant} restaurantId={item.restaurant_id} quantity={item.total_quantity} />} />
     </View>
   );
 };

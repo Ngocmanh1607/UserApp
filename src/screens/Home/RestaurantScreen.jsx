@@ -22,7 +22,7 @@ import { useNavigation } from '@react-navigation/native';
 import restaurantApi from '../../api/restaurantApi';
 import styles from '../../assets/css/RestaurantStyle';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCartCount } from '../../store/cartSlice';
+import { fetchCartCount, fetchAllCartItems } from '../../store/cartSlice';
 import userApi from '../../api/userApi';
 import Snackbar from 'react-native-snackbar';
 const RestaurantScreen = ({ route }) => {
@@ -69,7 +69,6 @@ const RestaurantScreen = ({ route }) => {
     const { x } = event.nativeEvent.layout;
     itemLayouts.current[index] = { x };
   };
-
   // state lấy dữ liêu từ api
   useEffect(() => {
     const fetchRestaurantData = async () => {
@@ -104,7 +103,6 @@ const RestaurantScreen = ({ route }) => {
         setLoading(false);
       } catch (error) {
         setLoading(false);
-        HandleApiError(error);
       }
     };
     fetchRestaurantData();
@@ -165,7 +163,10 @@ const RestaurantScreen = ({ route }) => {
         <View style={styles.imageOverlay} />
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}>
+          onPress={() => {
+            dispatch(fetchAllCartItems());
+            navigation.goBack();
+          }}>
           <AntDesign name="arrowleft" size={24} color="#FFF" />
         </TouchableOpacity>
         <TouchableOpacity
@@ -305,6 +306,7 @@ const RestaurantScreen = ({ route }) => {
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
         stickySectionHeadersEnabled={false}
+        style={styles.sectionFood}
       />
     </View>
   );

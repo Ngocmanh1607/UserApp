@@ -19,13 +19,14 @@ import styles from '../../assets/css/HomeStyle';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import RenderListFavorite from '../../components/RenderListFavorite';
 import { useNavigation } from '@react-navigation/native';
-
+import { selectCartItemCount, fetchAllCartItems } from '../../store/cartSlice';
 const HomeScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
   const address = useSelector((state) => state.currentLocation);
   const navigation = useNavigation();
-
+  const cartItemCount = useSelector(selectCartItemCount);
+  const dispatch = useDispatch();
   const fetchRestaurantData = useCallback(async () => {
     try {
       if (!address || !address.address) return;
@@ -44,13 +45,22 @@ const HomeScreen = () => {
   }, [address]);
 
   useEffect(() => {
-    if (address && address.address && address.address !== 'Đang lấy vị trí...') {
+    if (
+      address &&
+      address.address &&
+      address.address !== 'Đang lấy vị trí...'
+    ) {
       fetchRestaurantData();
     }
   }, [address, fetchRestaurantData]);
-
+  useEffect(() => {
+    dispatch(fetchAllCartItems());
+  }, []);
   const goToSearchScreen = () => {
     navigation.navigate('SearchScreen');
+  };
+  const handlePressRes = () => {
+    navigation.navigate('CartResScreen');
   };
   const SearchBar = () => (
     <TouchableOpacity
@@ -115,10 +125,10 @@ const HomeScreen = () => {
       />
 
       {/* Floating Cart Button */}
-      <TouchableOpacity style={styles.cartContainer}>
+      <TouchableOpacity style={styles.cartContainer} onPress={handlePressRes}>
         <SimpleLineIcons name="handbag" size={24} color="#FFF" />
         <View style={styles.cartBadge}>
-          <Text style={styles.cartBadgeText}>3</Text>
+          <Text style={styles.cartBadgeText}>{cartItemCount}</Text>
         </View>
       </TouchableOpacity>
 

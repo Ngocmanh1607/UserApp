@@ -159,8 +159,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 25,
     marginRight: 12,
-    height: 40,
     marginBottom: 8,
+    height: 40,
   },
   activeCategoryItem: {
     backgroundColor: '#f0f0f0',
@@ -181,6 +181,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     // paddingBottom: 400,
     backgroundColor: '#F7F8FA',
+  },
+  sectionFood: {
+    height: 550,
   },
   sectionHeaderContainer: {
     backgroundColor: 'rgba(248, 249, 250, 0.7)',

@@ -1,71 +1,73 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import formatPrice from '../utils/format';
-import { useSelector } from 'react-redux';
 
-const CardResInCart = ({ restaurant, restaurantId }) => {
+const CardResInCart = ({ restaurant, restaurantId, quantity }) => {
   console.log(restaurant, restaurantId);
-  const items = useSelector((state) => state.cart.carts[restaurantId]);
-  console.log(items);
   const navigation = useNavigation();
+
   const handlePress = () => {
     navigation.navigate('CartScreen', { restaurantId });
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={handlePress}>
-      <Image source={{ uri: restaurant.image }} style={styles.imageContainer} />
-      <View style={styles.mainContainer}>
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>{restaurant.name}</Text>
-          <Text style={styles.textFood}>{items.length} món</Text>
-        </View>
+    <TouchableOpacity style={styles.card} onPress={handlePress}>
+      <Image source={{ uri: restaurant.image }} style={styles.image} />
+      <View style={styles.content}>
+        <Text style={styles.name} numberOfLines={1}>
+          {restaurant.name}
+        </Text>
+        <Text style={styles.description} numberOfLines={2}>
+          {restaurant.description}
+        </Text>
+        <Text style={styles.quantity}>{quantity} món</Text>
       </View>
     </TouchableOpacity>
   );
 };
+
 const styles = StyleSheet.create({
-  container: {
-    margin: 10,
-    height: 90,
-    marginVertical: 5,
+  card: {
+    margin: 12,
+    height: 100,
+    marginVertical: 6,
     backgroundColor: '#ffffff',
-    borderRadius: 10,
+    borderRadius: 14,
     flexDirection: 'row',
-    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
-  mainContainer: {
+  image: {
+    width: 80,
+    height: 80,
+    margin: 10,
+    borderRadius: 12,
+  },
+  content: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    paddingVertical: 12,
+    paddingRight: 14,
     justifyContent: 'space-between',
   },
-  textContainer: {
-    flex: 1,
-  },
-  imageContainer: {
-    width: 70,
-    height: 70,
-    margin: 10,
-    borderRadius: 10,
-  },
-  text: {
-    marginLeft: 10,
-    fontSize: 18,
+  name: {
+    fontSize: 17,
     fontWeight: '600',
-    color: '#000000',
+    color: '#222',
+    marginBottom: 4,
   },
-  textAmount: {
-    marginLeft: 10,
+  description: {
     fontSize: 14,
-    color: '#000000',
-    fontWeight: 'bold',
+    color: '#666',
+    marginBottom: 6,
+    lineHeight: 18,
   },
-  textFood: {
-    marginLeft: 20,
-    fontSize: 14,
-    color: '#000000',
+  quantity: {
+    fontSize: 15,
+    color: '#444',
+    fontWeight: '500',
   },
 });
 

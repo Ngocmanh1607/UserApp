@@ -56,4 +56,28 @@ export const cart = {
       return handleApiError(error);
     }
   },
+  getAllCart: async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (!userId || !accessToken) {
+        throw new Error('Phiên hết hạn');
+      }
+      const response = await apiClient.get('/cart', {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      });
+      return {
+        success: true,
+        data: response.data.metadata,
+      };
+    } catch (error) {
+      console.log(error.message);
+
+      return handleApiError(error);
+    }
+  },
 };

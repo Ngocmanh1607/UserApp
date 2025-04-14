@@ -3,12 +3,15 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import getRatingReview from '../utils/getRatingReview';
+
 const CardRestaurant = ({ restaurant }) => {
   const [res, setRes] = useState(restaurant);
   const navigation = useNavigation();
+
   const handlePress = () => {
     navigation.navigate('RestaurantDetail', { restaurant: res });
   };
+
   useEffect(() => {
     const fetchReview = async () => {
       try {
@@ -20,26 +23,27 @@ const CardRestaurant = ({ restaurant }) => {
     };
     fetchReview();
   }, []);
+
   return (
-    <TouchableOpacity style={styles.container} onPress={handlePress}>
-      <Image source={{ uri: res.image }} style={styles.imageContainer} />
-      <View style={styles.mainContainer}>
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>{res.name}</Text>
-          <Text style={styles.textSubTitle} numberOfLines={2}>
-            {res.description}
-          </Text>
-          <View style={styles.bottomContainer}>
-            <View style={styles.ratingContainer}>
-              <Text style={styles.ratingText}>{res.rating}</Text>
-              <MaterialIcons name="star" size={20} color="#FFA500" />
-            </View>
-            <View style={styles.distanceContainer}>
-              <MaterialIcons name="place" size={18} color="#666" />
-              <Text style={styles.distanceText}>
-                {(restaurant.distance || 0).toFixed(2)} km
-              </Text>
-            </View>
+    <TouchableOpacity style={styles.card} onPress={handlePress}>
+      <Image source={{ uri: res.image }} style={styles.image} />
+      <View style={styles.content}>
+        <Text style={styles.name} numberOfLines={1}>
+          {res.name}
+        </Text>
+        <Text style={styles.description} numberOfLines={2}>
+          {res.description}
+        </Text>
+        <View style={styles.footer}>
+          <View style={styles.rating}>
+            <Text style={styles.ratingValue}>{res.rating}</Text>
+            <MaterialIcons name="star" size={18} color="#FFA500" />
+          </View>
+          <View style={styles.distance}>
+            <MaterialIcons name="place" size={16} color="#666" />
+            <Text style={styles.distanceValue}>
+              {(restaurant.distance || 0).toFixed(2)} km
+            </Text>
           </View>
         </View>
       </View>
@@ -50,79 +54,69 @@ const CardRestaurant = ({ restaurant }) => {
 export default CardRestaurant;
 
 const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: 10,
-    height: 100,
-    marginVertical: 8,
+  card: {
+    flexDirection: 'row',
     backgroundColor: '#ffffff',
-    borderRadius: 15,
-    flexDirection: 'row',
-    elevation: 8,
+    borderRadius: 16,
+    marginHorizontal: 12,
+    marginVertical: 8,
+    height: 110,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.22,
+    shadowRadius: 4,
+    elevation: 5,
   },
-  mainContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingRight: 10,
-  },
-  textContainer: {
-    flex: 1,
-    paddingVertical: 5,
-  },
-  imageContainer: {
-    width: 80,
-    height: 80,
-    margin: 10,
+  image: {
+    width: 90,
+    height: 90,
     borderRadius: 12,
+    margin: 10,
   },
-  text: {
-    marginLeft: 10,
+  content: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingRight: 14,
+    justifyContent: 'space-between',
+  },
+  name: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#333333',
+    fontWeight: 'bold',
+    color: '#222',
     marginBottom: 4,
   },
-  textSubTitle: {
-    marginLeft: 10,
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 8,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 10,
-    paddingRight: 8,
-    borderRightWidth: 1,
-    borderRightColor: '#DDDDDD',
-  },
-  ratingText: {
-    marginRight: 5,
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333333',
-  },
-  bottomContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 5,
-  },
-  distanceContainer: {
-    paddingLeft: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  distanceText: {
-    marginLeft: 4,
+  description: {
     fontSize: 14,
     color: '#666',
+    lineHeight: 19,
+    flex: 1,
+  },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+  },
+  rating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 10,
+    borderRightWidth: 1,
+    borderRightColor: '#E0E0E0',
+  },
+  ratingValue: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#333',
+    marginRight: 4,
+  },
+  distance: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 10,
+  },
+  distanceValue: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 3,
   },
 });
