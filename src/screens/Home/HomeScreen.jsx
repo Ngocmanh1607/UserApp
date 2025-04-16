@@ -88,7 +88,7 @@ const HomeScreen = () => {
       {/* Categories */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Danh mục</Text>
+          <Text style={styles.sectionTitle}>Danh mục sản phẩm</Text>
         </View>
         <Categories />
       </View>

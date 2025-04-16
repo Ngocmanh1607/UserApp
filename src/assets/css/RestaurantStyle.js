@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginRight: 4,
   },
+  //Search style
   searchBarContainer: {
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -146,6 +147,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  //flashsale style
+  flashSaleContainer: {
+    marginVertical: 10,
+    paddingHorizontal: 15,
+  },
+  flashSaleTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  flashSaleList: {
+    flexDirection: 'row',
+  },
+  //category style
   categoryListContainer: {
     paddingHorizontal: 8,
     backgroundColor: '#F7F8FA',

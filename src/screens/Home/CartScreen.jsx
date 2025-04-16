@@ -13,10 +13,14 @@ import {
   Modal,
   FlatList,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ItemInCart from '../../components/ItemInCart';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import CompleteOrder from '../Order/CompleteOrderScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatPrice } from '../../utils/format';
@@ -34,8 +38,7 @@ const CartScreen = () => {
 
   const { restaurantId } = route.params;
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('ZALOPAY');
-  const [coupon, setCoupon] = useState('');
-
+  const [coupons, setCoupons] = useState([]);
   const [modalPayment, setModalPayment] = useState(false);
   const [modalCoupon, setModalCoupon] = useState(false);
 
@@ -48,33 +51,35 @@ const CartScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [foodData, setFoodData] = useState([]);
   const [cartID, setCartID] = useState(null);
-  useEffect(() => {
-    const fetchCartData = async () => {
-      setIsLoading(true);
-      const cartData = await cart.getCart(restaurantId);
-      setIsLoading(false);
-      if (cartData.success) {
-        const items = cartData.data.map((item) => item.description);
-        setCartID(cartData.cart_item_id);
-        setFoodData(items);
+  const fetchCartData = async () => {
+    setIsLoading(true);
+    const cartData = await cart.getCart(restaurantId);
+    setIsLoading(false);
+    if (cartData.success) {
+      const items = cartData.data.map((item) => item.description);
+      setCartID(cartData.cart_item_id);
+      setFoodData(items);
+    } else {
+      if (cartData.message === 500) {
+        Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
+          text: 'OK',
+          onPress: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Auth' }],
+            });
+          },
+        });
       } else {
-        if (cartData.message === 500) {
-          Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
-            text: 'OK',
-            onPress: () => {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Auth' }],
-              });
-            },
-          });
-        } else {
-          Alert.alert('Đã xảy ra lỗi', cartData.message);
-        }
+        Alert.alert('Đã xảy ra lỗi', cartData.message);
       }
-    };
-    fetchCartData();
-  }, []);
+    }
+  };
+  useFocusEffect(
+    useCallback(() => {
+      fetchCartData();
+    }, [])
+  );
   useEffect(() => {
     handleGetPrice();
   }, [foodData, address]);
@@ -190,8 +195,17 @@ const CartScreen = () => {
   const handleDiscount = () => {
     setModalCoupon(true);
   };
-  const handleSelectCoupon = (coupon) => {
-    setCoupon(coupon);
+
+  const handleSelectCoupon = (newCoupon) => {
+    // Check if coupon already exists
+    const isCouponExists = coupons.some((coupon) => coupon.id === newCoupon.id);
+
+    if (isCouponExists) {
+      Alert.alert('Thông báo', 'Mã giảm giá này đã được áp dụng');
+      return;
+    }
+
+    setCoupons((prevCoupons) => [...prevCoupons, newCoupon]);
     setModalCoupon(false);
   };
   const handleGetPrice = async () => {
@@ -245,7 +259,12 @@ const CartScreen = () => {
       </View>
     );
   };
-
+  const calculateTotalDiscount = () => {
+    return coupons.reduce(
+      (total, coupon) => total + (coupon.discount_value || 0),
+      0
+    );
+  };
   // Enhanced footer component
   const renderFooter = () => {
     return (
@@ -283,14 +302,42 @@ const CartScreen = () => {
             <Text style={styles.paymentText}>Mã giảm giá</Text>
           </View>
           <View style={styles.couponRightContent}>
-            {coupon ? (
-              <Text style={styles.discountText}>{coupon.coupon_code}</Text>
+            {coupons.length > 0 ? (
+              <View style={styles.appliedCouponsContainer}>
+                <Text style={styles.discountText}>
+                  {coupons.length} mã được áp dụng
+                </Text>
+                <TouchableOpacity onPress={() => setModalCoupon(true)}>
+                  <Text style={styles.addMoreText}>+ Thêm</Text>
+                </TouchableOpacity>
+              </View>
             ) : (
               <Text style={styles.noCouponText}>Chọn hoặc nhập mã</Text>
             )}
             <Ionicons name="chevron-forward" size={18} color="#7f8c8d" />
           </View>
         </TouchableOpacity>
+
+        {/* Add this section to display applied coupons */}
+        {coupons.length > 0 && (
+          <View style={styles.appliedCouponsList}>
+            {coupons.map((coupon, index) => (
+              <View key={index} style={styles.appliedCouponItem}>
+                <Text style={styles.couponCode}>{coupon.coupon_code}</Text>
+                <Text style={styles.couponValue}>
+                  -{formatPrice(coupon.discount_value)}
+                </Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    setCoupons((prev) => prev.filter((c) => c.id !== coupon.id))
+                  }
+                  style={styles.removeCouponButton}>
+                  <Ionicons name="close-circle" size={20} color="#e74c3c" />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        )}
 
         {/* Order Summary */}
         <View style={styles.summaryContainer}>
@@ -313,9 +360,10 @@ const CartScreen = () => {
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Giảm giá</Text>
             <Text style={styles.discountValue}>
-              {coupon && coupon.discount_value
+              {/* {coupon && coupon.discount_value
                 ? `- ${formatPrice(coupon.discount_value)}`
-                : formatPrice(0)}
+                : formatPrice(0)} */}
+              0
             </Text>
           </View>
 
@@ -326,10 +374,9 @@ const CartScreen = () => {
             <Text style={styles.totalSummaryValue}>
               {formatPrice(
                 cost
-                  ? cost.totalFoodPrice +
-                      cost.shippingCost -
-                      (coupon?.discount_value ?? 0)
-                  : 0
+                  ? cost.totalFoodPrice + cost.shippingCost
+                  : // (coupon?.discount_value ?? 0)
+                    0
               )}
             </Text>
           </View>
@@ -375,10 +422,9 @@ const CartScreen = () => {
           <Text style={styles.totalValue}>
             {formatPrice(
               cost
-                ? cost.totalFoodPrice +
-                    cost.shippingCost -
-                    (coupon?.discount_value ?? 0)
-                : 0
+                ? cost.totalFoodPrice + cost.shippingCost
+                : // (coupon?.discount_value ?? 0)
+                  0
             )}
           </Text>
         </View>

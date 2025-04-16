@@ -18,8 +18,6 @@ const ItemInCart = ({ food, onAdd, restaurantId }) => {
 
   const handleIncrement = () => {
     const newFood = { ...food, quantity: 1, restaurant_id: restaurantId };
-    console.log('newfood', newFood);
-
     onAdd(food.id, newFood);
   };
 
@@ -46,7 +44,10 @@ const ItemInCart = ({ food, onAdd, restaurantId }) => {
   };
 
   const handlePress = () => {
-    navigation.navigate('FoodDetail');
+    navigation.navigate('FoodDetail', {
+      food: food,
+      restaurant: { id: restaurantId },
+    });
   };
 
   return (

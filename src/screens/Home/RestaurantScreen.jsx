@@ -17,14 +17,17 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import CardFood2 from '../../components/CardFood2';
+import Snackbar from 'react-native-snackbar';
 import { useNavigation } from '@react-navigation/native';
+
+import CardFood2 from '../../components/CardFood2';
 import restaurantApi from '../../api/restaurantApi';
 import styles from '../../assets/css/RestaurantStyle';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartCount, fetchAllCartItems } from '../../store/cartSlice';
 import userApi from '../../api/userApi';
-import Snackbar from 'react-native-snackbar';
+import FoodCard from '../../components/CardFood';
+
 const RestaurantScreen = ({ route }) => {
   const navigation = useNavigation();
   const { restaurant } = route.params;
@@ -39,6 +42,7 @@ const RestaurantScreen = ({ route }) => {
   const [isFavorite, setIsFavorite] = useState();
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(0);
+  const [flashSaleFoods, setFlashSaleFoods] = useState([]);
 
   const scrollRef = useRef(null);
   const sectionListRef = useRef();
@@ -116,18 +120,54 @@ const RestaurantScreen = ({ route }) => {
     };
     fetchFavorite();
   }, [restaurantId]);
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    if (query === '') {
-      setFilteredData(restaurantData);
-    } else {
-      const filtered = restaurantData.filter((food) =>
-        food.name.toLowerCase().includes(query.toLowerCase())
-      );
-      setFilteredData(filtered);
-    }
-  };
 
+  //Get flashSale
+  // useEffect(() => {
+  //   const fetchFlashSaleFoods = async () => {
+  //     try {
+  //       const data = await restaurantApi.getFlashSaleFoods(restaurantId);
+  //       if (data.success) {
+  //         setFlashSaleFoods(data.data);
+  //       } else {
+  //         Alert.alert('Lỗi', data.message);
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+
+  //   fetchFlashSaleFoods();
+  // }, [restaurantId]);
+  // const handleSearch = (query) => {
+  //   setSearchQuery(query);
+  //   if (query === '') {
+  //     setFilteredData(restaurantData);
+  //   } else {
+  //     const filtered = restaurantData.filter((food) =>
+  //       food.name.toLowerCase().includes(query.toLowerCase())
+  //     );
+  //     setFilteredData(filtered);
+  //   }
+  // };
+  useEffect(() => {
+    const mockFlashSaleFoods = [
+      {
+        id: 1,
+        name: 'Pizza Margherita',
+        price: 100000,
+        image: 'https://example.com/pizza.jpg',
+        descriptions: 'Delicious pizza with fresh ingredients',
+      },
+      {
+        id: 2,
+        name: 'Burger Special',
+        price: 80000,
+        image: 'https://example.com/burger.jpg',
+        descriptions: 'Juicy burger with cheese and bacon',
+      },
+    ];
+    setFlashSaleFoods(mockFlashSaleFoods);
+  }, []);
   const handleFavoriteToggle = async () => {
     try {
       setLoading(true);
@@ -206,35 +246,35 @@ const RestaurantScreen = ({ route }) => {
     </View>
   );
 
-  const renderSearchBar = () => (
-    <View style={styles.searchBarContainer}>
-      <View style={styles.searchInputWrapper}>
-        <AntDesign
-          name="search1"
-          size={20}
-          color="#888"
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Tìm kiếm món ăn"
-          value={searchQuery}
-          onChangeText={handleSearch}
-          placeholderTextColor="#999"
-        />
-        {searchQuery !== '' && (
-          <TouchableOpacity onPress={() => handleSearch('')}>
-            <AntDesign
-              name="close"
-              size={20}
-              color="#888"
-              style={styles.clearIcon}
-            />
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
-  );
+  // const renderSearchBar = () => (
+  //   <View style={styles.searchBarContainer}>
+  //     <View style={styles.searchInputWrapper}>
+  //       <AntDesign
+  //         name="search1"
+  //         size={20}
+  //         color="#888"
+  //         style={styles.searchIcon}
+  //       />
+  //       <TextInput
+  //         style={styles.searchInput}
+  //         placeholder="Tìm kiếm món ăn"
+  //         value={searchQuery}
+  //         onChangeText={handleSearch}
+  //         placeholderTextColor="#999"
+  //       />
+  //       {searchQuery !== '' && (
+  //         <TouchableOpacity onPress={() => handleSearch('')}>
+  //           <AntDesign
+  //             name="close"
+  //             size={20}
+  //             color="#888"
+  //             style={styles.clearIcon}
+  //           />
+  //         </TouchableOpacity>
+  //       )}
+  //     </View>
+  //   </View>
+  // );
 
   const renderItem = ({ item }) => (
     <CardFood2 food={item} restaurant={restaurant} />
@@ -259,6 +299,19 @@ const RestaurantScreen = ({ route }) => {
       }
     }
   };
+  const renderFlashSale = () => (
+    <View style={styles.flashSaleContainer}>
+      <Text style={styles.flashSaleTitle}>Flash Sale</Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.flashSaleList}>
+        {flashSaleFoods.map((food) => (
+          <FoodCard key={food.id} food={food} restaurant={restaurant} />
+        ))}
+      </ScrollView>
+    </View>
+  );
   const renderFoodList = () => (
     <View style={styles.foodListContainer}>
       <ScrollView
@@ -315,6 +368,7 @@ const RestaurantScreen = ({ route }) => {
       <SafeAreaView style={styles.container}>
         {renderRestaurantHeader()}
         {/* {renderSearchBar()} */}
+        {/* {renderFlashSale()} */}
         {renderFoodList()}
         <TouchableOpacity
           style={styles.cartButton}
