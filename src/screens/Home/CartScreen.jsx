@@ -160,9 +160,8 @@ const CartScreen = () => {
         return;
       }
     }
-    const totalCost =
-      cost.totalFoodPrice + cost.shippingCost - (coupon?.discount_value ?? 0);
-    const couponid = coupon.id;
+    const totalCost = cost.totalFoodPrice + cost.shippingCost;
+    const couponid = null;
     const info = userInfoResponse.data;
     const response = await orderApi.orderApi(
       info,
@@ -210,13 +209,16 @@ const CartScreen = () => {
   };
   const handleGetPrice = async () => {
     setIsLoading(true);
-    const response = await orderApi.getPrice(
-      address.latitude,
-      address.longitude,
-      restaurantId,
-      foodData
-    );
-    setIsLoading(false);
+    let response;
+    if (foodData.length > 0) {
+      response = await orderApi.getPrice(
+        address.latitude,
+        address.longitude,
+        restaurantId,
+        foodData
+      );
+      setIsLoading(false);
+    }
     if (!response.success) {
       if (response.message === 500) {
         Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
