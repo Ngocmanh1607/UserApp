@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
+export default StyleSheet.create({
   container: {
     flex: 1,
     position: 'absolute',
@@ -21,60 +21,76 @@ const styles = StyleSheet.create({
     elevation: 5,
     maxHeight: '80%',
   },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  searchbox: {
+  searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-    marginTop: 10,
-    padding: 2,
-    elevation: 3,
+    backgroundColor: '#fff',
+    padding: 12,
+    margin: 16,
+    borderRadius: 8,
+    elevation: 2,
     shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
+    shadowRadius: 4,
   },
-  input: {
+  searchInput: {
     flex: 1,
-    height: 40,
-    color: '#333',
+    marginLeft: 8,
+    fontSize: 16,
   },
-  listContainer: {
-    marginTop: 20,
-    paddingBottom: 20,
+  couponList: {
+    padding: 16,
   },
   couponCard: {
     backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    elevation: 2,
     shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#f0f0f0',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
+    shadowRadius: 4,
+  },
+  couponHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   couponTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
+    fontWeight: '600',
+    color: '#1f2937',
+    marginLeft: 8,
   },
   couponCode: {
     fontSize: 14,
-    color: '#FF5722',
-    marginTop: 5,
+    color: '#4b5563',
+    marginBottom: 4,
+  },
+  discountValue: {
+    fontSize: 15,
     fontWeight: '500',
+    color: '#FF3B30',
+    marginBottom: 4,
+  },
+  minOrder: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    padding: 32,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#6b7280',
+    textAlign: 'center',
   },
 });
-export default styles;

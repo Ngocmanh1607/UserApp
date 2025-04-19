@@ -35,7 +35,6 @@ import {
 const RestaurantScreen = ({ route }) => {
   const navigation = useNavigation();
   const { restaurant } = route.params;
-  console.log(restaurant);
 
   const restaurantId = restaurant.id;
   const dispatch = useDispatch();
@@ -106,7 +105,6 @@ const RestaurantScreen = ({ route }) => {
             });
           });
 
-          // Create sections array with flash sale as first section if it exists
           const sections = [];
           if (flashItems.length > 0) {
             sections.push({

@@ -49,8 +49,8 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   textName: {
-    fontSize: 22,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '600',
     color: '#202020',
     letterSpacing: 0.5,
     flex: 1,
@@ -61,6 +61,37 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FF3B30',
     letterSpacing: 0.5,
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  originalPrice: {
+    fontSize: 14,
+    color: '#9ca3af',
+    textDecorationLine: 'line-through',
+    marginRight: 8,
+  },
+
+  discountPrice: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FF3B30',
+    marginRight: 8,
+  },
+
+  discountBadge: {
+    backgroundColor: '#FF3B30',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+
+  discountText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   toppingContainer: {
     margin: 22,

@@ -6,7 +6,6 @@ import { formatPrice } from '../utils/format';
 
 const CardFood2 = React.memo(({ food, restaurant }) => {
   const navigation = useNavigation();
-  console.log(food);
 
   const isFlashSale = food.is_flash_sale || false;
 

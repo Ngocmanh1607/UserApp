@@ -115,16 +115,17 @@ const orderApi = {
       if (!userId || !accessToken) {
         throw new Error('Phiên hết hạn');
       }
-      const messenger = await apiClient.get(`coupon/${total}`, {
+      const coupons = await apiClient.get(`coupon/${total}`, {
         headers: {
           'x-api-key': apiKey,
           authorization: accessToken,
           'x-client-id': userId,
         },
       });
+
       return {
         success: true,
-        data: messenger.data.metadata,
+        data: coupons.data.metadata,
       };
     } catch (error) {
       return handleApiError(error);
@@ -157,7 +158,8 @@ const orderApi = {
     userLatitude,
     userLongitude,
     restaurant_id,
-    listCartItem
+    listCartItem,
+    coupon = 0
   ) => {
     try {
       const userId = await AsyncStorage.getItem('userId');
@@ -172,6 +174,7 @@ const orderApi = {
           userLongitude: userLongitude,
           restaurant_id: restaurant_id,
           listCartItem: listCartItem,
+          discountCost: coupon,
         },
         {
           headers: {

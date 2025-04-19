@@ -1,88 +1,106 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Alert,
-  Text,
   View,
+  Text,
   FlatList,
   TouchableOpacity,
   TextInput,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { orderApi } from '../../api/orderApi';
-import styles from '../../assets/css/CouponStyle';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { formatPrice } from '../../utils/format';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import styles from '../../assets/css/CouponStyle';
 
-const CouponPage = ({ onSelectCoupon, total }) => {
-  const [coupons, setCoupons] = useState([]);
+const CouponScreen = ({ onSelectCoupon, total }) => {
+  const [loading, setLoading] = useState(true);
+  const [coupons, setCoupons] = useState({
+    adminCoupons: [],
+    restaurantCoupons: [],
+  });
   const [search, setSearch] = useState('');
-  const handleSearch = (text) => {
-    setSearch(text);
-  };
+
   useEffect(() => {
-    const fetchCoupon = async () => {
+    fetchCoupons();
+  }, []);
+
+  const fetchCoupons = async () => {
+    try {
       const response = await orderApi.getCoupon(total);
       if (!response.success) {
-        return Alert.alert('Lỗi', response.message);
+        Alert.alert('Lỗi', response.message);
+        return;
       }
-      const couponData = response.data.map((item) => item.coupon);
-      setCoupons(couponData);
-    };
-    fetchCoupon();
-  }, []);
-  const renderCoupon = ({ item }) => (
-    <TouchableOpacity
-      style={styles.couponCard}
-      onPress={() => onSelectCoupon(item)}>
-      <Text style={styles.couponTitle}>{item.coupon_name}</Text>
-      <Text style={styles.couponCode}>Mã: {item.coupon_code}</Text>
-      <Text style={styles.couponCode}>
-        Giảm: {formatPrice(item.discount_value)}
-      </Text>
-    </TouchableOpacity>
-  );
+      setCoupons(response.data);
+    } catch (error) {
+      Alert.alert('Lỗi', 'Không thể tải mã giảm giá');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderCouponItem = ({ item }) => {
+    const coupon = item.coupon;
+    if (!coupon || item.error) return null;
+
+    return (
+      <TouchableOpacity
+        style={styles.couponCard}
+        onPress={() => onSelectCoupon(coupon)}>
+        <View style={styles.couponHeader}>
+          <MaterialIcons name="local-offer" size={24} color="#FF3B30" />
+          <Text style={styles.couponTitle}>{coupon.coupon_name}</Text>
+        </View>
+        <Text style={styles.couponCode}>Mã: {coupon.coupon_code}</Text>
+        <Text style={styles.discountValue}>
+          Giảm: {formatPrice(coupon.discount_value)}
+        </Text>
+        <Text style={styles.minOrder}>
+          Đơn tối thiểu: {formatPrice(coupon.min_order_value)}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#FF3B30" />
+      </View>
+    );
+  }
+
+  const validCoupons = [
+    ...coupons.adminCoupons,
+    ...coupons.restaurantCoupons.filter((item) => !item.error),
+  ];
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={{
-          position: 'absolute',
-          top: 10,
-          right: 10,
-          zIndex: 10,
-          backgroundColor: 'rgba(0,0,0,0.1)',
-          borderRadius: 20,
-          padding: 8,
-        }}
-        onPress={() => onSelectCoupon(null)}>
-        <Ionicons name="close" size={24} color="#FF0000" />
-      </TouchableOpacity>
-      <Text style={styles.title}>Chọn mã giảm giá</Text>
-      <View style={styles.searchbox}>
-        <TouchableOpacity>
-          <AntDesign
-            name="search1"
-            size={24}
-            color="red"
-            style={{ marginHorizontal: 5 }}
-          />
-        </TouchableOpacity>
+      <View style={styles.searchContainer}>
+        <MaterialIcons name="search" size={24} color="#666" />
         <TextInput
-          style={styles.input}
-          placeholder="Tìm kiếm theo tên nhà hàng"
-          placeholderTextColor="#333"
+          style={styles.searchInput}
+          placeholder="Tìm mã giảm giá..."
           value={search}
-          onChangeText={handleSearch}
+          onChangeText={setSearch}
         />
       </View>
+
       <FlatList
-        data={coupons}
-        renderItem={renderCoupon}
-        keyExtractor={(item, index) => `${item.id} - ${index}`}
-        contentContainerStyle={styles.listContainer}
+        data={validCoupons}
+        renderItem={renderCouponItem}
+        keyExtractor={(item) => item.coupon?.id?.toString()}
+        contentContainerStyle={styles.couponList}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Không có mã giảm giá khả dụng</Text>
+          </View>
+        }
       />
     </View>
   );
 };
 
-export default CouponPage;
+export default CouponScreen;

@@ -196,11 +196,16 @@ const CartScreen = () => {
   };
 
   const handleSelectCoupon = (newCoupon) => {
+    if (!newCoupon) {
+      setModalCoupon(false);
+      return;
+    }
     // Check if coupon already exists
     const isCouponExists = coupons.some((coupon) => coupon.id === newCoupon.id);
 
     if (isCouponExists) {
       Alert.alert('Thông báo', 'Mã giảm giá này đã được áp dụng');
+      setModalCoupon(false);
       return;
     }
 
@@ -259,12 +264,6 @@ const CartScreen = () => {
           </View>
         </TouchableOpacity>
       </View>
-    );
-  };
-  const calculateTotalDiscount = () => {
-    return coupons.reduce(
-      (total, coupon) => total + (coupon.discount_value || 0),
-      0
     );
   };
   // Enhanced footer component

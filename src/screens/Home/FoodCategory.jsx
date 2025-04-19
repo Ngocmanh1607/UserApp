@@ -14,7 +14,6 @@ const FoodCategory = ({ route }) => {
   const { categoryId } = route.params;
   const [isLoading, setIsLoading] = useState(true);
   const [foodData, setFoodData] = useState([]);
-  const [isNull, setIsNull] = useState(false);
 
   useEffect(() => {
     const fetchFoodInCategory = async () => {

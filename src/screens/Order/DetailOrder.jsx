@@ -10,13 +10,26 @@ import React from 'react';
 import { formatPrice, formatDate } from '../../utils/format';
 import { useRoute } from '@react-navigation/native';
 import styles from '../../assets/css/DetailOrderStyle';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {
+  getCurrentDaySchedule,
+  checkIsOpen,
+} from '../../utils/restaurantHelpers';
+import { Linking } from 'react-native';
 const OrderDetailScreen = () => {
   const route = useRoute();
   const order = route.params?.order || {};
+  const schedule = getCurrentDaySchedule(order.Restaurant?.opening_hours);
+  const isOpen = checkIsOpen(schedule);
   return (
     <View style={styles.container}>
       <ScrollView>
         {/* Header */}
+        {/* Order ID */}
+        <View style={styles.orderIdContainer}>
+          <Text style={styles.orderId}>Mã đơn: {order.id}</Text>
+          <Text style={styles.orderTime}>{formatDate(order.order_date)}</Text>
+        </View>
         {/* Driver Information */}
         {order.Driver && (
           <View style={styles.driverInfoContainer}>
@@ -45,11 +58,55 @@ const OrderDetailScreen = () => {
             </View>
           </View>
         )}
-        {/* Order ID */}
-        <View style={styles.orderIdContainer}>
-          <Text style={styles.orderId}>Mã đơn: {order.id}</Text>
-          <Text style={styles.orderTime}>{formatDate(order.order_date)}</Text>
-        </View>
+        {order.Restaurant && (
+          <View style={styles.restaurantContainer}>
+            <View style={styles.restaurantHeader}>
+              <Image
+                source={{ uri: order.Restaurant?.image }}
+                style={styles.restaurantImage}
+              />
+              <View style={styles.restaurantInfo}>
+                <Text style={styles.restaurantName}>
+                  {order.Restaurant?.name}
+                </Text>
+                <View style={styles.statusContainer}>
+                  <MaterialIcons name="access-time" size={16} color="#666" />
+                  <Text
+                    style={[
+                      styles.statusText,
+                      { color: isOpen ? '#059669' : '#dc2626' },
+                    ]}>
+                    {isOpen ? 'Đang mở cửa' : 'Đã đóng cửa'}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.addressContainer}>
+              <MaterialIcons name="place" size={16} color="#666" />
+              <Text style={styles.addressText}>
+                {order.Restaurant?.address}
+              </Text>
+            </View>
+            {schedule && (
+              <View style={styles.scheduleContainer}>
+                <MaterialIcons name="schedule" size={16} color="#666" />
+                <Text style={styles.scheduleText}>
+                  Giờ mở cửa: {schedule.open} - {schedule.close}
+                </Text>
+              </View>
+            )}
+            <TouchableOpacity
+              style={styles.phoneContainer}
+              onPress={() =>
+                Linking.openURL(`tel:${order.Restaurant?.phone_number}`)
+              }>
+              <MaterialIcons name="phone" size={16} color="#007AFF" />
+              <Text style={styles.phoneText}>
+                {order.Restaurant?.phone_number}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
         {/* Ordered Items */}
         {order.listCartItem.map((item, index) => (
           <View key={index} style={styles.orderItemContainer}>

@@ -24,8 +24,14 @@ const FoodDetailScreen = () => {
   const route = useRoute();
   const { food, restaurant } = route.params;
   const navigation = useNavigation();
-  const [foodDetails, setFoodDetails] = useState({ ...food, quantity: 1 });
-  const [sum, setSum] = useState(food.price);
+  const [foodDetails, setFoodDetails] = useState({
+    ...food,
+    quantity: 1,
+    price: food.is_flash_sale ? food.discountPrice : food.price,
+  });
+  const [sum, setSum] = useState(
+    food.is_flash_sale ? food.discountPrice : food.price
+  );
   const [toppings, setToppings] = useState([]);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -76,7 +82,8 @@ const FoodDetailScreen = () => {
     const selectedToppingsPrice = updatedToppings
       .filter((topping) => topping.selected)
       .reduce((total, topping) => total + topping.price, 0);
-    const totalSum = (food.price + selectedToppingsPrice) * quantity;
+    const basePrice = food.is_flash_sale ? food.discountPrice : food.price;
+    const totalSum = (basePrice + selectedToppingsPrice) * quantity;
     setSum(totalSum);
   };
   const handleAddtoCart = async () => {
@@ -116,7 +123,25 @@ const FoodDetailScreen = () => {
       <View style={styles.mainContainer}>
         <View style={styles.headerContainer}>
           <Text style={styles.textName}>{food.name}</Text>
-          <Text style={styles.textPrice}>{formatPrice(food.price)}</Text>
+          <View style={styles.priceContainer}>
+            {food.is_flash_sale ? (
+              <>
+                <Text style={styles.originalPrice}>
+                  {formatPrice(food.price)}
+                </Text>
+                <Text style={styles.discountPrice}>
+                  {formatPrice(food.discountPrice)}
+                </Text>
+                <View style={styles.discountBadge}>
+                  <Text style={styles.discountText}>
+                    -{Math.round((1 - food.discountPrice / food.price) * 100)}%
+                  </Text>
+                </View>
+              </>
+            ) : (
+              <Text style={styles.textPrice}>{formatPrice(food.price)}</Text>
+            )}
+          </View>
         </View>
 
         <FlatList

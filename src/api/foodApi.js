@@ -48,5 +48,20 @@ const foodApi = {
       return handleApiError(error);
     }
   },
+  getFlashSale: async () => {
+    try {
+      const response = await apiClient.get(`/customer/flashsale`, {
+        headers: {
+          'x-api-key': apiKey,
+        },
+      });
+      return {
+        success: true,
+        data: response.data.metadata,
+      };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
 };
 export { foodApi };

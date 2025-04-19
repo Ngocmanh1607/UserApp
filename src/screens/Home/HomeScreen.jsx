@@ -8,18 +8,20 @@ import {
   Modal,
   SafeAreaView,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+
 import Headerbar from '../../components/Headerbar';
 import OfferSlider from '../../components/OfferSlider';
 import Categories from '../../components/Categories';
 import CardRestaurant from '../../components/CardRestaurant';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import restaurantApi from '../../api/restaurantApi';
-import { useDispatch, useSelector } from 'react-redux';
 import styles from '../../assets/css/HomeStyle';
+import restaurantApi from '../../api/restaurantApi';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import RenderListFavorite from '../../components/RenderListFavorite';
-import { useNavigation } from '@react-navigation/native';
 import { selectCartItemCount, fetchAllCartItems } from '../../store/cartSlice';
+import { foodApi } from '../../api/foodApi';
 const HomeScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -43,7 +45,16 @@ const HomeScreen = () => {
       console.error('Lỗi khi tải dữ liệu nhà hàng:', error);
     }
   }, [address]);
-
+  const fetchFlashSaleData = async () => {
+    try {
+      const response = await foodApi.getFlashSale();
+      if (response.success) {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.error('Lỗi khi tải dữ liệu nhà hàng:', error);
+    }
+  };
   useEffect(() => {
     if (
       address &&
@@ -52,6 +63,7 @@ const HomeScreen = () => {
     ) {
       fetchRestaurantData();
     }
+    fetchFlashSaleData();
   }, [address, fetchRestaurantData]);
   useEffect(() => {
     dispatch(fetchAllCartItems());
@@ -79,7 +91,6 @@ const HomeScreen = () => {
     <>
       {/* Search Bar */}
       <SearchBar />
-
       {/* Banner Slider */}
       <View style={styles.section}>
         <OfferSlider />
