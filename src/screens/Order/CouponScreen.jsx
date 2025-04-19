@@ -25,7 +25,8 @@ const CouponPage = ({ onSelectCoupon, total }) => {
       if (!response.success) {
         return Alert.alert('Lỗi', response.message);
       }
-      setCoupons(response.data);
+      const couponData = response.data.map((item) => item.coupon);
+      setCoupons(couponData);
     };
     fetchCoupon();
   }, []);

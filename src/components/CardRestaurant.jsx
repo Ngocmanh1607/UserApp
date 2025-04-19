@@ -1,14 +1,29 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import getRatingReview from '../utils/getRatingReview';
-
+import { getCurrentDaySchedule, checkIsOpen } from '../utils/restaurantHelpers';
 const CardRestaurant = ({ restaurant }) => {
   const [res, setRes] = useState(restaurant);
   const navigation = useNavigation();
-
+  const schedule = getCurrentDaySchedule(res.opening_hours);
+  const isOpen = checkIsOpen(schedule);
   const handlePress = () => {
+    if (!isOpen) {
+      Alert.alert(
+        'Nhà hàng đóng cửa',
+        `Nhà hàng sẽ mở cửa lại vào lúc ${schedule?.open || '---'}`
+      );
+      return;
+    }
     navigation.navigate('RestaurantDetail', { restaurant: res });
   };
 
@@ -25,12 +40,44 @@ const CardRestaurant = ({ restaurant }) => {
   }, []);
 
   return (
-    <TouchableOpacity style={styles.card} onPress={handlePress}>
+    <TouchableOpacity
+      style={[styles.card, !isOpen && styles.closedCard]}
+      onPress={handlePress}
+      activeOpacity={isOpen ? 0.7 : 1}>
       <Image source={{ uri: res.image }} style={styles.image} />
       <View style={styles.content}>
-        <Text style={styles.name} numberOfLines={1}>
-          {res.name}
-        </Text>
+        <View style={styles.headerContainer}>
+          <Text style={styles.name} numberOfLines={1}>
+            {res.name}
+          </Text>
+          {getCurrentDaySchedule(res.opening_hours) && (
+            <View
+              style={[
+                styles.statusBadge,
+                {
+                  backgroundColor: checkIsOpen(
+                    getCurrentDaySchedule(res.opening_hours)
+                  )
+                    ? '#ecfdf5'
+                    : '#fef2f2',
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.statusText,
+                  {
+                    color: checkIsOpen(getCurrentDaySchedule(res.opening_hours))
+                      ? '#059669'
+                      : '#dc2626',
+                  },
+                ]}>
+                {checkIsOpen(getCurrentDaySchedule(res.opening_hours))
+                  ? 'Đang mở cửa'
+                  : 'Đã đóng cửa'}
+              </Text>
+            </View>
+          )}
+        </View>
         <Text style={styles.description} numberOfLines={2}>
           {res.description}
         </Text>
@@ -42,9 +89,18 @@ const CardRestaurant = ({ restaurant }) => {
           <View style={styles.distance}>
             <MaterialIcons name="place" size={16} color="#666" />
             <Text style={styles.distanceValue}>
-              {(restaurant.distance || 0).toFixed(2)} km
+              {(res.distance || 0).toFixed(2)} km
             </Text>
           </View>
+          {getCurrentDaySchedule(res.opening_hours) && (
+            <View style={styles.timeContainer}>
+              <MaterialIcons name="access-time" size={16} color="#666" />
+              <Text style={styles.timeValue}>
+                {getCurrentDaySchedule(res.opening_hours).open} -{' '}
+                {getCurrentDaySchedule(res.opening_hours).close}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -66,6 +122,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 4,
     elevation: 5,
+  },
+  closedCard: {
+    opacity: 0.7,
+    backgroundColor: '#f5f5f5',
   },
   image: {
     width: 90,
@@ -115,6 +175,38 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   distanceValue: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 3,
+  },
+
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+
+  statusText: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 10,
+    borderLeftWidth: 1,
+    borderLeftColor: '#E0E0E0',
+  },
+
+  timeValue: {
     fontSize: 14,
     color: '#666',
     marginLeft: 3,

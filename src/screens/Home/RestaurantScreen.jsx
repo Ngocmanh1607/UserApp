@@ -26,24 +26,28 @@ import styles from '../../assets/css/RestaurantStyle';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartCount, fetchAllCartItems } from '../../store/cartSlice';
 import userApi from '../../api/userApi';
-import FoodCard from '../../components/CardFood';
+import {
+  checkIsOpen,
+  getCurrentDaySchedule,
+  formatTime,
+} from '../../utils/restaurantHelpers';
 
 const RestaurantScreen = ({ route }) => {
   const navigation = useNavigation();
   const { restaurant } = route.params;
+  console.log(restaurant);
+
   const restaurantId = restaurant.id;
   const dispatch = useDispatch();
   const { cartCount } = useSelector((state) => state.cart);
 
   const [loading, setLoading] = useState(true);
   const [restaurantData, setRestaurantData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState([]);
   const [isFavorite, setIsFavorite] = useState();
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(0);
-  const [flashSaleFoods, setFlashSaleFoods] = useState([]);
-
+  const schedule = getCurrentDaySchedule(restaurant.opening_hours) || false;
+  const isOpen = checkIsOpen(schedule) || false;
   const scrollRef = useRef(null);
   const sectionListRef = useRef();
   const itemLayouts = useRef({}); // lưu toạ độ x và width của từng item (theo index)
@@ -73,6 +77,7 @@ const RestaurantScreen = ({ route }) => {
     const { x } = event.nativeEvent.layout;
     itemLayouts.current[index] = { x };
   };
+
   // state lấy dữ liêu từ api
   useEffect(() => {
     const fetchRestaurantData = async () => {
@@ -81,34 +86,74 @@ const RestaurantScreen = ({ route }) => {
       try {
         const data = await restaurantApi.getFoodsCateInRes(restaurantId);
         if (data.success) {
-          const sections = data.data.map((category) => {
+          // First collect flash sale items
+          const flashItems = [];
+          data.data.forEach((category) => {
+            category.products.forEach((product) => {
+              if (product.is_flash_sale) {
+                flashItems.push({
+                  id: product.product_id,
+                  name: product.product_name,
+                  price: product.original_price,
+                  image: product.image,
+                  descriptions: product.product_description,
+                  quantity: product.product_quantity,
+                  toppings: product.toppings,
+                  discountPrice: product.product_price,
+                  is_flash_sale: product.is_flash_sale,
+                });
+              }
+            });
+          });
+
+          // Create sections array with flash sale as first section if it exists
+          const sections = [];
+          if (flashItems.length > 0) {
+            sections.push({
+              title: 'Flash Sale 🔥',
+              data: flashItems,
+            });
+            cate.push({
+              id: 'flash_sale',
+              name: 'Flash Sale 🔥',
+            });
+          }
+
+          // Add regular categories
+          data.data.forEach((category) => {
             cate.push({
               id: category.category_id,
               name: category.category_name,
             });
-            return {
+
+            sections.push({
               title: category.category_name,
               data: category.products.map((product) => ({
                 id: product.product_id,
                 name: product.product_name,
-                price: product.product_price,
+                price: product.original_price,
                 image: product.image,
                 descriptions: product.product_description,
                 quantity: product.product_quantity,
                 toppings: product.toppings,
+                discountPrice: product.product_price,
+                is_flash_sale: product.is_flash_sale,
               })),
-            };
+            });
           });
+
           setRestaurantData(sections);
           setCategories(cate);
         } else {
           Alert.alert('Lỗi', data.message);
         }
-        setLoading(false);
       } catch (error) {
+        console.error(error);
+      } finally {
         setLoading(false);
       }
     };
+
     fetchRestaurantData();
     dispatch(fetchCartCount(restaurantId));
   }, [restaurantId]);
@@ -121,53 +166,6 @@ const RestaurantScreen = ({ route }) => {
     fetchFavorite();
   }, [restaurantId]);
 
-  //Get flashSale
-  // useEffect(() => {
-  //   const fetchFlashSaleFoods = async () => {
-  //     try {
-  //       const data = await restaurantApi.getFlashSaleFoods(restaurantId);
-  //       if (data.success) {
-  //         setFlashSaleFoods(data.data);
-  //       } else {
-  //         Alert.alert('Lỗi', data.message);
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   fetchFlashSaleFoods();
-  // }, [restaurantId]);
-  // const handleSearch = (query) => {
-  //   setSearchQuery(query);
-  //   if (query === '') {
-  //     setFilteredData(restaurantData);
-  //   } else {
-  //     const filtered = restaurantData.filter((food) =>
-  //       food.name.toLowerCase().includes(query.toLowerCase())
-  //     );
-  //     setFilteredData(filtered);
-  //   }
-  // };
-  useEffect(() => {
-    const mockFlashSaleFoods = [
-      {
-        id: 1,
-        name: 'Pizza Margherita',
-        price: 100000,
-        image: 'https://example.com/pizza.jpg',
-        descriptions: 'Delicious pizza with fresh ingredients',
-      },
-      {
-        id: 2,
-        name: 'Burger Special',
-        price: 80000,
-        image: 'https://example.com/burger.jpg',
-        descriptions: 'Juicy burger with cheese and bacon',
-      },
-    ];
-    setFlashSaleFoods(mockFlashSaleFoods);
-  }, []);
   const handleFavoriteToggle = async () => {
     try {
       setLoading(true);
@@ -192,7 +190,101 @@ const RestaurantScreen = ({ route }) => {
       restaurantName: restaurant.name,
     });
   };
+  const handleCategoryPress = (index) => {
+    if (index !== activeCategory) {
+      // setActiveCategory(index);
+      const layout = itemLayouts.current[index];
+      if (layout) {
+        scrollRef.current?.scrollTo({
+          x: layout.x - 20, // scroll hơi lệch trái cho đẹp
+          animated: true,
+        });
+      }
+      if (sectionListRef.current) {
+        sectionListRef.current.scrollToLocation({
+          sectionIndex: index,
+          itemIndex: 0,
+          animated: true,
+          viewPosition: 0,
+        });
+      }
+    }
+  };
+  const renderOpeningHours = () => {
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    const currentMinute = currentTime.getMinutes();
+    const currentTimeMinutes = currentHour * 60 + currentMinute;
 
+    // Calculate remaining time
+    let remainingText = '';
+    if (schedule) {
+      const [openHour, openMin] = schedule.open.split(':').map(Number);
+      const [closeHour, closeMin] = schedule.close.split(':').map(Number);
+      const openTimeMinutes = openHour * 60 + openMin;
+      const closeTimeMinutes = closeHour * 60 + closeMin;
+
+      if (isOpen) {
+        const minutesUntilClose = closeTimeMinutes - currentTimeMinutes;
+        const hoursUntilClose = Math.floor(minutesUntilClose / 60);
+        const minsUntilClose = minutesUntilClose % 60;
+        remainingText = `Đóng cửa sau ${hoursUntilClose}h${minsUntilClose}p`;
+      } else {
+        if (currentTimeMinutes < openTimeMinutes) {
+          const minutesUntilOpen = openTimeMinutes - currentTimeMinutes;
+          const hoursUntilOpen = Math.floor(minutesUntilOpen / 60);
+          const minsUntilOpen = minutesUntilOpen % 60;
+          remainingText = `Mở cửa sau ${hoursUntilOpen}h${minsUntilOpen}p`;
+        } else {
+          remainingText = `Mở cửa vào ${schedule.open} ngày mai`;
+        }
+      }
+    }
+
+    return (
+      <View style={styles.openingHoursContainer}>
+        <View style={styles.openingHoursHeader}>
+          <View style={styles.headerLeft}>
+            <MaterialIcons name="access-time" size={20} color="#666" />
+            <Text style={styles.openingHoursTitle}>Giờ hoạt động hôm nay</Text>
+          </View>
+          <View
+            style={[
+              styles.statusBadge,
+              { backgroundColor: isOpen ? '#ecfdf5' : '#fef2f2' },
+            ]}>
+            <View style={styles.statusDot} />
+            <Text
+              style={[
+                styles.statusText,
+                { color: isOpen ? '#059669' : '#dc2626' },
+              ]}>
+              {isOpen ? 'Đang mở cửa' : 'Đã đóng cửa'}
+            </Text>
+          </View>
+        </View>
+        {schedule && (
+          <View style={styles.timeDetailsContainer}>
+            <View style={styles.timeRow}>
+              <MaterialIcons name="schedule" size={16} color="#666" />
+              <Text style={styles.timeValue}>
+                {formatTime(schedule.open)} - {formatTime(schedule.close)}
+              </Text>
+            </View>
+            <View style={styles.remainingContainer}>
+              <Text
+                style={[
+                  styles.remainingTime,
+                  { color: isOpen ? '#059669' : '#dc2626' },
+                ]}>
+                {remainingText}
+              </Text>
+            </View>
+          </View>
+        )}
+      </View>
+    );
+  };
   const renderRestaurantHeader = () => (
     <View style={styles.restaurantHeaderContainer}>
       <View style={styles.restaurantImageWrapper}>
@@ -242,102 +334,42 @@ const RestaurantScreen = ({ route }) => {
             <FontAwesome name="chevron-right" size={14} color="#007AFF" />
           </TouchableOpacity>
         </View>
+        {renderOpeningHours()}
       </View>
     </View>
   );
 
-  // const renderSearchBar = () => (
-  //   <View style={styles.searchBarContainer}>
-  //     <View style={styles.searchInputWrapper}>
-  //       <AntDesign
-  //         name="search1"
-  //         size={20}
-  //         color="#888"
-  //         style={styles.searchIcon}
-  //       />
-  //       <TextInput
-  //         style={styles.searchInput}
-  //         placeholder="Tìm kiếm món ăn"
-  //         value={searchQuery}
-  //         onChangeText={handleSearch}
-  //         placeholderTextColor="#999"
-  //       />
-  //       {searchQuery !== '' && (
-  //         <TouchableOpacity onPress={() => handleSearch('')}>
-  //           <AntDesign
-  //             name="close"
-  //             size={20}
-  //             color="#888"
-  //             style={styles.clearIcon}
-  //           />
-  //         </TouchableOpacity>
-  //       )}
-  //     </View>
-  //   </View>
-  // );
-
   const renderItem = ({ item }) => (
     <CardFood2 food={item} restaurant={restaurant} />
   );
-  const handleCategoryPress = (index) => {
-    if (index !== activeCategory) {
-      // setActiveCategory(index);
-      const layout = itemLayouts.current[index];
-      if (layout) {
-        scrollRef.current?.scrollTo({
-          x: layout.x - 20, // scroll hơi lệch trái cho đẹp
-          animated: true,
-        });
-      }
-      if (sectionListRef.current) {
-        sectionListRef.current.scrollToLocation({
-          sectionIndex: index,
-          itemIndex: 0,
-          animated: true,
-          viewPosition: 0,
-        });
-      }
-    }
-  };
-  const renderFlashSale = () => (
-    <View style={styles.flashSaleContainer}>
-      <Text style={styles.flashSaleTitle}>Flash Sale</Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.flashSaleList}>
-        {flashSaleFoods.map((food) => (
-          <FoodCard key={food.id} food={food} restaurant={restaurant} />
-        ))}
-      </ScrollView>
-    </View>
-  );
   const renderFoodList = () => (
     <View style={styles.foodListContainer}>
-      <ScrollView
-        ref={scrollRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.categoryListContainer}>
-        {categories.map((item, index) => (
-          <TouchableOpacity
-            key={item.id.toString()}
-            onLayout={(event) => handleLayout(event, index)}
-            style={[
-              styles.categoryItem,
-              activeCategory === index && styles.activeCategoryItem,
-            ]}
-            onPress={() => handleCategoryPress(index)}>
-            <Text
+      <View style={styles.categoryListContainer}>
+        <ScrollView
+          ref={scrollRef}
+          horizontal
+          keyExtractor={(item) => item.id.toString()}
+          showsHorizontalScrollIndicator={false}>
+          {categories.map((item, index) => (
+            <TouchableOpacity
+              key={item.id.toString()}
+              onLayout={(event) => handleLayout(event, index)}
               style={[
-                styles.categoryText,
-                activeCategory === index && styles.activeCategoryText,
-              ]}>
-              {item.name}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+                styles.categoryItem,
+                activeCategory === index && styles.activeCategoryItem,
+              ]}
+              onPress={() => handleCategoryPress(index)}>
+              <Text
+                style={[
+                  styles.categoryText,
+                  activeCategory === index && styles.activeCategoryText,
+                ]}>
+                {item.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
 
       <SectionList
         ref={sectionListRef}
@@ -367,8 +399,6 @@ const RestaurantScreen = ({ route }) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
         {renderRestaurantHeader()}
-        {/* {renderSearchBar()} */}
-        {/* {renderFlashSale()} */}
         {renderFoodList()}
         <TouchableOpacity
           style={styles.cartButton}

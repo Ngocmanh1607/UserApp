@@ -114,51 +114,90 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginRight: 4,
   },
-  //Search style
-  searchBarContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  searchInputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFF',
+  // Add to your existing StyleSheet
+  openingHoursContainer: {
+    marginTop: 16,
+    backgroundColor: '#fff',
     borderRadius: 12,
-    height: 46,
-    paddingHorizontal: 12,
+    padding: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 1,
     },
     shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowRadius: 2,
     elevation: 2,
   },
-  searchIcon: {
-    marginRight: 8,
+
+  openingHoursHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
   },
-  clearIcon: {
+
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  openingHoursTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#374151',
     marginLeft: 8,
   },
-  searchInput: {
-    flex: 1,
-    height: '100%',
-    fontSize: 16,
-    color: '#333',
-  },
-  //flashsale style
-  flashSaleContainer: {
-    marginVertical: 10,
-    paddingHorizontal: 15,
-  },
-  flashSaleTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  flashSaleList: {
+
+  statusBadge: {
     flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'currentColor',
+    marginRight: 4,
+  },
+
+  statusText: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+
+  timeDetailsContainer: {
+    backgroundColor: '#f9fafb',
+    padding: 12,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+
+  timeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  timeValue: {
+    fontSize: 14,
+    color: '#374151',
+    marginLeft: 8,
+    fontWeight: '500',
+  },
+  remainingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  remainingTime: {
+    fontSize: 13,
+    fontWeight: '500',
+    marginTop: 4,
   },
   //category style
   categoryListContainer: {

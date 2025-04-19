@@ -6,14 +6,24 @@ import { formatPrice } from '../utils/format';
 
 const CardFood2 = React.memo(({ food, restaurant }) => {
   const navigation = useNavigation();
+  console.log(food);
+
+  const isFlashSale = food.is_flash_sale || false;
+
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, isFlashSale && styles.flashSaleContainer]}
       onPress={() => {
         navigation.navigate('FoodDetail', { food, restaurant });
       }}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: food.image }} style={styles.foodImage} />
+        {isFlashSale && (
+          <View style={styles.flashSaleBadge}>
+            <MaterialIcons name="flash-on" size={14} color="#FFF" />
+            <Text style={styles.flashSaleText}>Flash Sale</Text>
+          </View>
+        )}
       </View>
       <View style={styles.mainContainer}>
         <View style={styles.foodNameContainer}>
@@ -27,7 +37,18 @@ const CardFood2 = React.memo(({ food, restaurant }) => {
           </Text>
         </View>
         <View style={styles.priceContainer}>
-          <Text style={styles.price}>{formatPrice(food.price)}</Text>
+          {isFlashSale ? (
+            <View style={styles.flashSalePriceContainer}>
+              <Text style={styles.discountPrice}>
+                {formatPrice(food.discountPrice)}
+              </Text>
+              <Text style={styles.originalPrice}>
+                {formatPrice(food.price)}
+              </Text>
+            </View>
+          ) : (
+            <Text style={styles.price}>{formatPrice(food.price)}</Text>
+          )}
           <TouchableOpacity style={styles.addButton}>
             <MaterialIcons name="add" size={16} color="white" />
           </TouchableOpacity>
@@ -60,7 +81,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     paddingLeft: 12,
-    // height: '100%',
     justifyContent: 'space-between',
   },
   imageContainer: {
@@ -107,6 +127,41 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#FF0000',
     fontWeight: 'bold',
+  },
+  flashSaleContainer: {
+    borderColor: '#FF3B30',
+    borderWidth: 1,
+  },
+  flashSaleBadge: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    backgroundColor: '#FF3B30',
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  flashSaleText: {
+    color: '#FFF',
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginLeft: 2,
+  },
+  flashSalePriceContainer: {
+    flexDirection: 'column',
+  },
+  discountPrice: {
+    fontSize: 16,
+    color: '#FF3B30',
+    fontWeight: 'bold',
+  },
+  originalPrice: {
+    fontSize: 12,
+    color: '#999',
+    textDecorationLine: 'line-through',
+    marginTop: 2,
   },
   addButton: {
     backgroundColor: '#FF0000',

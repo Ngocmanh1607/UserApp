@@ -95,7 +95,6 @@ const HomeScreen = () => {
 
       {/* Popular Products */}
       <RenderListFavorite />
-
       {/* Latest Products */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
@@ -111,7 +110,6 @@ const HomeScreen = () => {
       <View style={styles.header}>
         <Headerbar />
       </View>
-
       <FlatList
         data={restaurants}
         ListHeaderComponent={<HeaderComponent />}
