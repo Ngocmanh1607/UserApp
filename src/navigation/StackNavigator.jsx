@@ -188,6 +188,15 @@ const StackNavigator = () => {
           headerBackTitle: 'Quay lại',
         }}
       />
+      <Stack.Screen
+        name="Coupon"
+        component={CouponPage}
+        options={{
+          headerShown: false,
+          title: 'Mã giảm giá',
+          headerBackTitle: 'Quay lại',
+        }}
+      />
     </Stack.Navigator>
   );
 };

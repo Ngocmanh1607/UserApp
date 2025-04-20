@@ -7,13 +7,19 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { orderApi } from '../../api/orderApi';
 import { formatPrice } from '../../utils/format';
 import styles from '../../assets/css/CouponStyle';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-const CouponScreen = ({ onSelectCoupon, total }) => {
+const CouponScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { onSelectCoupon, total } = route.params;
+
   const [loading, setLoading] = useState(true);
   const [coupons, setCoupons] = useState({
     adminCoupons: [],
@@ -33,11 +39,17 @@ const CouponScreen = ({ onSelectCoupon, total }) => {
         return;
       }
       setCoupons(response.data);
+      console.log(response.data.restaurantCoupons);
     } catch (error) {
       Alert.alert('Lỗi', 'Không thể tải mã giảm giá');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSelectCoupon = (coupon) => {
+    navigation.goBack();
+    onSelectCoupon(coupon);
   };
 
   const renderCouponItem = ({ item }) => {
@@ -47,18 +59,65 @@ const CouponScreen = ({ onSelectCoupon, total }) => {
     return (
       <TouchableOpacity
         style={styles.couponCard}
-        onPress={() => onSelectCoupon(coupon)}>
+        onPress={() => handleSelectCoupon(coupon)}>
         <View style={styles.couponHeader}>
-          <MaterialIcons name="local-offer" size={24} color="#FF3B30" />
-          <Text style={styles.couponTitle}>{coupon.coupon_name}</Text>
+          <MaterialIcons name="local-offer" size={18} color="#FF3B30" />
+          <Text style={styles.couponTitle} numberOfLines={1}>
+            {coupon.coupon_name}
+          </Text>
+          <View style={styles.statusBadge}>
+            <Text style={styles.statusText}>Khả dụng</Text>
+          </View>
         </View>
-        <Text style={styles.couponCode}>Mã: {coupon.coupon_code}</Text>
-        <Text style={styles.discountValue}>
-          Giảm: {formatPrice(coupon.discount_value)}
-        </Text>
-        <Text style={styles.minOrder}>
-          Đơn tối thiểu: {formatPrice(coupon.min_order_value)}
-        </Text>
+
+        <View style={styles.infoRow}>
+          <View style={styles.infoItem}>
+            <MaterialIcons
+              name="vpn-key"
+              size={14}
+              color="#666"
+              style={styles.infoIcon}
+            />
+            <Text style={styles.infoText}>{coupon.coupon_code}</Text>
+          </View>
+          <View style={styles.infoItem}>
+            <MaterialIcons
+              name="loyalty"
+              size={14}
+              color="#FF3B30"
+              style={styles.infoIcon}
+            />
+            <Text
+              style={[
+                styles.infoText,
+                { color: '#FF3B30', fontWeight: '500' },
+              ]}>
+              {formatPrice(coupon.discount_value)}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.infoRow}>
+          <View style={styles.infoItem}>
+            <MaterialIcons
+              name="shopping-bag"
+              size={14}
+              color="#666"
+              style={styles.infoIcon}
+            />
+            <Text style={styles.infoText}>
+              Tối thiểu: {formatPrice(coupon.min_order_value)}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.couponFooter}>
+          <Text style={styles.expiryText}>Hết hạn: 30/04/2025</Text>
+          <TouchableOpacity style={styles.applyButton}>
+            <MaterialIcons name="check" size={12} color="#fff" />
+            <Text style={styles.applyButtonText}>Áp dụng</Text>
+          </TouchableOpacity>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -77,7 +136,7 @@ const CouponScreen = ({ onSelectCoupon, total }) => {
   ];
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.searchContainer}>
         <MaterialIcons name="search" size={24} color="#666" />
         <TextInput
@@ -99,7 +158,7 @@ const CouponScreen = ({ onSelectCoupon, total }) => {
           </View>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

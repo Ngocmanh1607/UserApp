@@ -70,6 +70,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333333',
   },
+  flashSaleSection: {
+    backgroundColor: '#FFF8F8',
+    paddingVertical: 16,
+    marginVertical: 8,
+    borderRadius: 16,
+  },
+
+  flashSaleTitle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+
+  flashSaleList: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    marginBottom: 4,
+  },
   productRow: {
     justifyContent: 'space-between',
     paddingHorizontal: 12,

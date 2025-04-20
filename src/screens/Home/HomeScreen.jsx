@@ -11,6 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Headerbar from '../../components/Headerbar';
 import OfferSlider from '../../components/OfferSlider';
@@ -22,12 +23,15 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import RenderListFavorite from '../../components/RenderListFavorite';
 import { selectCartItemCount, fetchAllCartItems } from '../../store/cartSlice';
 import { foodApi } from '../../api/foodApi';
+import FlashSaleCard from '../../components/FlashSaleCard';
+
 const HomeScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
   const address = useSelector((state) => state.currentLocation);
   const navigation = useNavigation();
   const cartItemCount = useSelector(selectCartItemCount);
+  const [flashSaleItems, setFlashSaleItems] = useState([]);
   const dispatch = useDispatch();
   const fetchRestaurantData = useCallback(async () => {
     try {
@@ -49,7 +53,7 @@ const HomeScreen = () => {
     try {
       const response = await foodApi.getFlashSale();
       if (response.success) {
-        console.log(response.data);
+        setFlashSaleItems(response.data);
       }
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu nhà hàng:', error);
@@ -103,7 +107,31 @@ const HomeScreen = () => {
         </View>
         <Categories />
       </View>
-
+      {flashSaleItems.length > 0 && (
+        <View style={styles.flashSaleSection}>
+          <View style={styles.sectionHeader}>
+            <View style={styles.flashSaleTitle}>
+              <Text style={styles.sectionTitle}>Flash Sale</Text>
+              <MaterialIcons name="flash-on" size={24} color="#FF3B30" />
+            </View>
+          </View>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={flashSaleItems}
+            renderItem={({ item }) => (
+              <FlashSaleCard
+                item={item}
+                restaurant={restaurants.find(
+                  (r) => r.id === item.restaurant_id
+                )}
+              />
+            )}
+            keyExtractor={(item) => item.product_id.toString()}
+            contentContainerStyle={styles.flashSaleList}
+          />
+        </View>
+      )}
       {/* Popular Products */}
       <RenderListFavorite />
       {/* Latest Products */}

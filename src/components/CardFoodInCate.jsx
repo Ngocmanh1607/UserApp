@@ -5,8 +5,6 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
-  SafeAreaView,
   Alert,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -19,7 +17,6 @@ const CardFood2 = ({ food }) => {
   const navigation = useNavigation();
   const address = useSelector((state) => state.currentLocation);
   const [restaurant, setRestaurant] = useState({});
-
   const handelPress = async () => {
     // Gọi cả hai API đồng thời
     const [restaurantInfo, distance, ratingReview] = await Promise.all([

@@ -40,8 +40,6 @@ const CartScreen = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('ZALOPAY');
   const [coupons, setCoupons] = useState([]);
   const [modalPayment, setModalPayment] = useState(false);
-  const [modalCoupon, setModalCoupon] = useState(false);
-
   const [showCompleteOrder, setShowCompleteOrder] = useState(false);
   const address = useSelector((state) => state.currentLocation);
   const errorAddress = useSelector((state) => state.currentLocation.error);
@@ -192,7 +190,10 @@ const CartScreen = () => {
   };
 
   const handleDiscount = () => {
-    setModalCoupon(true);
+    navigation.navigate('Coupon', {
+      onSelectCoupon: handleSelectCoupon,
+      total: cost ? cost.totalFoodPrice + cost.shippingCost : 0,
+    });
   };
 
   const handleSelectCoupon = (newCoupon) => {
@@ -205,12 +206,10 @@ const CartScreen = () => {
 
     if (isCouponExists) {
       Alert.alert('Thông báo', 'Mã giảm giá này đã được áp dụng');
-      setModalCoupon(false);
       return;
     }
 
     setCoupons((prevCoupons) => [...prevCoupons, newCoupon]);
-    setModalCoupon(false);
   };
   const handleGetPrice = async () => {
     setIsLoading(true);
@@ -308,9 +307,7 @@ const CartScreen = () => {
                 <Text style={styles.discountText}>
                   {coupons.length} mã được áp dụng
                 </Text>
-                <TouchableOpacity onPress={() => setModalCoupon(true)}>
-                  <Text style={styles.addMoreText}>+ Thêm</Text>
-                </TouchableOpacity>
+                <Text style={styles.addMoreText}>+ Thêm</Text>
               </View>
             ) : (
               <Text style={styles.noCouponText}>Chọn hoặc nhập mã</Text>
@@ -343,7 +340,6 @@ const CartScreen = () => {
         {/* Order Summary */}
         <View style={styles.summaryContainer}>
           <Text style={styles.summaryTitle}>Chi tiết thanh toán</Text>
-
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Tạm tính</Text>
             <Text style={styles.summaryValue}>
@@ -403,19 +399,6 @@ const CartScreen = () => {
         ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={false}
       />
-
-      {/* Coupon Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalCoupon}
-        onRequestClose={() => setModalCoupon(false)}>
-        <CouponPage
-          onSelectCoupon={handleSelectCoupon}
-          total={cost && cost.totalFoodPrice + cost.shippingCost}
-        />
-      </Modal>
-
       {/* Footer Container with Order Summary */}
       <View style={styles.footerContainer}>
         <View style={styles.totalRow}>
