@@ -215,31 +215,52 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 14,
   },
+  // Styles for the applied coupons list section
   appliedCouponsList: {
-    marginTop: 8,
-    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#eeeeee',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 5,
   },
+
   appliedCouponItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eeeeee',
+    marginBottom: 4,
   },
+
   couponCode: {
-    flex: 1,
-    fontSize: 14,
-    color: '#2c3e50',
-  },
-  couponValue: {
-    fontSize: 14,
+    flex: 1.5,
+    fontWeight: '600',
     color: '#e74c3c',
-    marginRight: 8,
+    fontSize: 14,
   },
+
+  couponValue: {
+    flex: 1,
+    textAlign: 'right',
+    fontWeight: '600',
+    color: '#e74c3c',
+    fontSize: 14,
+    paddingRight: 10,
+  },
+
   removeCouponButton: {
-    padding: 4,
+    padding: 6,
   },
   overlay: {
     flex: 1,

@@ -5,9 +5,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { formatPrice } from '../utils/format';
 import restaurantApi from '../api/restaurantApi';
 import { useSelector } from 'react-redux';
-const FlashSaleCard = ({ item }) => {
+import getRatingReview from '../utils/getRatingReview';
+const FlashSaleCard = ({ item, restaurantId }) => {
   const navigation = useNavigation();
-
   const discountPercent = Math.round(
     ((item.original_price - item.flash_sale_price) / item.original_price) * 100
   );
@@ -16,13 +16,13 @@ const FlashSaleCard = ({ item }) => {
   const handlePress = async () => {
     // Gọi cả hai API đồng thời
     const [restaurantInfo, distance, ratingReview] = await Promise.all([
-      restaurantApi.getInfoRestaurants(food.restaurantId),
+      restaurantApi.getInfoRestaurants(restaurantId),
       restaurantApi.getDistance(
         address.latitude,
         address.longitude,
-        food.restaurantId
+        restaurantId
       ),
-      getRatingReview(food.restaurantId),
+      getRatingReview(restaurantId),
     ]);
     if (restaurantInfo.success && distance.success) {
       const dis = parseFloat(distance.data);

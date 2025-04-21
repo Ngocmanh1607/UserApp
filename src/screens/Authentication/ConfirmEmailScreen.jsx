@@ -2,20 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, Image } from 'react-native';
 import styles from '../../assets/css/ConfirmEmailStyle';
 const ConfirmEmailScreen = ({ navigation }) => {
-  const [isResending, setIsResending] = useState(false);
-
-  // Xử lý gửi lại email xác nhận
-  const handleResendEmail = async () => {
-    setIsResending(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      Alert.alert('Thành công', 'Email xác nhận đã được gửi lại!');
-    } catch (error) {
-      Alert.alert('Lỗi', 'Không thể gửi lại email. Vui lòng thử lại sau.');
-    }
-    setIsResending(false);
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.topImageContainer}>

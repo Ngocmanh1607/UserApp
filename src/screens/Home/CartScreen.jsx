@@ -3,9 +3,7 @@ import {
   View,
   SafeAreaView,
   TouchableOpacity,
-  ScrollView,
   TextInput,
-  Animated,
   Alert,
   Linking,
   AppState,
@@ -31,6 +29,7 @@ import PaymentMethodScreen from '../Order/PaymentMethodScreen';
 import CouponPage from '../Order/CouponScreen';
 import { cart } from '../../api/cartOrder';
 import { fetchCartCount } from '../../store/cartSlice';
+
 const CartScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -44,11 +43,13 @@ const CartScreen = () => {
   const address = useSelector((state) => state.currentLocation);
   const errorAddress = useSelector((state) => state.currentLocation.error);
   const [cost, setCost] = useState();
+  const [discountCost, setDiscountCost] = useState(0);
   const [note, setNote] = useState('');
   const [transactionId, setTransactionId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [foodData, setFoodData] = useState([]);
   const [cartID, setCartID] = useState(null);
+
   const fetchCartData = async () => {
     setIsLoading(true);
     const cartData = await cart.getCart(restaurantId);
@@ -73,14 +74,44 @@ const CartScreen = () => {
       }
     }
   };
+
   useFocusEffect(
     useCallback(() => {
       fetchCartData();
     }, [])
   );
+
+  const calculateTotalDiscount = () => {
+    if (!cost || !cost.totalFoodPrice) return 0;
+
+    let totalDiscount = 0;
+    const subtotal = cost.totalFoodPrice;
+
+    coupons.forEach((coupon) => {
+      if (coupon.discount_type === 'PERCENTAGE') {
+        const percentageDiscount =
+          (subtotal * parseFloat(coupon.discount_value)) / 100;
+        const discountAmount = coupon.max_discount_amount
+          ? Math.min(percentageDiscount, parseFloat(coupon.max_discount_amount))
+          : percentageDiscount;
+        totalDiscount += discountAmount;
+      } else {
+        totalDiscount += parseFloat(coupon.discount_value);
+      }
+    });
+
+    return totalDiscount;
+  };
+
+  useEffect(() => {
+    const discount = calculateTotalDiscount();
+    setDiscountCost(discount);
+  }, [coupons, cost]);
+
   useEffect(() => {
     handleGetPrice();
-  }, [foodData, address]);
+  }, [foodData, address, discountCost, coupons]);
+
   // Lắng nghe khi người dùng quay lại app bằng cách sử dụng AppState
   useEffect(() => {
     const handleAppStateChange = (nextAppState) => {
@@ -110,6 +141,7 @@ const CartScreen = () => {
   const handlePress = () => {
     navigation.navigate('MapScreen');
   };
+
   // Thêm sản phẩm
   const handleAdd = async (id, description) => {
     setIsLoading(true);
@@ -123,6 +155,7 @@ const CartScreen = () => {
       Alert.alert('Đã xảy ra lỗi', response.message);
     }
   };
+
   const handleOrder = async () => {
     if (foodData.length === 0) {
       return Alert.alert('Lỗi', 'Giỏ hàng của bạn đang trống');
@@ -130,6 +163,7 @@ const CartScreen = () => {
     setIsLoading(true);
     const userInfoResponse = await userApi.getInfoUser(dispatch);
     setIsLoading(false);
+
     if (!userInfoResponse.data.profile) {
       Alert.alert('Lỗi', 'Vui lòng cập nhật thông tin cá nhân', [
         {
@@ -141,8 +175,9 @@ const CartScreen = () => {
       ]);
       return;
     }
+
     if (!userInfoResponse.success) {
-      if (userInfoResponse.message === 500) {
+      if (userInfoResponse.message == 'JsonWebTokenError') {
         Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
           text: 'OK',
           onPress: () => {
@@ -158,32 +193,45 @@ const CartScreen = () => {
         return;
       }
     }
-    const totalCost = cost.totalFoodPrice + cost.shippingCost;
-    const couponid = null;
+
     const info = userInfoResponse.data;
+    const totalPrice = Math.ceil(cost?.totalPrice / 1000) * 1000 || 0;
+    const shipePrice = Math.floor(cost.shippingCost) || 0;
+
     const response = await orderApi.orderApi(
       info,
       address,
       foodData,
-      'ZALOPAY',
-      totalCost,
-      cost.shippingCost,
-      note,
-      couponid
+      selectedPaymentMethod,
+      totalPrice,
+      shipePrice,
+      note
     );
+
     setIsLoading(false);
     if (!response.success) {
       Alert.alert('Lỗi', response.message);
       return;
     }
+
     setTransactionId(response.data.app_trans_id);
-    if (response.data.url) {
-      await Linking.openURL(response.data.url);
+    if (selectedPaymentMethod === 'ZALOPAY') {
+      if (response.data.url) {
+        await Linking.openURL(response.data.url);
+      }
+    } else {
+      Alert.alert('Đặt hàng thành công', 'Cảm ơn bạn đã đặt hàng', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Main'),
+        },
+      ]);
     }
   };
   const handlePayment = () => {
     setModalPayment(true);
   };
+
   const handleSelectPaymentMethod = (method) => {
     setSelectedPaymentMethod(method);
     setModalPayment(false);
@@ -192,13 +240,12 @@ const CartScreen = () => {
   const handleDiscount = () => {
     navigation.navigate('Coupon', {
       onSelectCoupon: handleSelectCoupon,
-      total: cost ? cost.totalFoodPrice + cost.shippingCost : 0,
+      total: cost?.totalFoodPrice + cost?.shippingCost,
     });
   };
 
   const handleSelectCoupon = (newCoupon) => {
     if (!newCoupon) {
-      setModalCoupon(false);
       return;
     }
     // Check if coupon already exists
@@ -209,8 +256,20 @@ const CartScreen = () => {
       return;
     }
 
+    const subtotal = cost ? cost.totalFoodPrice : 0;
+    if (subtotal < parseFloat(newCoupon.min_order_value)) {
+      Alert.alert(
+        'Thông báo',
+        `Đơn hàng tối thiểu ${formatPrice(
+          newCoupon.min_order_value
+        )} để sử dụng mã này`
+      );
+      return;
+    }
+
     setCoupons((prevCoupons) => [...prevCoupons, newCoupon]);
   };
+
   const handleGetPrice = async () => {
     setIsLoading(true);
     let response;
@@ -219,12 +278,13 @@ const CartScreen = () => {
         address.latitude,
         address.longitude,
         restaurantId,
-        foodData
+        foodData,
+        discountCost
       );
       setIsLoading(false);
     }
-    if (!response.success) {
-      if (response.message === 500) {
+    if (!response || !response.success) {
+      if (response && response.message === 'JsonWebTokenError') {
         Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
           text: 'OK',
           onPress: () => {
@@ -236,12 +296,10 @@ const CartScreen = () => {
         });
         return;
       }
-      return Alert.alert('Lỗi', response.message);
     }
     setCost(response.data);
   };
 
-  // Enhanced header component
   const renderHeader = () => {
     return (
       <View style={styles.headContainer}>
@@ -265,7 +323,7 @@ const CartScreen = () => {
       </View>
     );
   };
-  // Enhanced footer component
+
   const renderFooter = () => {
     return (
       <View style={styles.footer}>
@@ -316,14 +374,16 @@ const CartScreen = () => {
           </View>
         </TouchableOpacity>
 
-        {/* Add this section to display applied coupons */}
+        {/* section lits coupon */}
         {coupons.length > 0 && (
           <View style={styles.appliedCouponsList}>
             {coupons.map((coupon, index) => (
               <View key={index} style={styles.appliedCouponItem}>
                 <Text style={styles.couponCode}>{coupon.coupon_code}</Text>
                 <Text style={styles.couponValue}>
-                  -{formatPrice(coupon.discount_value)}
+                  {coupon.discount_type === 'PERCENTAGE'
+                    ? `${coupon.discount_value}%`
+                    : `- ${formatPrice(coupon.discount_value)}`}
                 </Text>
                 <TouchableOpacity
                   onPress={() =>
@@ -357,10 +417,9 @@ const CartScreen = () => {
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Giảm giá</Text>
             <Text style={styles.discountValue}>
-              {/* {coupon && coupon.discount_value
-                ? `- ${formatPrice(coupon.discount_value)}`
-                : formatPrice(0)} */}
-              0
+              {discountCost > 0
+                ? `- ${formatPrice(discountCost)}`
+                : formatPrice(0)}
             </Text>
           </View>
 
@@ -369,12 +428,7 @@ const CartScreen = () => {
           <View style={styles.totalSummaryRow}>
             <Text style={styles.totalSummaryLabel}>Tổng thanh toán</Text>
             <Text style={styles.totalSummaryValue}>
-              {formatPrice(
-                cost
-                  ? cost.totalFoodPrice + cost.shippingCost
-                  : // (coupon?.discount_value ?? 0)
-                    0
-              )}
+              {formatPrice(cost?.totalPrice || 0)}
             </Text>
           </View>
         </View>
@@ -404,12 +458,7 @@ const CartScreen = () => {
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Tổng số tiền</Text>
           <Text style={styles.totalValue}>
-            {formatPrice(
-              cost
-                ? cost.totalFoodPrice + cost.shippingCost
-                : // (coupon?.discount_value ?? 0)
-                  0
-            )}
+            {formatPrice(Math.ceil(cost?.totalPrice / 1000) * 1000 || 0)}
           </Text>
         </View>
 
@@ -443,7 +492,10 @@ const CartScreen = () => {
           transparent={true}
           visible={modalPayment}
           onRequestClose={() => setModalPayment(false)}>
-          <PaymentMethodScreen onSelectMethod={handleSelectPaymentMethod} />
+          <PaymentMethodScreen
+            onSelectMethod={handleSelectPaymentMethod}
+            onClose={() => setModalPayment(false)}
+          />
         </Modal>
 
         {/* Order Button */}

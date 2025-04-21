@@ -35,8 +35,19 @@ const CouponScreen = () => {
     try {
       const response = await orderApi.getCoupon(total);
       if (!response.success) {
+        if (response.message === 'JsonWebTokenError: invalid signature') {
+          Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
+            text: 'OK',
+            onPress: () => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Auth' }],
+              });
+            },
+          });
+          return;
+        }
         Alert.alert('Lỗi', response.message);
-        return;
       }
       setCoupons(response.data);
       console.log(response.data.restaurantCoupons);
@@ -48,13 +59,38 @@ const CouponScreen = () => {
   };
 
   const handleSelectCoupon = (coupon) => {
-    navigation.goBack();
     onSelectCoupon(coupon);
+    navigation.goBack();
+  };
+  const formatDiscount = (coupon) => {
+    if (coupon.discount_type === 'PERCENTAGE') {
+      return `${coupon.discount_value}%`;
+    } else {
+      return formatPrice(coupon.discount_value);
+    }
+  };
+
+  const getDiscountDescription = (coupon) => {
+    if (coupon.discount_type === 'PERCENTAGE') {
+      return `Giảm ${coupon.discount_value}% (tối đa ${formatPrice(
+        coupon.max_discount_amount
+      )})`;
+    } else {
+      return `Giảm ${formatPrice(coupon.discount_value)}`;
+    }
   };
 
   const renderCouponItem = ({ item }) => {
     const coupon = item.coupon;
     if (!coupon || item.error) return null;
+
+    if (
+      search &&
+      !coupon.coupon_name.toLowerCase().includes(search.toLowerCase()) &&
+      !coupon.coupon_code.toLowerCase().includes(search.toLowerCase())
+    ) {
+      return null;
+    }
 
     return (
       <TouchableOpacity
@@ -92,7 +128,7 @@ const CouponScreen = () => {
                 styles.infoText,
                 { color: '#FF3B30', fontWeight: '500' },
               ]}>
-              {formatPrice(coupon.discount_value)}
+              {getDiscountDescription(coupon)}
             </Text>
           </View>
         </View>
@@ -112,7 +148,9 @@ const CouponScreen = () => {
         </View>
 
         <View style={styles.couponFooter}>
-          <Text style={styles.expiryText}>Hết hạn: 30/04/2025</Text>
+          <Text style={styles.expiryText}>
+            Hết hạn: {new Date(coupon.end_date).toLocaleDateString('vi-VN')}
+          </Text>
           <TouchableOpacity style={styles.applyButton}>
             <MaterialIcons name="check" size={12} color="#fff" />
             <Text style={styles.applyButtonText}>Áp dụng</Text>

@@ -7,6 +7,7 @@ import {
   Text,
   Modal,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -37,7 +38,6 @@ const HomeScreen = () => {
     try {
       if (!address || !address.address) return;
       setLoading(true);
-
       const response = await restaurantApi.getAllRestaurant(address);
       setLoading(false);
 
@@ -45,8 +45,18 @@ const HomeScreen = () => {
         setRestaurants(response.data);
       }
     } catch (error) {
+      Alert.alert('Lỗi', error.message || 'Đã có lỗi xảy ra khi tải dữ liệu', [
+        {
+          text: 'Thử lại',
+          onPress: () => fetchRestaurantData(),
+        },
+        {
+          text: 'Đóng',
+          style: 'cancel',
+        },
+      ]);
+    } finally {
       setLoading(false);
-      console.error('Lỗi khi tải dữ liệu nhà hàng:', error);
     }
   }, [address]);
   const fetchFlashSaleData = async () => {
@@ -54,9 +64,16 @@ const HomeScreen = () => {
       const response = await foodApi.getFlashSale();
       if (response.success) {
         setFlashSaleItems(response.data);
+      } else {
+        throw new Error(response.message || 'Không thể tải flash sale');
       }
     } catch (error) {
-      console.error('Lỗi khi tải dữ liệu nhà hàng:', error);
+      Alert.alert('Thông báo', 'Không thể tải danh sách flash sale', [
+        {
+          text: 'OK',
+          style: 'cancel',
+        },
+      ]);
     }
   };
   useEffect(() => {
@@ -120,12 +137,7 @@ const HomeScreen = () => {
             showsHorizontalScrollIndicator={false}
             data={flashSaleItems}
             renderItem={({ item }) => (
-              <FlashSaleCard
-                item={item}
-                restaurant={restaurants.find(
-                  (r) => r.id === item.restaurant_id
-                )}
-              />
+              <FlashSaleCard item={item} restaurantId={item.restaurant_id} />
             )}
             keyExtractor={(item) => item.product_id.toString()}
             contentContainerStyle={styles.flashSaleList}

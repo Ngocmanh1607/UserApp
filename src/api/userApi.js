@@ -175,7 +175,7 @@ const userApi = {
       );
       return;
     } catch (error) {
-      throw error;
+      handleApiError(error);
     }
   },
   getListFavoRes: async () => {

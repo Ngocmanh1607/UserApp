@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
-import { useNavigation } from '@react-navigation/native';
 import ReviewItem from '../../components/ReviewItem';
 import restaurantApi from '../../api/restaurantApi';
 import styles from '../../assets/css/ReviewStyle';
@@ -26,6 +25,18 @@ const ReviewScreen = ({ route }) => {
         if (response.success) {
           setReviews(response.data);
         } else {
+          if (response.message === 'JsonWebTokenError: invalid signature') {
+            Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
+              text: 'OK',
+              onPress: () => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Auth' }],
+                });
+              },
+            });
+            return;
+          }
           Alert.alert('Lỗi', response.message);
         }
       } catch (error) {

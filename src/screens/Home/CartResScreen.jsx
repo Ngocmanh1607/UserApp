@@ -16,7 +16,7 @@ const CartResScreen = () => {
       if (cartData.success) {
         setCarts(cartData.data.metadata);
       } else {
-        if (cartData.message === 500) {
+        if (cartData.message == 'JsonWebTokenError: invalid signature') {
           Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
             text: 'OK',
             onPress: () => {
@@ -32,12 +32,20 @@ const CartResScreen = () => {
       }
     };
     fetchCartData();
-  }, [])
+  }, []);
   return (
     <View style={styles.container}>
-      <FlatList keyExtractor={(item, index) => `${item.restaurant_id + index}`}
+      <FlatList
+        keyExtractor={(item, index) => `${item.restaurant_id + index}`}
         data={carts}
-        renderItem={({ item }) => <CardResInCart restaurant={item.restaurant} restaurantId={item.restaurant_id} quantity={item.total_quantity} />} />
+        renderItem={({ item }) => (
+          <CardResInCart
+            restaurant={item.restaurant}
+            restaurantId={item.restaurant_id}
+            quantity={item.total_quantity}
+          />
+        )}
+      />
     </View>
   );
 };

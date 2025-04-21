@@ -29,20 +29,16 @@ const OrderScreen = () => {
           setOrders(response.data);
           setFilteredOrders(response.data);
         } else {
-          if (response.message === 500) {
-            Alert.alert(
-              'Có lỗi xảy ra',
-              'Hết phiên làm việc, vui lòng đăng nhập lại',
-              {
-                text: 'Đăng nhập lại',
-                onPress: () => {
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Auth' }],
-                  });
-                },
-              }
-            );
+          if (response.message === 'JsonWebTokenError: invalid signature') {
+            Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
+              text: 'OK',
+              onPress: () => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Auth' }],
+                });
+              },
+            });
             return;
           }
           Alert.alert('Có lỗi xảy ra', response.message);

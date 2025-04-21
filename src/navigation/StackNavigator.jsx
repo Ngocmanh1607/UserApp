@@ -192,7 +192,7 @@ const StackNavigator = () => {
         name="Coupon"
         component={CouponPage}
         options={{
-          headerShown: false,
+          headerShown: true,
           title: 'Mã giảm giá',
           headerBackTitle: 'Quay lại',
         }}

@@ -132,5 +132,111 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+
+  loadingOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  imageContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    overflow: 'hidden',
+  },
+
+  activeInput: {
+    borderColor: '#FF4B3A',
+    borderWidth: 1,
+  },
+
+  disabledInput: {
+    backgroundColor: '#f5f5f5',
+    color: '#666',
+  },
+
+  errorText: {
+    color: '#FF0000',
+    fontSize: 12,
+    marginTop: -15,
+    marginBottom: 10,
+    marginLeft: 5,
+  },
+
+  // Gender selection container
+  genderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+
+  genderButton: {
+    width: '48%',
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    alignItems: 'center',
+  },
+
+  activeGender: {
+    borderColor: '#FF4B3A',
+    backgroundColor: 'rgba(255, 75, 58, 0.1)',
+  },
+
+  genderText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  activeGenderText: {
+    color: '#FF4B3A',
+  },
+
+  mapButtonContainer: {
+    position: 'absolute',
+    right: 10,
+    top: 12,
+    zIndex: 1,
+  },
+
+  mapButton: {
+    padding: 8,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 15,
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+
+  divider: {
+    height: 1,
+    backgroundColor: '#eee',
+    marginVertical: 20,
+  },
+
+  cameraIconContainer: {
+    position: 'absolute',
+    bottom: -10,
+    right: -10,
+    backgroundColor: '#FF4B3A',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
 });
 export default styles;
