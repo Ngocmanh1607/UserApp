@@ -43,6 +43,21 @@ const HomeScreen = () => {
 
       if (response.success) {
         setRestaurants(response.data);
+      } else {
+        Alert.alert(
+          'Lỗi',
+          response.message || 'Đã có lỗi xảy ra khi tải dữ liệu',
+          [
+            {
+              text: 'Thử lại',
+              onPress: () => fetchRestaurantData(),
+            },
+            {
+              text: 'Đóng',
+              style: 'cancel',
+            },
+          ]
+        );
       }
     } catch (error) {
       Alert.alert('Lỗi', error.message || 'Đã có lỗi xảy ra khi tải dữ liệu', [
