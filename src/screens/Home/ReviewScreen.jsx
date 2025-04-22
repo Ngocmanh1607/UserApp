@@ -25,7 +25,7 @@ const ReviewScreen = ({ route }) => {
         if (response.success) {
           setReviews(response.data);
         } else {
-          if (response.message === 'JsonWebTokenError: invalid signature') {
+          if (response.message === 'invalid signature') {
             Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
               text: 'OK',
               onPress: () => {

@@ -216,47 +216,38 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   // Styles for the applied coupons list section
-  appliedCouponsList: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#eeeeee',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-    elevation: 5,
-  },
-
   appliedCouponItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
+    backgroundColor: '#fff',
+    padding: 12,
+    marginBottom: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+
+  adminCoupon: {
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF4B3A',
+  },
+
+  restaurantCoupon: {
+    borderLeftWidth: 4,
+    borderLeftColor: '#4CAF50',
+  },
+
+  couponBadgeContainer: {
+    marginRight: 8,
+  },
+
+  couponBadge: {
+    fontSize: 12,
+    color: '#666',
+    backgroundColor: '#f0f0f0',
     paddingHorizontal: 6,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eeeeee',
-    marginBottom: 4,
-  },
-
-  couponCode: {
-    flex: 1.5,
-    fontWeight: '600',
-    color: '#e74c3c',
-    fontSize: 14,
-  },
-
-  couponValue: {
-    flex: 1,
-    textAlign: 'right',
-    fontWeight: '600',
-    color: '#e74c3c',
-    fontSize: 14,
-    paddingRight: 10,
+    paddingVertical: 2,
+    borderRadius: 4,
   },
 
   removeCouponButton: {

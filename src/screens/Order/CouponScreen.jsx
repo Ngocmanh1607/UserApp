@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  FlatList,
+  SectionList,
   TouchableOpacity,
   TextInput,
   Alert,
@@ -35,22 +35,24 @@ const CouponScreen = () => {
     try {
       const response = await orderApi.getCoupon(total);
       if (!response.success) {
-        if (response.message === 'JsonWebTokenError: invalid signature') {
-          Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
-            text: 'OK',
-            onPress: () => {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Auth' }],
-              });
+        if (response.message === 'invalid signature') {
+          Alert.alert('Lỗi', 'Hết phiên làm việc. Vui lòng đăng nhập lại', [
+            {
+              text: 'OK',
+              onPress: () => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Auth' }],
+                });
+              },
             },
-          });
+          ]);
           return;
         }
         Alert.alert('Lỗi', response.message);
+        return;
       }
       setCoupons(response.data);
-      console.log(response.data.restaurantCoupons);
     } catch (error) {
       Alert.alert('Lỗi', 'Không thể tải mã giảm giá');
     } finally {
@@ -62,12 +64,12 @@ const CouponScreen = () => {
     onSelectCoupon(coupon);
     navigation.goBack();
   };
+
   const formatDiscount = (coupon) => {
     if (coupon.discount_type === 'PERCENTAGE') {
       return `${coupon.discount_value}%`;
-    } else {
-      return formatPrice(coupon.discount_value);
     }
+    return formatPrice(coupon.discount_value);
   };
 
   const getDiscountDescription = (coupon) => {
@@ -75,9 +77,8 @@ const CouponScreen = () => {
       return `Giảm ${coupon.discount_value}% (tối đa ${formatPrice(
         coupon.max_discount_amount
       )})`;
-    } else {
-      return `Giảm ${formatPrice(coupon.discount_value)}`;
     }
+    return `Giảm ${formatPrice(coupon.discount_value)}`;
   };
 
   const renderCouponItem = ({ item }) => {
@@ -123,11 +124,7 @@ const CouponScreen = () => {
               color="#FF3B30"
               style={styles.infoIcon}
             />
-            <Text
-              style={[
-                styles.infoText,
-                { color: '#FF3B30', fontWeight: '500' },
-              ]}>
+            <Text style={[styles.infoText, styles.discountText]}>
               {getDiscountDescription(coupon)}
             </Text>
           </View>
@@ -168,10 +165,16 @@ const CouponScreen = () => {
     );
   }
 
-  const validCoupons = [
-    ...coupons.adminCoupons,
-    ...coupons.restaurantCoupons.filter((item) => !item.error),
-  ];
+  const sections = [
+    {
+      title: 'Mã giảm giá từ Yummy',
+      data: coupons.adminCoupons.filter((item) => !item.error),
+    },
+    {
+      title: 'Mã giảm giá từ nhà hàng',
+      data: coupons.restaurantCoupons.filter((item) => !item.error),
+    },
+  ].filter((section) => section.data.length > 0);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -185,9 +188,15 @@ const CouponScreen = () => {
         />
       </View>
 
-      <FlatList
-        data={validCoupons}
+      <SectionList
+        sections={sections}
         renderItem={renderCouponItem}
+        renderSectionHeader={({ section: { title, data } }) => (
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>{title}</Text>
+            <Text style={styles.couponCount}>{data.length} mã giảm giá</Text>
+          </View>
+        )}
         keyExtractor={(item) => item.coupon?.id?.toString()}
         contentContainerStyle={styles.couponList}
         ListEmptyComponent={

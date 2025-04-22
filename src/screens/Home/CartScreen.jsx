@@ -82,25 +82,48 @@ const CartScreen = () => {
   );
 
   const calculateTotalDiscount = () => {
-    if (!cost || !cost.totalFoodPrice) return 0;
-
     let totalDiscount = 0;
-    const subtotal = cost.totalFoodPrice;
-
-    coupons.forEach((coupon) => {
-      if (coupon.discount_type === 'PERCENTAGE') {
-        const percentageDiscount =
-          (subtotal * parseFloat(coupon.discount_value)) / 100;
-        const discountAmount = coupon.max_discount_amount
-          ? Math.min(percentageDiscount, parseFloat(coupon.max_discount_amount))
-          : percentageDiscount;
-        totalDiscount += discountAmount;
-      } else {
-        totalDiscount += parseFloat(coupon.discount_value);
-      }
+    const subtotal = cost?.totalFoodPrice || 0;
+    const sortedCoupons = [...coupons].sort((a, b) => {
+      // Apply restaurant coupons before admin coupons
+      if (a.type === 'RESTAURANT' && b.type === 'ADMIN') return -1;
+      if (a.type === 'ADMIN' && b.type === 'RESTAURANT') return 1;
+      return 0;
     });
 
-    return totalDiscount;
+    let remainingAmount = subtotal;
+    sortedCoupons.forEach((coupon) => {
+      // Skip if remaining amount is 0
+      if (remainingAmount <= 0) return;
+
+      let discountAmount = 0;
+
+      if (coupon.discount_type === 'PERCENTAGE') {
+        // Calculate percentage discount
+        discountAmount =
+          (remainingAmount * parseFloat(coupon.discount_value)) / 100;
+
+        if (coupon.max_discount_amount) {
+          discountAmount = Math.min(
+            discountAmount,
+            parseFloat(coupon.max_discount_amount)
+          );
+        }
+      } else {
+        // Fixed amount discount
+        discountAmount = Math.min(
+          parseFloat(coupon.discount_value),
+          remainingAmount
+        );
+      }
+
+      // Update total discount and remaining amount
+      totalDiscount += discountAmount;
+      remainingAmount -= discountAmount;
+    });
+
+    // Round to nearest 1000 VND
+    return Math.floor(totalDiscount / 1000) * 1000;
   };
 
   useEffect(() => {
@@ -245,28 +268,31 @@ const CartScreen = () => {
   };
 
   const handleSelectCoupon = (newCoupon) => {
-    if (!newCoupon) {
-      return;
-    }
+    if (!newCoupon) return;
     // Check if coupon already exists
     const isCouponExists = coupons.some((coupon) => coupon.id === newCoupon.id);
-
     if (isCouponExists) {
       Alert.alert('Thông báo', 'Mã giảm giá này đã được áp dụng');
       return;
     }
-
-    const subtotal = cost ? cost.totalFoodPrice : 0;
-    if (subtotal < parseFloat(newCoupon.min_order_value)) {
-      Alert.alert(
-        'Thông báo',
-        `Đơn hàng tối thiểu ${formatPrice(
-          newCoupon.min_order_value
-        )} để sử dụng mã này`
-      );
+    // Check coupon type limit
+    const isAdminCoupon = newCoupon.type === 'ADMIN';
+    const existingAdminCoupon = coupons.find(
+      (coupon) => coupon.type === 'ADMIN'
+    );
+    const existingRestaurantCoupon = coupons.find(
+      (coupon) => coupon.type === 'RESTAURANT'
+    );
+    if (isAdminCoupon && existingAdminCoupon) {
+      Alert.alert('Thông báo', 'Chỉ được áp dụng 1 mã giảm giá từ Yummy');
+      return;
+    }
+    if (!isAdminCoupon && existingRestaurantCoupon) {
+      Alert.alert('Thông báo', 'Chỉ được áp dụng 1 mã giảm giá từ nhà hàng');
       return;
     }
 
+    // Add new coupon
     setCoupons((prevCoupons) => [...prevCoupons, newCoupon]);
   };
 
@@ -378,7 +404,19 @@ const CartScreen = () => {
         {coupons.length > 0 && (
           <View style={styles.appliedCouponsList}>
             {coupons.map((coupon, index) => (
-              <View key={index} style={styles.appliedCouponItem}>
+              <View
+                key={index}
+                style={[
+                  styles.appliedCouponItem,
+                  coupon.type === 'ADMIN'
+                    ? styles.adminCoupon
+                    : styles.restaurantCoupon,
+                ]}>
+                <View style={styles.couponBadgeContainer}>
+                  <Text style={styles.couponBadge}>
+                    {coupon.type === 'ADMIN' ? 'Yummy' : 'Nhà hàng'}
+                  </Text>
+                </View>
                 <Text style={styles.couponCode}>{coupon.coupon_code}</Text>
                 <Text style={styles.couponValue}>
                   {coupon.discount_type === 'PERCENTAGE'

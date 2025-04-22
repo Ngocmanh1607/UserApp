@@ -16,7 +16,7 @@ const CartResScreen = () => {
       if (cartData.success) {
         setCarts(cartData.data.metadata);
       } else {
-        if (cartData.message == 'JsonWebTokenError: invalid signature') {
+        if (cartData.message == 'invalid signature') {
           Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
             text: 'OK',
             onPress: () => {

@@ -85,22 +85,26 @@ const RestaurantScreen = ({ route }) => {
       try {
         const data = await restaurantApi.getFoodsCateInRes(restaurantId);
         if (data.success) {
-          // First collect flash sale items
+          const uniqueFlashItemIds = new Set();
           const flashItems = [];
+
           data.data.forEach((category) => {
             category.products.forEach((product) => {
               if (product.is_flash_sale) {
-                flashItems.push({
-                  id: product.product_id,
-                  name: product.product_name,
-                  price: product.original_price,
-                  image: product.image,
-                  descriptions: product.product_description,
-                  quantity: product.product_quantity,
-                  toppings: product.toppings,
-                  discountPrice: product.product_price,
-                  is_flash_sale: product.is_flash_sale,
-                });
+                if (!uniqueFlashItemIds.has(product.product_id)) {
+                  uniqueFlashItemIds.add(product.product_id);
+                  flashItems.push({
+                    id: product.product_id,
+                    name: product.product_name,
+                    price: product.original_price,
+                    image: product.image,
+                    descriptions: product.product_description,
+                    quantity: product.product_quantity,
+                    toppings: product.toppings,
+                    discountPrice: product.product_price,
+                    is_flash_sale: product.is_flash_sale,
+                  });
+                }
               }
             });
           });
@@ -143,7 +147,7 @@ const RestaurantScreen = ({ route }) => {
           setRestaurantData(sections);
           setCategories(cate);
         } else {
-          if (data.message === 'JsonWebTokenError: invalid signature') {
+          if (data.message === 'invalid signature') {
             Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
               text: 'OK',
               onPress: () => {
@@ -153,6 +157,7 @@ const RestaurantScreen = ({ route }) => {
                 });
               },
             });
+            return;
           }
           Alert.alert('Lỗi', data.message);
         }
@@ -180,7 +185,7 @@ const RestaurantScreen = ({ route }) => {
       setLoading(true);
       await userApi.handleFavorite(restaurantId, navigation);
     } catch (error) {
-      if (data.message === 'JsonWebTokenError: invalid signature') {
+      if (data.message === 'invalid signature') {
         Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
           text: 'OK',
           onPress: () => {
