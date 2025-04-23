@@ -148,15 +148,17 @@ const RestaurantScreen = ({ route }) => {
           setCategories(cate);
         } else {
           if (data.message === 'invalid signature') {
-            Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
-              text: 'OK',
-              onPress: () => {
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Auth' }],
-                });
+            Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', [
+              {
+                text: 'OK',
+                onPress: () => {
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Auth' }],
+                  });
+                },
               },
-            });
+            ]);
             return;
           }
           Alert.alert('Lỗi', data.message);
@@ -186,15 +188,18 @@ const RestaurantScreen = ({ route }) => {
       await userApi.handleFavorite(restaurantId, navigation);
     } catch (error) {
       if (data.message === 'invalid signature') {
-        Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
-          text: 'OK',
-          onPress: () => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Auth' }],
-            });
+        Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', [
+          {
+            text: 'OK',
+            onPress: () => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Auth' }],
+              });
+            },
           },
-        });
+        ]);
+        return;
       }
       Alert.alert('Lỗi', data.message);
     } finally {

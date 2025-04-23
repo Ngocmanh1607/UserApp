@@ -17,15 +17,17 @@ const CartResScreen = () => {
         setCarts(cartData.data.metadata);
       } else {
         if (cartData.message == 'invalid signature') {
-          Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
-            text: 'OK',
-            onPress: () => {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Auth' }],
-              });
+          Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', [
+            {
+              text: 'OK',
+              onPress: () => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Auth' }],
+                });
+              },
             },
-          });
+          ]);
         } else {
           Alert.alert('Đã xảy ra lỗi', cartData.message);
         }

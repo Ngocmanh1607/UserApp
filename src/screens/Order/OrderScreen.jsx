@@ -30,15 +30,17 @@ const OrderScreen = () => {
           setFilteredOrders(response.data);
         } else {
           if (response.message === 'invalid signature') {
-            Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', {
-              text: 'OK',
-              onPress: () => {
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Auth' }],
-                });
+            Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', [
+              {
+                text: 'OK',
+                onPress: () => {
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Auth' }],
+                  });
+                },
               },
-            });
+            ]);
             return;
           }
           Alert.alert('Có lỗi xảy ra', response.message);
