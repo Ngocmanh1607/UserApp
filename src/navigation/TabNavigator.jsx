@@ -2,11 +2,11 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import HomeScreen from '../screens/Home/HomeScreen';
 import OrderScreen from '../screens/Order/OrderScreen';
 import ChatboxScreen from '../screens/Chat/ChatboxScreen';
-import UserProfileScreen from '../screens/ProfileScreen';
+import ProfileScreen from '../screens/Account/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -44,7 +44,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Thông tin"
-        component={UserProfileScreen}
+        component={ProfileScreen}
         options={() => ({
           headerShown: true,
           // headerRight: () => (

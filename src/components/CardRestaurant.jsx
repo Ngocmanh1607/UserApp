@@ -107,7 +107,7 @@ const CardRestaurant = ({ restaurant }) => {
   );
 };
 
-export default CardRestaurant;
+export default React.memo(CardRestaurant);
 
 const styles = StyleSheet.create({
   card: {

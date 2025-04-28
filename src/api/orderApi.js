@@ -4,7 +4,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import handleApiError from './handleApiError';
 const apiKey = '123';
 const orderApi = {
-  orderApi: async (userInfo, address, cart, payMethod, price, fee, note) => {
+  orderApi: async (
+    userInfo,
+    address,
+    cart,
+    payMethod,
+    price,
+    fee,
+    note,
+    listCoupon
+  ) => {
     try {
       const convertCartToListCartItem = (cart) => {
         return cart.map((item) => ({
@@ -33,6 +42,7 @@ const orderApi = {
         phone_number: phone_number,
         order_pay: payMethod,
         note: note,
+        list_coupon_id: listCoupon,
         price: price,
         delivery_fee: fee,
         order_status: 'PAID',
@@ -51,6 +61,7 @@ const orderApi = {
             phone_number: phone_number,
             order_pay: payMethod,
             note: note,
+            list_coupon_id: listCoupon,
             price: price,
             delivery_fee: fee,
             order_status: 'PAID',

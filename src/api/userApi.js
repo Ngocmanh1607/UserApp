@@ -124,7 +124,7 @@ const userApi = {
             name: userData.name,
             image: userData.image,
             phone_number: userData.phone_number,
-            date: userData.date,
+            // date: userData.date,
             // mail: userData.email,
           },
           address: {

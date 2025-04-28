@@ -236,7 +236,9 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: '#4CAF50',
   },
-
+  appliedCouponsList: {
+    marginTop: 8,
+  },
   couponBadgeContainer: {
     marginRight: 8,
   },
@@ -249,9 +251,32 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
   },
-
+  couponCode: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2c3e50',
+    backgroundColor: '#f5f6fa',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginRight: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    borderWidth: 1,
+    borderColor: '#dcdde1',
+    overflow: 'hidden',
+  },
+  couponValue: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#e74c3c',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 8,
+  },
   removeCouponButton: {
     padding: 6,
+    justifyContent: 'flex-end',
   },
   overlay: {
     flex: 1,

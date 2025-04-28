@@ -1,242 +1,351 @@
-import { StyleSheet } from 'react-native';
-const styles = StyleSheet.create({
+const styles = {
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F3F4F6',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#FAFAFA',
   },
-  header: {
-    backgroundColor: '#FF6347',
-    paddingVertical: 20,
-    paddingHorizontal: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerText: {
-    fontSize: 20,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  mainContainer: {
-    margin: 10,
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    marginTop: -40,
-  },
-  avatarContainer: {
-    zIndex: 1,
-    backgroundColor: '#FFF',
-    width: 120,
-    height: 120,
-    marginTop: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    borderRadius: 15,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderColor: '#FF6347',
-    borderWidth: 2,
-  },
-  editAvatar: {
-    position: 'absolute',
-    bottom: 0,
-    right: 10,
-    backgroundColor: '#FF0000',
-    padding: 5,
-    borderRadius: 15,
-  },
-  infoContainer: {
-    padding: 20,
-    marginTop: 60,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 5,
-  },
-  input: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  editButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    backgroundColor: '#F00',
-    paddingVertical: 12,
-    borderRadius: 8,
-    width: '45%',
-    alignItems: 'center',
-  },
-  saveButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    backgroundColor: '#32CD32',
-    paddingVertical: 12,
-    borderRadius: 8,
-    width: '45%',
-    alignItems: 'center',
-  },
-  cancelButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    backgroundColor: '#F00',
-    paddingVertical: 12,
-    borderRadius: 8,
-    width: '45%',
-    alignItems: 'center',
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    backgroundColor: '#F00',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    width: '45%',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  logoutIcon: {
-    marginLeft: 10,
-  },
-  profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 15,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  scrollContent: {
+    paddingBottom: 30,
   },
 
-  loadingOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
+  // Profile Header
+  profileHeaderContainer: {
+    backgroundColor: '#e74c3c',
+    paddingVertical: 30,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
   },
-
+  profileHeader: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   imageContainer: {
     width: 120,
     height: 120,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    borderRadius: 60,
     overflow: 'hidden',
-  },
-
-  activeInput: {
-    borderColor: '#FF4B3A',
-    borderWidth: 1,
-  },
-
-  disabledInput: {
-    backgroundColor: '#f5f5f5',
-    color: '#666',
-  },
-
-  errorText: {
-    color: '#FF0000',
-    fontSize: 12,
-    marginTop: -15,
-    marginBottom: 10,
-    marginLeft: 5,
-  },
-
-  // Gender selection container
-  genderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-
-  genderButton: {
-    width: '48%',
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    alignItems: 'center',
-  },
-
-  activeGender: {
-    borderColor: '#FF4B3A',
-    backgroundColor: 'rgba(255, 75, 58, 0.1)',
-  },
-
-  genderText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  activeGenderText: {
-    color: '#FF4B3A',
-  },
-
-  mapButtonContainer: {
-    position: 'absolute',
-    right: 10,
-    top: 12,
-    zIndex: 1,
-  },
-
-  mapButton: {
-    padding: 8,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 15,
-    marginTop: 20,
-    paddingHorizontal: 20,
-  },
-
-  divider: {
-    height: 1,
-    backgroundColor: '#eee',
-    marginVertical: 20,
-  },
-
-  cameraIconContainer: {
-    position: 'absolute',
-    bottom: -10,
-    right: -10,
-    backgroundColor: '#FF4B3A',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,
+    borderWidth: 3,
+    borderColor: '#fff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-});
+  profileImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 60,
+  },
+  placeholderImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 60,
+    backgroundColor: '#E5E7EB',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  editImageOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  userName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 15,
+  },
+
+  // Card Container
+  cardContainer: {
+    paddingHorizontal: 16,
+    marginTop: -20,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginLeft: 10,
+  },
+  cardContent: {
+    gap: 16,
+  },
+
+  // Input Styling
+  inputGroup: {
+    marginBottom: 16,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#4B5563',
+    marginBottom: 8,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 50,
+  },
+  inputIcon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    color: '#1F2937',
+    fontSize: 16,
+    paddingVertical: 8,
+  },
+  addressInput: {
+    color: '#1F2937',
+  },
+  inputIconRight: {
+    marginLeft: 10,
+  },
+
+  // Action Buttons
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 24,
+    gap: 10,
+  },
+  editButton: {
+    flex: 1,
+    backgroundColor: '#FF4B3A',
+    borderRadius: 8,
+    height: 46,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  saveButton: {
+    flex: 1,
+    backgroundColor: '#10B981',
+    borderRadius: 8,
+    height: 46,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#EF4444',
+    borderRadius: 8,
+    height: 46,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  passwordButton: {
+    flex: 1,
+    backgroundColor: '#3B82F6',
+    borderRadius: 8,
+    height: 46,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoutButton: {
+    flex: 1,
+    backgroundColor: '#F59E0B',
+    borderRadius: 8,
+    height: 46,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonIcon: {
+    marginRight: 8,
+  },
+  editButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  cancelButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  passwordButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+
+  // Modal Styling
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    width: '100%',
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  closeModalButton: {
+    padding: 5,
+  },
+  passwordInputContainer: {
+    gap: 16,
+    marginBottom: 20,
+  },
+  passwordInputWrapper: {
+    marginBottom: 10,
+  },
+  passwordInputLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#4B5563',
+    marginBottom: 8,
+  },
+  passwordInputField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 50,
+  },
+  passwordInput: {
+    flex: 1,
+    color: '#1F2937',
+    fontSize: 16,
+    paddingVertical: 8,
+  },
+  eyeIconButton: {
+    padding: 5,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    gap: 12,
+  },
+  cancelModalButton: {
+    flex: 1,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 8,
+    height: 46,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  confirmPasswordButton: {
+    flex: 1,
+    backgroundColor: '#3B82F6',
+    borderRadius: 8,
+    height: 46,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cancelModalButtonText: {
+    color: '#4B5563',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  confirmPasswordButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+
+  // Loading Overlay
+  loadingOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#4B5563',
+  },
+};
+
 export default styles;

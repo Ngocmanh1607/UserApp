@@ -61,7 +61,11 @@ const CouponScreen = () => {
   };
 
   const handleSelectCoupon = (coupon) => {
-    onSelectCoupon(coupon);
+    const couponWithType = {
+      ...coupon,
+      type: coupon.restaurant_id ? 'RESTAURANT' : 'ADMIN',
+    };
+    onSelectCoupon(couponWithType);
     navigation.goBack();
   };
 

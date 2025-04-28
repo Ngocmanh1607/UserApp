@@ -84,45 +84,22 @@ const CartScreen = () => {
   const calculateTotalDiscount = () => {
     let totalDiscount = 0;
     const subtotal = cost?.totalFoodPrice || 0;
-    const sortedCoupons = [...coupons].sort((a, b) => {
-      // Apply restaurant coupons before admin coupons
-      if (a.type === 'RESTAURANT' && b.type === 'ADMIN') return -1;
-      if (a.type === 'ADMIN' && b.type === 'RESTAURANT') return 1;
-      return 0;
-    });
 
-    let remainingAmount = subtotal;
-    sortedCoupons.forEach((coupon) => {
-      // Skip if remaining amount is 0
-      if (remainingAmount <= 0) return;
-
-      let discountAmount = 0;
-
+    coupons.forEach((coupon) => {
       if (coupon.discount_type === 'PERCENTAGE') {
-        // Calculate percentage discount
-        discountAmount =
-          (remainingAmount * parseFloat(coupon.discount_value)) / 100;
-
+        let discountAmount =
+          (subtotal * parseFloat(coupon.discount_value)) / 100;
         if (coupon.max_discount_amount) {
           discountAmount = Math.min(
             discountAmount,
             parseFloat(coupon.max_discount_amount)
           );
         }
+        totalDiscount += discountAmount;
       } else {
-        // Fixed amount discount
-        discountAmount = Math.min(
-          parseFloat(coupon.discount_value),
-          remainingAmount
-        );
+        totalDiscount += parseFloat(coupon.discount_value);
       }
-
-      // Update total discount and remaining amount
-      totalDiscount += discountAmount;
-      remainingAmount -= discountAmount;
     });
-
-    // Round to nearest 1000 VND
     return Math.floor(totalDiscount / 1000) * 1000;
   };
 
@@ -220,7 +197,7 @@ const CartScreen = () => {
     const info = userInfoResponse.data;
     const totalPrice = Math.ceil(cost?.totalPrice / 1000) * 1000 || 0;
     const shipePrice = Math.floor(cost.shippingCost) || 0;
-
+    const listCouponId = coupons.map((coupon) => coupon.id);
     const response = await orderApi.orderApi(
       info,
       address,
@@ -228,7 +205,8 @@ const CartScreen = () => {
       selectedPaymentMethod,
       totalPrice,
       shipePrice,
-      note
+      note,
+      listCouponId
     );
 
     setIsLoading(false);
@@ -420,7 +398,7 @@ const CartScreen = () => {
                 <Text style={styles.couponCode}>{coupon.coupon_code}</Text>
                 <Text style={styles.couponValue}>
                   {coupon.discount_type === 'PERCENTAGE'
-                    ? `${coupon.discount_value}%`
+                    ? `- ${coupon.discount_value}%`
                     : `- ${formatPrice(coupon.discount_value)}`}
                 </Text>
                 <TouchableOpacity

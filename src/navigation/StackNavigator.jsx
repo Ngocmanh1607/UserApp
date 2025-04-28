@@ -21,7 +21,7 @@ import FoodCategory from '../screens/Home/FoodCategory';
 import CartResScreen from '../screens/Home/CartResScreen';
 import ReviewScreen from '../screens/Home/ReviewScreen';
 import ConfirmEmailScreen from '../screens/Authentication/ConfirmEmailScreen';
-import UserProfileScreen from '../screens/ProfileScreen';
+import ProfileScreen from '../screens/Account/ProfileScreen';
 import SearchScreen from '../screens/Home/SearchScreen';
 
 const Stack = createNativeStackNavigator();
@@ -171,7 +171,7 @@ const StackNavigator = () => {
       <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
       <Stack.Screen
         name="Profile"
-        component={UserProfileScreen}
+        component={ProfileScreen}
         options={{
           headerShown: true,
           title: 'Thông tin',

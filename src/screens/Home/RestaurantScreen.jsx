@@ -418,6 +418,8 @@ const RestaurantScreen = ({ route }) => {
             <Text style={styles.emptyText}>Không tìm thấy món ăn nào</Text>
           </View>
         }
+        initialNumToRender={10}
+        maxToRenderPerBatch={5}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
         stickySectionHeadersEnabled={false}

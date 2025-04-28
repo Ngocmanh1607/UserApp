@@ -1,4 +1,6 @@
 export default function handleApiError(error) {
+  console.log('handleApiError', error.message);
+
   if (error.response) {
     // Lỗi từ backend (4xx, 5xx)
     console.error('Backend error:', error.response.data);

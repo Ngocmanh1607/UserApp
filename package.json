@@ -38,6 +38,7 @@
     "react-native-elements": "^3.4.3",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-image-picker": "^7.1.2",
+    "react-native-linear-gradient": "^2.8.3",
     "react-native-macos": "^0.75.8",
     "react-native-maps": "^1.18.2",
     "react-native-modal-datetime-picker": "^18.0.0",
