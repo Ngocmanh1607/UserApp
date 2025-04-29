@@ -33,22 +33,9 @@ const orderApi = {
         throw new Error('Phiên hết hạn');
       }
       const { name, phone_number } = userInfo.profile;
-      const order = {
-        listCartItem,
-        receiver_name: name,
-        address_receiver: address.address,
-        userLatitude: address.latitude,
-        userLongitude: address.longitude,
-        phone_number: phone_number,
-        order_pay: payMethod,
-        note: note,
-        list_coupon_id: listCoupon,
-        price: price,
-        delivery_fee: fee,
-        order_status: 'PAID',
-        order_date: new Date().toString(),
-      };
-      console.log(order);
+      const status = payMethod === 'COD' ? 'UNPAID' : 'PAID';
+      console.log(status);
+
       const response = await apiClient.post(
         '/payment',
         {
@@ -64,7 +51,7 @@ const orderApi = {
             list_coupon_id: listCoupon,
             price: price,
             delivery_fee: fee,
-            order_status: 'PAID',
+            order_status: status,
             order_date: new Date().toString(),
           },
         },

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Headerbar from '../../components/Headerbar';
@@ -22,7 +22,11 @@ import styles from '../../assets/css/HomeStyle';
 import restaurantApi from '../../api/restaurantApi';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import RenderListFavorite from '../../components/RenderListFavorite';
-import { selectCartItemCount, fetchAllCartItems } from '../../store/cartSlice';
+import {
+  selectCartItemCount,
+  fetchAllCartItems,
+  fetchCartCount,
+} from '../../store/cartSlice';
 import { foodApi } from '../../api/foodApi';
 import FlashSaleCard from '../../components/FlashSaleCard';
 
@@ -104,6 +108,11 @@ const HomeScreen = () => {
   useEffect(() => {
     dispatch(fetchAllCartItems());
   }, []);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchCartCount());
+    }, [dispatch])
+  );
   const goToSearchScreen = () => {
     navigation.navigate('SearchScreen');
   };

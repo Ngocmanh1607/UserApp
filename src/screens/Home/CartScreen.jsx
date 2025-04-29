@@ -26,7 +26,6 @@ import { orderApi } from '../../api/orderApi';
 import userApi from '../../api/userApi';
 import styles from '../../assets/css/CartStyle';
 import PaymentMethodScreen from '../Order/PaymentMethodScreen';
-import CouponPage from '../Order/CouponScreen';
 import { cart } from '../../api/cartOrder';
 import { fetchCartCount } from '../../store/cartSlice';
 
@@ -46,7 +45,7 @@ const CartScreen = () => {
   const [discountCost, setDiscountCost] = useState(0);
   const [note, setNote] = useState('');
   const [transactionId, setTransactionId] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [foodData, setFoodData] = useState([]);
   const [cartID, setCartID] = useState(null);
 
@@ -162,8 +161,6 @@ const CartScreen = () => {
     }
     setIsLoading(true);
     const userInfoResponse = await userApi.getInfoUser(dispatch);
-    setIsLoading(false);
-
     if (!userInfoResponse.data.profile) {
       Alert.alert('Lỗi', 'Vui lòng cập nhật thông tin cá nhân', [
         {
@@ -301,6 +298,7 @@ const CartScreen = () => {
         return;
       }
     }
+    setIsLoading(false);
     setCost(response.data);
   };
 

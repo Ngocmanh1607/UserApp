@@ -165,11 +165,6 @@ const OrderDetailScreen = () => {
             <Text style={styles.orderTotal}>{formatPrice(order.price)}</Text>
           </View>
         </View>
-
-        {/* Reorder Button */}
-        {/* <TouchableOpacity style={styles.reorderButton}>
-                    <Text style={styles.reorderButtonText}>Đặt lại món</Text>
-                </TouchableOpacity> */}
       </ScrollView>
     </View>
   );
