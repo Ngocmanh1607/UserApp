@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import React from 'react';
 import { formatPrice, formatDate } from '../../utils/format';
@@ -16,11 +17,34 @@ import {
   checkIsOpen,
 } from '../../utils/restaurantHelpers';
 import { Linking } from 'react-native';
+
 const OrderDetailScreen = () => {
   const route = useRoute();
   const order = route.params?.order || {};
+  console.log(order);
+
   const schedule = getCurrentDaySchedule(order.Restaurant?.opening_hours);
   const isOpen = checkIsOpen(schedule);
+
+  const handleFeedback = () => {
+    // You can customize this to navigate to a feedback form or show a modal
+    Alert.alert(
+      'Gửi phản hồi',
+      'Bạn có muốn gửi phản hồi về đơn hàng này không?',
+      [
+        {
+          text: 'Hủy',
+          style: 'cancel',
+        },
+        {
+          text: 'Gửi',
+          onPress: () =>
+            navigation.navigate('FeedbackScreen', { orderId: order.id }),
+        },
+      ]
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -30,6 +54,7 @@ const OrderDetailScreen = () => {
           <Text style={styles.orderId}>Mã đơn: {order.id}</Text>
           <Text style={styles.orderTime}>{formatDate(order.order_date)}</Text>
         </View>
+
         {/* Driver Information */}
         {order.Driver && (
           <View style={styles.driverInfoContainer}>
@@ -50,7 +75,7 @@ const OrderDetailScreen = () => {
                   <Text style={styles.licensePlate}>
                     {order.Driver.license_plate} -{' '}
                   </Text>
-                  <Text tyle={styles.licensePlate}>
+                  <Text style={styles.licensePlate}>
                     {order.Driver.car_name}
                   </Text>
                 </View>
@@ -58,6 +83,8 @@ const OrderDetailScreen = () => {
             </View>
           </View>
         )}
+
+        {/* Restaurant Information */}
         {order.Restaurant && (
           <View style={styles.restaurantContainer}>
             <View style={styles.restaurantHeader}>
@@ -107,37 +134,40 @@ const OrderDetailScreen = () => {
             </TouchableOpacity>
           </View>
         )}
+
         {/* Ordered Items */}
-        {order.listCartItem.map((item, index) => (
-          <View key={index} style={styles.orderItemContainer}>
-            <View style={styles.orderItemDetails}>
-              <Image
-                source={{ uri: item.image }}
-                style={styles.orderItemImage}
-              />
-              <View style={styles.orderItemText}>
-                <Text style={styles.orderItemName}>{item.name}</Text>
-                {item.descriptions && (
-                  <Text style={styles.orderItemOption}>
-                    Mô tả: {item.descriptions}
-                  </Text>
-                )}
-                {item.toppings &&
-                  item.toppings.map((option, optIndex) => (
-                    <Text key={optIndex} style={styles.orderItemOption}>
-                      {option.topping_name}
+        {order.listCartItem &&
+          order.listCartItem.map((item, index) => (
+            <View key={index} style={styles.orderItemContainer}>
+              <View style={styles.orderItemDetails}>
+                <Image
+                  source={{ uri: item.image }}
+                  style={styles.orderItemImage}
+                />
+                <View style={styles.orderItemText}>
+                  <Text style={styles.orderItemName}>{item.name}</Text>
+                  {item.descriptions && (
+                    <Text style={styles.orderItemOption}>
+                      Mô tả: {item.descriptions}
                     </Text>
-                  ))}
-                <Text style={styles.orderItemOption}>
-                  Số lượng: {item.quantity}
-                </Text>
-                <Text style={styles.orderItemPrice}>
-                  Giá: {formatPrice(item.price)}
-                </Text>
+                  )}
+                  {item.toppings &&
+                    item.toppings.map((option, optIndex) => (
+                      <Text key={optIndex} style={styles.orderItemOption}>
+                        {option.topping_name}
+                      </Text>
+                    ))}
+                  <Text style={styles.orderItemOption}>
+                    Số lượng: {item.quantity}
+                  </Text>
+                  <Text style={styles.orderItemPrice}>
+                    Giá: {formatPrice(item.price)}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-        ))}
+          ))}
+
         {/* Note */}
         {order.note && (
           <View style={styles.noteContainer}>
@@ -145,6 +175,7 @@ const OrderDetailScreen = () => {
             <Text style={styles.noteText}>{order.note}</Text>
           </View>
         )}
+
         {/* Payment Information */}
         <View style={styles.summaryContainer}>
           <Text style={styles.textBold}>Chi tiết thanh toán</Text>
@@ -153,19 +184,55 @@ const OrderDetailScreen = () => {
             <Text style={styles.value}>{formatPrice(order.price)}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Phí áp dụng</Text>
+            <Text style={styles.label}>Phí giao hàng</Text>
             <Text style={styles.value}>{formatPrice(order.delivery_fee)}</Text>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Giảm giá</Text>
-            <Text style={styles.value}>{formatPrice(0)}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.paymentMethod}>Trả qua: {order.order_pay}</Text>
+
+          {/* Coupons - Fixed implementation */}
+          {Array.isArray(order.coupon) && order.coupon.length > 0 && (
+            <View style={styles.couponsSection}>
+              {order.coupon.map((coupon, index) => (
+                <View key={index} style={styles.couponContainer}>
+                  <View style={styles.couponRow}>
+                    <View style={styles.couponLeft}>
+                      <MaterialIcons
+                        name="local-offer"
+                        size={16}
+                        color="#FF3B30"
+                      />
+                      <Text style={styles.couponText}>
+                        {coupon.coupon_name} ({coupon.coupon_code})
+                      </Text>
+                    </View>
+                    <Text style={styles.discountValue}>
+                      {coupon.discount_type === 'PERCENTAGE'
+                        ? `-${coupon.discount_value}%`
+                        : `-${formatPrice(coupon.discount_value)}`}
+                    </Text>
+                  </View>
+                  <Text style={styles.couponInfo}>
+                    {`Áp dụng cho đơn từ ${formatPrice(
+                      coupon.min_order_value
+                    )}`}
+                    {coupon.max_discount_amount &&
+                      `, tối đa ${formatPrice(coupon.max_discount_amount)}`}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          <View style={[styles.row, styles.totalRow]}>
+            <Text style={styles.totalLabel}>Tổng cộng</Text>
             <Text style={styles.orderTotal}>{formatPrice(order.price)}</Text>
           </View>
         </View>
       </ScrollView>
+
+      <TouchableOpacity style={styles.feedbackButton} onPress={handleFeedback}>
+        <MaterialIcons name="feedback" size={24} color="#fff" />
+        <Text style={styles.feedbackButtonText}>Gửi phản hồi</Text>
+      </TouchableOpacity>
     </View>
   );
 };

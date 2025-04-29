@@ -288,4 +288,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CardOrder;
+export default React.memo(CardOrder);

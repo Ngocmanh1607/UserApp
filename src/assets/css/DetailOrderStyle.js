@@ -197,23 +197,98 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#333',
   },
-  orderTotal: {
+  orderLable: {
+    fontSize: 16,
+    color: '#666',
+  },
+  totalLabel: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
   },
-  reorderButton: {
-    backgroundColor: '#ff5722',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginHorizontal: 16,
-    marginBottom: 24,
-  },
-  reorderButtonText: {
+  orderTotal: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#ff3b30',
+  },
+  totalRow: {
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+    paddingTop: 12,
+    marginTop: 4,
+  },
+
+  // Improved coupon section styles
+  couponsSection: {
+    marginBottom: 12,
+  },
+  couponContainer: {
+    marginBottom: 8,
+    padding: 12,
+    backgroundColor: '#FFF5F5',
+    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF3B30',
+  },
+  couponRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  couponLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  couponText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#333',
+    marginLeft: 8,
+    flex: 1,
+  },
+  discountValue: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FF3B30',
+  },
+  couponInfo: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 24,
+    fontStyle: 'italic',
+  },
+  couponValidity: {
+    fontSize: 11,
+    color: '#888',
+    marginLeft: 24,
+    marginTop: 4,
+  },
+
+  feedbackButton: {
+    position: 'absolute',
+    bottom: 10,
+    right: 0,
+    backgroundColor: '#ff3b30',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    borderRadius: 10,
+    marginHorizontal: 15,
+    marginVertical: 20,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  feedbackButtonText: {
     color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });
 

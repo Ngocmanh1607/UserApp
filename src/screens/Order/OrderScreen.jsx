@@ -25,6 +25,8 @@ const OrderScreen = () => {
     useCallback(() => {
       const fetchOrder = async () => {
         const response = await orderApi.getOrder();
+        console.log(response);
+
         if (response.success) {
           setOrders(response.data);
           setFilteredOrders(response.data);
