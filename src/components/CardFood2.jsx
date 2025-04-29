@@ -6,21 +6,35 @@ import { formatPrice } from '../utils/format';
 
 const CardFood2 = React.memo(({ food, restaurant }) => {
   const navigation = useNavigation();
-
   const isFlashSale = food.is_flash_sale || false;
+  const isAvailable = food.is_available;
+  console.log(isAvailable);
 
   return (
     <TouchableOpacity
-      style={[styles.container, isFlashSale && styles.flashSaleContainer]}
+      style={[
+        styles.container,
+        isFlashSale && styles.flashSaleContainer,
+        !isAvailable && styles.disabledContainer,
+      ]}
       onPress={() => {
         navigation.navigate('FoodDetail', { food, restaurant });
-      }}>
+      }}
+      disabled={!isAvailable}
+      activeOpacity={isAvailable ? 0.7 : 1}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: food.image }} style={styles.foodImage} />
         {isFlashSale && (
           <View style={styles.flashSaleBadge}>
             <MaterialIcons name="flash-on" size={14} color="#FFF" />
             <Text style={styles.flashSaleText}>Flash Sale</Text>
+          </View>
+        )}
+        {!isAvailable && (
+          <View style={styles.soldOutOverlay}>
+            <View style={styles.soldOutBadge}>
+              <Text style={styles.soldOutText}>Hết món</Text>
+            </View>
           </View>
         )}
       </View>
@@ -151,6 +165,49 @@ const styles = StyleSheet.create({
   flashSalePriceContainer: {
     flexDirection: 'column',
   },
+
+  soldOutOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
+  },
+  soldOutBadge: {
+    backgroundColor: '#FF3B30',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 25,
+    transform: [{ rotate: '-15deg' }],
+    borderWidth: 2,
+    borderColor: '#FFF',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  soldOutText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 4,
+  },
+  disabledContainer: {
+    opacity: 0.85,
+  },
+
   discountPrice: {
     fontSize: 16,
     color: '#FF3B30',
@@ -174,5 +231,26 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
+  },
+
+  disabledContainer: {
+    opacity: 0.6,
+  },
+  disabledText: {
+    opacity: 0.7,
+  },
+  soldOutBadge: {
+    position: 'absolute',
+    top: '50%',
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    paddingVertical: 4,
+    alignItems: 'center',
+  },
+  soldOutText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });

@@ -103,6 +103,7 @@ const RestaurantScreen = ({ route }) => {
                     toppings: product.toppings,
                     discountPrice: product.product_price,
                     is_flash_sale: product.is_flash_sale,
+                    is_available: product.is_available,
                   });
                 }
               }
@@ -127,6 +128,7 @@ const RestaurantScreen = ({ route }) => {
               id: category.category_id,
               name: category.category_name,
             });
+            console.log(category);
 
             sections.push({
               title: category.category_name,
@@ -140,6 +142,7 @@ const RestaurantScreen = ({ route }) => {
                 toppings: product.toppings,
                 discountPrice: product.product_price,
                 is_flash_sale: product.is_flash_sale,
+                is_available: product.is_available,
               })),
             });
           });

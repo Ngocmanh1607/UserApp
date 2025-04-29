@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { getChatllm, llmApi, postSendData } from '../../api/llmApi';
-import CardFood2 from '../../components/CardFoodInCate';
+import CardFood3 from '../../components/CardFood3';
 import styles from '../../assets/css/ChatboxStyle';
 const ChatboxScreen = () => {
   const [chatHistory, setChatHistory] = useState([]);
@@ -71,6 +71,8 @@ const ChatboxScreen = () => {
 
     try {
       const response = await llmApi(message);
+      console.log('Đã nhận được phản hồi từ API:', response);
+
       const botResponse =
         response.description || 'Xin lỗi, tôi không hiểu yêu cầu của bạn.';
       const products = response.product || [];
@@ -128,13 +130,12 @@ const ChatboxScreen = () => {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
                 style={styles.horizontalScrollView}>
-                {chat.items.map((item) => (
-                  <CardFood2
-                    food={item}
-                    id={item.restaurant_id}
-                    key={item.id}
+                {chat.items && (
+                  <CardFood3
+                    products={chat.items}
+                    restaurantId={chat.items[0].restaurant_id}
                   />
-                ))}
+                )}
               </ScrollView>
             );
           }

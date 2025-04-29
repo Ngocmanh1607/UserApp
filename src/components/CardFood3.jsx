@@ -6,111 +6,118 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
-  Alert,
+  FlatList,
+  Dimensions,
 } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
-import formatPrice from '../utils/format';
+import { formatPrice } from '../utils/format';
 import restaurantApi from '../api/restaurantApi';
 import { useSelector } from 'react-redux';
 
-const CardFood3 = ({ food, id }) => {
-  const address = useSelector((state) => state.currentLocation);
-  const [restaurant, setRestaurant] = useState({});
-  const navigation = useNavigation();
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = width * 0.4;
 
-  const handlePres = async () => {
-    // Gọi cả hai API đồng thời
-    const [restaurantInfo, distance] = await Promise.all([
-      restaurantApi.getInfoRestaurants(id),
-      restaurantApi.getDistance(address.latitude, address.longitude, id),
-    ]);
-    if (restaurantInfo.success && distance.success) {
-      const dis = parseFloat(distance.data);
-      const updatedRestaurant = { ...restaurantInfo.data, distance: dis };
-      navigation.navigate('RestaurantDetail', {
-        restaurant: updatedRestaurant,
-      });
-      setRestaurant(updatedRestaurant);
-    } else {
+const FoodCard = ({ food, onPress }) => (
+  <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
+    <Image source={{ uri: food.image }} style={styles.foodImage} />
+    <View style={styles.contentContainer}>
+      <Text style={styles.foodName} numberOfLines={1}>
+        {food.name}
+      </Text>
+      <Text style={styles.description} numberOfLines={2}>
+        {food.descriptions}
+      </Text>
+      <Text style={styles.price}>{formatPrice(food.price)}</Text>
+    </View>
+  </TouchableOpacity>
+);
+
+const CardFood3 = ({ products, restaurantId }) => {
+  const navigation = useNavigation();
+  const address = useSelector((state) => state.currentLocation);
+
+  const handlePress = async (food) => {
+    try {
+      const [restaurantInfo, distance] = await Promise.all([
+        restaurantApi.getInfoRestaurants(food.restaurant_id),
+        restaurantApi.getDistance(
+          address.latitude,
+          address.longitude,
+          food.restaurant_id
+        ),
+      ]);
+
+      if (restaurantInfo.success && distance.success) {
+        const restaurant = {
+          ...restaurantInfo.data,
+          distance: parseFloat(distance.data),
+        };
+        navigation.navigate('RestaurantDetail', { restaurant });
+      }
+    } catch (error) {
       Alert.alert('Lỗi', 'Không thể lấy thông tin nhà hàng');
     }
   };
+
   return (
-    <TouchableOpacity style={styles.container} onPress={() => handlePres()}>
-      <View style={styles.imageContainer}>
-        <Image source={{ uri: food.image }} style={styles.foodImage} />
-      </View>
-      <View style={styles.mainContainer}>
-        <View style={styles.foodNameContainer}>
-          <Text style={styles.foodName}>{food.name}</Text>
-        </View>
-        <View style={styles.foodDesContainer}>
-          <Text style={styles.foodDescription} numberOfLines={2}>
-            {food.descriptions}
-          </Text>
-        </View>
-        <View style={styles.priceContainer}>
-          <Text style={styles.price}>{formatPrice(food.price)}</Text>
-          {/* <View style={styles.addButton}>
-                        <MaterialIcons name="add" size={16} color="white" />
-                    </View> */}
-        </View>
-      </View>
-    </TouchableOpacity>
+    <FlatList
+      data={products}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <FoodCard food={item} onPress={() => handlePress(item)} />
+      )}
+      contentContainerStyle={styles.listContainer}
+    />
   );
 };
 
-export default CardFood3;
-
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#ffffff',
-    borderRadius: 5,
-    elevation: 10,
-    width: 150,
-    height: 200,
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
+  listContainer: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
-  mainContainer: {
-    marginTop: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+  cardContainer: {
+    width: CARD_WIDTH,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginRight: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    overflow: 'hidden',
   },
   foodImage: {
-    marginTop: 5,
-    width: 100,
-    height: 100,
-    borderRadius: 10,
+    width: '100%',
+    height: CARD_WIDTH * 0.75,
+    resizeMode: 'cover',
   },
-  foodNameContainer: {
-    marginBottom: 4,
+  contentContainer: {
+    padding: 12,
   },
   foodName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333333',
+    color: '#333',
+    marginBottom: 4,
   },
-  foodDesContainer: {
-    marginBottom: 10,
-    width: '80%',
-  },
-  foodDescription: {
+  description: {
     fontSize: 13,
-    color: '#666666',
-  },
-  priceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    color: '#666',
+    marginBottom: 8,
+    lineHeight: 18,
   },
   price: {
     fontSize: 16,
-    color: '#FF0000',
     fontWeight: 'bold',
+    color: '#FF0000',
   },
 });
+
+export default CardFood3;
