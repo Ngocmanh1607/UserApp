@@ -1,13 +1,14 @@
 import {
-  StyleSheet,
   Text,
   View,
   Image,
   TouchableOpacity,
   ScrollView,
   Alert,
+  TextInput,
+  Pressable,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { formatPrice, formatDate } from '../../utils/format';
 import { useRoute } from '@react-navigation/native';
 import styles from '../../assets/css/DetailOrderStyle';
@@ -17,34 +18,47 @@ import {
   checkIsOpen,
 } from '../../utils/restaurantHelpers';
 import { Linking } from 'react-native';
+import { Modal } from 'react-native-paper';
+import { orderApi } from '../../api/orderApi';
 
 const OrderDetailScreen = () => {
   const route = useRoute();
   const order = route.params?.order || {};
-  console.log(order);
+  console.log('order', order);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [feedback, setFeedback] = useState('');
 
   const schedule = getCurrentDaySchedule(order.Restaurant?.opening_hours);
   const isOpen = checkIsOpen(schedule);
 
   const handleFeedback = () => {
-    // You can customize this to navigate to a feedback form or show a modal
-    Alert.alert(
-      'Gửi phản hồi',
-      'Bạn có muốn gửi phản hồi về đơn hàng này không?',
-      [
-        {
-          text: 'Hủy',
-          style: 'cancel',
-        },
-        {
-          text: 'Gửi',
-          onPress: () =>
-            navigation.navigate('FeedbackScreen', { orderId: order.id }),
-        },
-      ]
-    );
+    setModalVisible(true);
   };
-
+  const submitFeedback = async () => {
+    if (!feedback.trim()) {
+      Alert.alert('Lỗi', 'Vui lòng nhập nội dung phản hồi');
+      return;
+    }
+    const feedbackData = {
+      order_id: order.id,
+      restaurant_id: order.Restaurant?.id,
+      customer_id: order.customer_id,
+      driver_id: order.Driver?.id,
+      content: feedback,
+    };
+    try {
+      await orderApi.submitFeedback(feedbackData);
+      Alert.alert(
+        'Thành công',
+        'Cảm ơn bạn đã gửi phản hồi! Vui lòng đợi trong giây lát.'
+      );
+      setModalVisible(false);
+      setFeedback('');
+    } catch (error) {
+      Alert.alert('Lỗi', 'Không thể gửi phản hồi. Vui lòng thử lại sau.');
+    }
+  };
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -229,10 +243,53 @@ const OrderDetailScreen = () => {
         </View>
       </ScrollView>
 
-      <TouchableOpacity style={styles.feedbackButton} onPress={handleFeedback}>
-        <MaterialIcons name="feedback" size={24} color="#fff" />
-        <Text style={styles.feedbackButtonText}>Gửi phản hồi</Text>
-      </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <Pressable
+            style={{ flex: 1 }}
+            onPress={() => setModalVisible(false)}
+          />
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Phản hồi đơn hàng</Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setModalVisible(false)}>
+                <MaterialIcons name="close" size={24} color="#555" />
+              </TouchableOpacity>
+            </View>
+
+            <TextInput
+              style={styles.feedbackInput}
+              placeholder="Nhập phản hồi của bạn..."
+              placeholderTextColor="#999"
+              multiline
+              numberOfLines={4}
+              value={feedback}
+              onChangeText={setFeedback}
+            />
+
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={submitFeedback}
+              activeOpacity={0.85}>
+              <Text style={styles.submitButtonText}>Gửi phản hồi</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      {order.order_status === 'ORDER_CONFIRMED' && (
+        <TouchableOpacity
+          style={styles.feedbackButton}
+          onPress={handleFeedback}>
+          <MaterialIcons name="feedback" size={24} color="#fff" />
+          <Text style={styles.feedbackButtonText}>Gửi phản hồi</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

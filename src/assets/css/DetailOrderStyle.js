@@ -266,6 +266,67 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 
+  //modal styles
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'flex-end',
+    padding: 10,
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    paddingBottom: 36,
+    minHeight: 320,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eeeeee',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#222222',
+  },
+  closeButton: {
+    padding: 6,
+  },
+  feedbackInput: {
+    backgroundColor: '#f8f8f8',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 12,
+    padding: 16,
+    height: 160,
+    textAlignVertical: 'top',
+    fontSize: 16,
+    marginBottom: 24,
+  },
+  submitButton: {
+    backgroundColor: '#ff3b30',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  submitButtonText: {
+    color: 'white',
+    fontSize: 17,
+    fontWeight: '600',
+  },
+
   feedbackButton: {
     position: 'absolute',
     bottom: 10,

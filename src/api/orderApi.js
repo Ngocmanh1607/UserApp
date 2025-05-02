@@ -219,5 +219,39 @@ const orderApi = {
       return handleApiError(error);
     }
   },
+  submitFeedback: async (feedback) => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (!userId || !accessToken) {
+        throw new Error('Phiên hết hạn');
+      }
+      const coupons = await apiClient.post(
+        `/feedback`,
+        {
+          restaurant_id: feedback.restaurant_id,
+          order_id: feedback.order_id,
+          content: feedback.content,
+          customer_id: feedback.customer_id,
+          driver_id: feedback.driver_id,
+        },
+        {
+          headers: {
+            'x-api-key': apiKey,
+            authorization: accessToken,
+            'x-client-id': userId,
+          },
+        }
+      );
+
+      return {
+        success: true,
+        data: coupons.data.metadata,
+      };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
 };
+
 export { orderApi };
