@@ -26,7 +26,7 @@ const userApi = {
     }
   },
 
-  loginApi: async (email, password, dispatch, fcmToken) => {
+  loginApi: async (email, password) => {
     try {
       const response = await apiClient.post(
         '/user/login',
@@ -79,7 +79,24 @@ const userApi = {
       return false;
     }
   },
-
+  resetPasswordApi: async (email, password) => {
+    const fcmToken =
+      'abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    try {
+      await apiClient.put(
+        '/user/forgot-password',
+        { email, password, role: 'user', fcmToken: fcmToken },
+        {
+          headers: {
+            'x-api-key': apiKey,
+          },
+        }
+      );
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
   getInfoUser: async (dispatch) => {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');

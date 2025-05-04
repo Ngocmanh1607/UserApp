@@ -40,17 +40,6 @@ const ProfileScreen = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [imageUri, setImageUri] = useState('');
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwordForm, setPasswordForm] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
-  const [showPasswords, setShowPasswords] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
 
   // Validation Functions
   const validateUserInfo = () => {
@@ -62,24 +51,30 @@ const ProfileScreen = () => {
     }
     return true;
   };
+  const handleSessionExpired = async () => {
+    console.log('Session expired');
 
+    try {
+      setIsLoading(true);
+      await AsyncStorage.clear();
+      setTimeout(() => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Auth' }],
+        });
+      }, 100);
+    } catch (error) {
+      console.error('Error during session expiration:', error);
+      Alert.alert('Lỗi', 'Không thể đăng xuất. Vui lòng thử lại');
+    } finally {
+      setIsLoading(false);
+    }
+  };
   // API Functions
   const fetchUserData = async () => {
     try {
       setIsLoading(true);
       const response = await userApi.getInfoUser(dispatch);
-
-      if (!response.success) {
-        if (response.message === 500) {
-          Alert.alert('Lỗi', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại');
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Auth' }],
-          });
-          return;
-        }
-        throw new Error(response.message);
-      }
 
       if (response.data.profile) {
         const { profile } = response.data;
@@ -91,7 +86,17 @@ const ProfileScreen = () => {
         setImageUri(profile.image);
       }
     } catch (error) {
-      Alert.alert('Lỗi', error.message || 'Không thể tải thông tin người dùng');
+      Alert.alert(
+        'Lỗi',
+        error.message || 'Không thể tải thông tin người dùng',
+        [
+          {
+            text: 'Đăng xuất',
+            onPress: handleSessionExpired,
+            style: 'cancel',
+          },
+        ]
+      );
     } finally {
       setIsLoading(false);
     }
@@ -109,57 +114,6 @@ const ProfileScreen = () => {
   const handleCancel = () => {
     setIsEditing(false);
     fetchUserData();
-  };
-
-  const handleChangePassword = async () => {
-    try {
-      if (!passwordForm.currentPassword.trim()) {
-        Alert.alert('Lỗi', 'Vui lòng nhập mật khẩu hiện tại');
-        return;
-      }
-      if (!passwordForm.newPassword.trim()) {
-        Alert.alert('Lỗi', 'Vui lòng nhập mật khẩu mới');
-        return;
-      }
-      if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-        Alert.alert('Lỗi', 'Mật khẩu xác nhận không khớp');
-        return;
-      }
-      if (passwordForm.newPassword.length < 6) {
-        Alert.alert('Lỗi', 'Mật khẩu mới phải có ít nhất 6 ký tự');
-        return;
-      }
-
-      setIsLoading(true);
-      const response = await userApi.changePassword({
-        currentPassword: passwordForm.currentPassword,
-        newPassword: passwordForm.newPassword,
-      });
-
-      if (response.success) {
-        Alert.alert('Thành công', 'Đổi mật khẩu thành công');
-        setShowPasswordModal(false);
-        setPasswordForm({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: '',
-        });
-      } else {
-        Alert.alert('Lỗi', response.message || 'Đổi mật khẩu thất bại');
-      }
-    } catch (error) {
-      Alert.alert('Lỗi', 'Không thể đổi mật khẩu. Vui lòng thử lại sau');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Add toggle password visibility handler
-  const togglePasswordVisibility = (field) => {
-    setShowPasswords((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
   };
 
   // Event Handlers
@@ -258,123 +212,6 @@ const ProfileScreen = () => {
       });
     }
   }, [location]);
-
-  const PasswordChangeModal = () => (
-    <Modal
-      visible={showPasswordModal}
-      transparent
-      animationType="slide"
-      onRequestClose={() => setShowPasswordModal(false)}>
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Đổi Mật Khẩu</Text>
-            <TouchableOpacity
-              style={styles.closeModalButton}
-              onPress={() => setShowPasswordModal(false)}>
-              <FontAwesome5 name="times" size={22} color="#333" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.passwordInputContainer}>
-            <View style={styles.passwordInputWrapper}>
-              <Text style={styles.passwordInputLabel}>Mật khẩu hiện tại</Text>
-              <View style={styles.passwordInputField}>
-                <TextInput
-                  style={styles.passwordInput}
-                  secureTextEntry={!showPasswords.current}
-                  value={passwordForm.currentPassword}
-                  onChangeText={(text) =>
-                    setPasswordForm((prev) => ({
-                      ...prev,
-                      currentPassword: text,
-                    }))
-                  }
-                  placeholder="Nhập mật khẩu hiện tại"
-                  placeholderTextColor="#9CA3AF"
-                />
-                <TouchableOpacity
-                  onPress={() => togglePasswordVisibility('current')}
-                  style={styles.eyeIconButton}>
-                  <FontAwesome5
-                    name={showPasswords.current ? 'eye' : 'eye-slash'}
-                    size={18}
-                    color="#6B7280"
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.passwordInputWrapper}>
-              <Text style={styles.passwordInputLabel}>Mật khẩu mới</Text>
-              <View style={styles.passwordInputField}>
-                <TextInput
-                  style={styles.passwordInput}
-                  secureTextEntry={!showPasswords.new}
-                  value={passwordForm.newPassword}
-                  onChangeText={(text) =>
-                    setPasswordForm((prev) => ({ ...prev, newPassword: text }))
-                  }
-                  placeholder="Nhập mật khẩu mới"
-                  placeholderTextColor="#9CA3AF"
-                />
-                <TouchableOpacity
-                  onPress={() => togglePasswordVisibility('new')}
-                  style={styles.eyeIconButton}>
-                  <FontAwesome5
-                    name={showPasswords.new ? 'eye' : 'eye-slash'}
-                    size={18}
-                    color="#6B7280"
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.passwordInputWrapper}>
-              <Text style={styles.passwordInputLabel}>Xác nhận mật khẩu</Text>
-              <View style={styles.passwordInputField}>
-                <TextInput
-                  style={styles.passwordInput}
-                  secureTextEntry={!showPasswords.confirm}
-                  value={passwordForm.confirmPassword}
-                  onChangeText={(text) =>
-                    setPasswordForm((prev) => ({
-                      ...prev,
-                      confirmPassword: text,
-                    }))
-                  }
-                  placeholder="Nhập lại mật khẩu mới"
-                  placeholderTextColor="#9CA3AF"
-                />
-                <TouchableOpacity
-                  onPress={() => togglePasswordVisibility('confirm')}
-                  style={styles.eyeIconButton}>
-                  <FontAwesome5
-                    name={showPasswords.confirm ? 'eye' : 'eye-slash'}
-                    size={18}
-                    color="#6B7280"
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.modalButtons}>
-            <TouchableOpacity
-              style={styles.cancelModalButton}
-              onPress={() => setShowPasswordModal(false)}>
-              <Text style={styles.cancelModalButtonText}>Hủy</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.confirmPasswordButton}
-              onPress={handleChangePassword}>
-              <Text style={styles.confirmPasswordButtonText}>Xác nhận</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </Modal>
-  );
 
   // Render Components
   const LoadingOverlay = () => (
@@ -579,7 +416,6 @@ const ProfileScreen = () => {
             )}
           </View>
         </ScrollView>
-        <PasswordChangeModal />
         <LoadingOverlay />
       </View>
     </SafeAreaView>
