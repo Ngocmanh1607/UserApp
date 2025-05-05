@@ -8,8 +8,6 @@ const CardFood2 = React.memo(({ food, restaurant }) => {
   const navigation = useNavigation();
   const isFlashSale = food.is_flash_sale || false;
   const isAvailable = food.is_available;
-  console.log(isAvailable);
-
   return (
     <TouchableOpacity
       style={[

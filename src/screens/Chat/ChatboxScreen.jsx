@@ -1,5 +1,5 @@
 import {
-  StyleSheet,
+  FlatList,
   Text,
   View,
   TouchableOpacity,
@@ -107,15 +107,17 @@ const ChatboxScreen = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
+      <FlatList
         style={styles.chatContainer}
         contentContainerStyle={{ paddingBottom: 10 }}
-        ref={scrollViewRef}>
-        {chatHistory.map((chat, index) => {
+        data={chatHistory}
+        ref={scrollViewRef}
+        keyExtractor={(_, index) => index.toString()}
+        onContentSizeChange={() => scrollViewRef.current?.scrollToEnd()}
+        renderItem={({ item: chat, index }) => {
           if (chat.type === 'user' || chat.type === 'bot') {
             return (
               <View
-                key={index}
                 style={[
                   styles.messageBubble,
                   chat.type === 'user' ? styles.userMessage : styles.botMessage,
@@ -126,7 +128,6 @@ const ChatboxScreen = () => {
           } else if (chat.type === 'products') {
             return (
               <ScrollView
-                key={index}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
                 style={styles.horizontalScrollView}>
@@ -140,20 +141,20 @@ const ChatboxScreen = () => {
             );
           }
           return null;
-        })}
+        }}
+        ListFooterComponent={() =>
+          isLoading ? (
+            <View style={styles.loadingContainer}>
+              <Image
+                source={require('../../assets/Images/loading.gif')}
+                style={styles.imageLoading}
+              />
+            </View>
+          ) : null
+        }
+      />
 
-        {/* Loading Indicator */}
-        {isLoading && (
-          <View style={styles.loadingContainer}>
-            <Image
-              source={require('../../assets/Images/loading.gif')}
-              style={styles.imageLoading}
-            />
-          </View>
-        )}
-      </ScrollView>
-
-      {/* Input */}
+      {/* Input container remains the same */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}

@@ -389,18 +389,6 @@ const ProfileScreen = () => {
                   <Text style={styles.editButtonText}>Chỉnh sửa</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.passwordButton}
-                  onPress={() => setShowPasswordModal(true)}
-                  activeOpacity={0.8}>
-                  <FontAwesome5
-                    name="key"
-                    size={16}
-                    color="#fff"
-                    style={styles.buttonIcon}
-                  />
-                  <Text style={styles.passwordButtonText}>Đổi mật khẩu</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
                   style={styles.logoutButton}
                   onPress={handleLogout}
                   activeOpacity={0.8}>
