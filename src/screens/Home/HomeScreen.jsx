@@ -111,6 +111,7 @@ const HomeScreen = () => {
   useFocusEffect(
     useCallback(() => {
       dispatch(fetchCartCount());
+      dispatch(fetchAllCartItems());
     }, [dispatch])
   );
   const goToSearchScreen = () => {

@@ -10,6 +10,10 @@ import {
   ActivityIndicator,
   Modal,
   FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Keyboard,
 } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ItemInCart from '../../components/ItemInCart';
@@ -33,6 +37,8 @@ const CartScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const noteInputRef = useRef(null);
 
   const { restaurantId } = route.params;
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('ZALOPAY');
@@ -137,6 +143,7 @@ const CartScreen = () => {
       subscription.remove();
     };
   }, [transactionId]);
+
   const handlePress = () => {
     navigation.navigate('MapScreen');
   };
@@ -226,6 +233,7 @@ const CartScreen = () => {
       ]);
     }
   };
+
   const handlePayment = () => {
     setModalPayment(true);
   };
@@ -326,28 +334,10 @@ const CartScreen = () => {
     );
   };
 
-  const renderFooter = () => {
+  // Render coupon section
+  const renderCouponSection = () => {
     return (
-      <View style={styles.footer}>
-        {/* Note Input */}
-        <View style={styles.noteContainer}>
-          <View style={styles.noteInputWrapper}>
-            <Ionicons
-              name="create-outline"
-              size={20}
-              color="#7f8c8d"
-              style={styles.noteIcon}
-            />
-            <TextInput
-              placeholder="Ghi chú cho đơn hàng"
-              placeholderTextColor="#7f8c8d"
-              style={styles.noteInput}
-              value={note}
-              onChangeText={setNote}
-            />
-          </View>
-        </View>
-
+      <>
         {/* Coupon Button */}
         <TouchableOpacity
           style={styles.couponContainer}
@@ -410,41 +400,45 @@ const CartScreen = () => {
             ))}
           </View>
         )}
+      </>
+    );
+  };
 
-        {/* Order Summary */}
-        <View style={styles.summaryContainer}>
-          <Text style={styles.summaryTitle}>Chi tiết thanh toán</Text>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Tạm tính</Text>
-            <Text style={styles.summaryValue}>
-              {formatPrice(cost ? cost.totalFoodPrice : 0)}
-            </Text>
-          </View>
+  // Render summary section
+  const renderSummarySection = () => {
+    return (
+      <View style={styles.summaryContainer}>
+        <Text style={styles.summaryTitle}>Chi tiết thanh toán</Text>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Tạm tính</Text>
+          <Text style={styles.summaryValue}>
+            {formatPrice(cost ? cost.totalFoodPrice : 0)}
+          </Text>
+        </View>
 
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Phí vận chuyển</Text>
-            <Text style={styles.summaryValue}>
-              {formatPrice(cost ? cost.shippingCost : 0)}
-            </Text>
-          </View>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Phí vận chuyển</Text>
+          <Text style={styles.summaryValue}>
+            {formatPrice(cost ? cost.shippingCost : 0)}
+          </Text>
+        </View>
 
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Giảm giá</Text>
-            <Text style={styles.discountValue}>
-              {discountCost > 0
-                ? `- ${formatPrice(discountCost)}`
-                : formatPrice(0)}
-            </Text>
-          </View>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Giảm giá</Text>
+          <Text style={styles.discountValue}>
+            {discountCost > 0
+              ? `- ${formatPrice(discountCost)}`
+              : formatPrice(0)}
+          </Text>
+        </View>
 
-          <View style={styles.divider}></View>
+        <View style={styles.divider}></View>
 
-          <View style={styles.totalSummaryRow}>
-            <Text style={styles.totalSummaryLabel}>Tổng thanh toán</Text>
-            <Text style={styles.totalSummaryValue}>
-              {formatPrice(cost?.totalPrice || 0)}
-            </Text>
-          </View>
+        <View style={styles.totalSummaryRow}>
+          <Text style={styles.totalSummaryLabel}>Tổng thanh toán</Text>
+          <Text style={styles.totalSummaryValue}>
+            {formatPrice(cost?.totalPrice || 0)}
+          </Text>
         </View>
       </View>
     );
@@ -452,21 +446,56 @@ const CartScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        ListHeaderComponent={renderHeader}
-        data={foodData}
-        renderItem={({ item }) => (
-          <ItemInCart
-            food={item}
-            onAdd={handleAdd}
-            restaurantId={restaurantId}
-          />
-        )}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
-        style={styles.flatListContainer}
-        ListFooterComponent={renderFooter}
-        showsVerticalScrollIndicator={false}
-      />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
+        <ScrollView
+          style={styles.flatListContainer}
+          showsVerticalScrollIndicator={false}>
+          {renderHeader()}
+
+          {/* Cart Items */}
+          {foodData.map((item, index) => (
+            <ItemInCart
+              key={`${item.id}-${index}`}
+              food={item}
+              onAdd={handleAdd}
+              restaurantId={restaurantId}
+            />
+          ))}
+
+          <View style={styles.footer}>
+            {/* Note Input - Separate from FlatList */}
+            <View style={styles.noteContainer}>
+              <View style={styles.noteInputWrapper}>
+                <Ionicons
+                  name="create-outline"
+                  size={20}
+                  color="#7f8c8d"
+                  style={styles.noteIcon}
+                />
+                <TextInput
+                  ref={noteInputRef}
+                  placeholder="Ghi chú cho đơn hàng"
+                  placeholderTextColor="#7f8c8d"
+                  style={styles.noteInput}
+                  value={note}
+                  onChangeText={setNote}
+                  blurOnSubmit={false}
+                  autoCapitalize="none"
+                  keyboardType="default"
+                  returnKeyType="none"
+                  autoCorrect={false}
+                />
+              </View>
+            </View>
+            {renderCouponSection()}
+            {renderSummarySection()}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+
       {/* Footer Container with Order Summary */}
       <View style={styles.footerContainer}>
         <View style={styles.totalRow}>
