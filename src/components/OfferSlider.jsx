@@ -9,6 +9,19 @@ import {
 import React from 'react';
 import Swiper from 'react-native-swiper';
 const OfferSlider = () => {
+  const slides = [
+    require('../assets/Images/banner1.png'),
+    require('../assets/Images/banner2.png'),
+    require('../assets/Images/banner3.png'),
+  ];
+
+  const renderSlides = () => {
+    return slides.map((image, index) => (
+      <View key={index} style={styles.slide}>
+        <Image source={image} style={styles.image} />
+      </View>
+    ));
+  };
   return (
     <View style={styles.container}>
       <Swiper
@@ -19,24 +32,7 @@ const OfferSlider = () => {
         activeDotColer={'black'}
         nextButton={<Text style={styles.nextButton}> </Text>}
         prevButton={<Text style={styles.nextButton}> </Text>}>
-        <View style={styles.slide}>
-          <Image
-            source={require('../assets/Images/sampleImg1.jpeg')}
-            style={styles.image}
-          />
-        </View>
-        <View style={styles.slide}>
-          <Image
-            source={require('../assets/Images/sampleImg2.jpeg')}
-            style={styles.image}
-          />
-        </View>
-        <View style={styles.slide}>
-          <Image
-            source={require('../assets/Images/sampleImg3.jpeg')}
-            style={styles.image}
-          />
-        </View>
+        {renderSlides()}
       </Swiper>
     </View>
   );
@@ -44,7 +40,7 @@ const OfferSlider = () => {
 export default OfferSlider;
 const styles = StyleSheet.create({
   container: {
-    height: 200,
+    height: 230,
     width: '95%',
     alignSelf: 'center',
     marginVertical: 10,

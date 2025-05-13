@@ -252,6 +252,56 @@ const orderApi = {
       return handleApiError(error);
     }
   },
+  getFeedbackByOrderId: async (orderId) => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (!userId || !accessToken) {
+        throw new Error('Phiên hết hạn');
+      }
+      const coupons = await apiClient.get(`/feedback/${orderId}/order`, {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      });
+
+      return {
+        success: true,
+        data: coupons.data.metadata,
+      };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+  sendFeedbackForAdmin: async (customer_id, id) => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (!userId || !accessToken) {
+        throw new Error('Phiên hết hạn');
+      }
+      const coupons = await apiClient.post(
+        `/feedback/${customer_id}/${id}/admin`,
+        {},
+        {
+          headers: {
+            'x-api-key': apiKey,
+            authorization: accessToken,
+            'x-client-id': userId,
+          },
+        }
+      );
+
+      return {
+        success: true,
+        data: coupons.data.metadata,
+      };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
 };
 
 export { orderApi };

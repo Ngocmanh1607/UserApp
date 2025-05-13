@@ -8,7 +8,7 @@ import {
   TextInput,
   Pressable,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatPrice, formatDate } from '../../utils/format';
 import { useRoute } from '@react-navigation/native';
 import styles from '../../assets/css/DetailOrderStyle';
@@ -17,23 +17,60 @@ import {
   getCurrentDaySchedule,
   checkIsOpen,
 } from '../../utils/restaurantHelpers';
-import { Linking } from 'react-native';
 import { Modal } from 'react-native-paper';
 import { orderApi } from '../../api/orderApi';
-
 const OrderDetailScreen = () => {
   const route = useRoute();
   const order = route.params?.order || {};
-  console.log('order', order);
-
+  const [existingFeedback, setExistingFeedback] = useState();
   const [isModalVisible, setModalVisible] = useState(false);
   const [feedback, setFeedback] = useState('');
+  const [canCreateReport, setCanCreateReport] = useState(true);
 
   const schedule = getCurrentDaySchedule(order.Restaurant?.opening_hours);
   const isOpen = checkIsOpen(schedule);
 
+  useEffect(() => {
+    const fetchFeedback = async () => {
+      try {
+        const response = await orderApi.getFeedbackByOrderId(order.id);
+        if (response && response.data) {
+          setExistingFeedback(response.data);
+          const userFeedback = response.data.filter(
+            (item) => !item.restaurant_res
+          )[0];
+          const restaurantResponse = response.data.filter(
+            (item) => item.restaurant_res
+          )[0];
+
+          const feedbackDate = new Date(userFeedback.createdAt);
+          const currentDate = new Date();
+          const dayDifference =
+            (currentDate - feedbackDate) / (1000 * 60 * 60 * 24);
+          setCanCreateReport(restaurantResponse || dayDifference > 1);
+        }
+      } catch (error) {
+        console.log('Error fetching feedback:', error);
+      }
+    };
+
+    if (order.id) {
+      fetchFeedback();
+    }
+  }, [order.id]);
   const handleFeedback = () => {
     setModalVisible(true);
+  };
+  const handleReport = async (customerId, id) => {
+    try {
+      await orderApi.sendFeedbackForAdmin(customerId, id);
+      Alert.alert(
+        'Thành công',
+        'Cảm ơn bạn đã gửi báo cáo! Quản trị viên sẽ xem xét sớm nhất có thể.'
+      );
+    } catch (error) {
+      Alert.alert('Lỗi', 'Không thể gửi báo cáo. Vui lòng thử lại sau.');
+    }
   };
   const submitFeedback = async () => {
     if (!feedback.trim()) {
@@ -59,6 +96,93 @@ const OrderDetailScreen = () => {
       Alert.alert('Lỗi', 'Không thể gửi phản hồi. Vui lòng thử lại sau.');
     }
   };
+  const renderFeedbackSection = () => {
+    if (!existingFeedback) return null;
+
+    const userFeedback = existingFeedback.filter(
+      (item) => !item.restaurant_res
+    )[0];
+    const restaurantResponse = existingFeedback.filter(
+      (item) => item.restaurant_res
+    )[0];
+
+    return (
+      <View style={styles.feedbackSection}>
+        <Text style={styles.feedbackSectionTitle}>Phản hồi đơn hàng</Text>
+
+        {/* User Feedback */}
+        <View style={styles.feedbackCard}>
+          <View style={styles.feedbackHeader}>
+            <Text style={styles.feedbackAuthor}>Phản hồi của bạn</Text>
+            <Text style={styles.feedbackDate}>
+              {formatDate(userFeedback.createdAt)}
+            </Text>
+          </View>
+          <Text style={styles.feedbackContent}>{userFeedback.content}</Text>
+          <View style={styles.feedbackStatus}>
+            <MaterialIcons
+              name={restaurantResponse ? 'check-circle' : 'hourglass-empty'}
+              size={16}
+              color={restaurantResponse ? '#059669' : '#f59e0b'}
+            />
+            <Text
+              style={[
+                styles.statusText,
+                {
+                  color: userFeedback.is_checked ? '#059669' : '#f59e0b',
+                },
+              ]}>
+              {restaurantResponse ? 'Đã xem xét' : 'Đang chờ phản hồi'}
+            </Text>
+          </View>
+        </View>
+
+        {/* Restaurant Response */}
+        {restaurantResponse && (
+          <View style={[styles.feedbackCard, styles.responseCard]}>
+            <View style={styles.feedbackHeader}>
+              <Text style={styles.feedbackAuthor}>Phản hồi từ nhà hàng</Text>
+              <Text style={styles.feedbackDate}>
+                {formatDate(restaurantResponse.createdAt)}
+              </Text>
+            </View>
+            <Text style={styles.feedbackContent}>
+              {restaurantResponse.content}
+            </Text>
+          </View>
+        )}
+
+        {/* Report Button */}
+        {canCreateReport && (
+          <TouchableOpacity
+            style={[
+              styles.reportButton,
+              userFeedback.admin_check && styles.reportedButton,
+            ]}
+            onPress={() =>
+              handleReport(userFeedback.customer_id, userFeedback.id)
+            }
+            disabled={userFeedback.admin_check}>
+            <MaterialIcons
+              name={userFeedback.admin_check ? 'check-circle' : 'flag'}
+              size={16}
+              color={userFeedback.admin_check ? '#059669' : '#FF3B30'}
+            />
+            <Text
+              style={[
+                styles.reportButtonText,
+                userFeedback.admin_check && styles.reportedButtonText,
+              ]}>
+              {userFeedback.admin_check
+                ? 'Đã báo cáo với Admin'
+                : 'Báo cáo với Admin'}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -75,10 +199,9 @@ const OrderDetailScreen = () => {
             <View style={styles.driverDetails}>
               <Image
                 source={{
-                  uri:
-                    order.Driver.Profile.image ||
-                    'https://www.google.com/imgres?q=icon%20shipper%20png&imgurl=https%3A%2F%2Fimg.freepik.com%2Fpremium-vector%2Fcartoon-delivery-worker-with-scooter-bike_180868-5613.jpg&imgrefurl=https%3A%2F%2Fwww.freepik.com%2Fvectors%2Fdelivery-guy-png%2F7&docid=6GatJwZp5ACmKM&tbnid=EEfVdjJ0j6N55M&vet=12ahUKEwjH2b_NtK6MAxXVD1kFHeqkFgs4ChAzegQITxAA..i&w=626&h=626&hcb=2&itg=1&ved=2ahUKEwjH2b_NtK6MAxXVD1kFHeqkFgs4ChAzegQITxAA',
+                  uri: order.Driver.Profile.image,
                 }}
+                defaultSource={require('../../assets/Images/driver.png')}
                 style={styles.driverImage}
               />
               <View style={styles.driverInfo}>
@@ -136,11 +259,7 @@ const OrderDetailScreen = () => {
                 </Text>
               </View>
             )}
-            <TouchableOpacity
-              style={styles.phoneContainer}
-              onPress={() =>
-                Linking.openURL(`tel:${order.Restaurant?.phone_number}`)
-              }>
+            <TouchableOpacity style={styles.phoneContainer}>
               <MaterialIcons name="phone" size={16} color="#007AFF" />
               <Text style={styles.phoneText}>
                 {order.Restaurant?.phone_number}
@@ -148,7 +267,7 @@ const OrderDetailScreen = () => {
             </TouchableOpacity>
           </View>
         )}
-
+        {renderFeedbackSection()}
         {/* Ordered Items */}
         {order.listCartItem &&
           order.listCartItem.map((item, index) => (
@@ -242,7 +361,7 @@ const OrderDetailScreen = () => {
           </View>
         </View>
       </ScrollView>
-
+      {/* Feedback Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -282,12 +401,12 @@ const OrderDetailScreen = () => {
           </View>
         </View>
       </Modal>
-      {order.order_status === 'ORDER_CONFIRMED' && (
+      {order.order_status === 'ORDER_CONFIRMED' && !existingFeedback && (
         <TouchableOpacity
           style={styles.feedbackButton}
           onPress={handleFeedback}>
           <MaterialIcons name="feedback" size={24} color="#fff" />
-          <Text style={styles.feedbackButtonText}>Gửi phản hồi</Text>
+          <Text style={styles.feedbackButtonText}>Phản hồi</Text>
         </TouchableOpacity>
       )}
     </View>

@@ -105,12 +105,10 @@ const HomeScreen = () => {
     }
     fetchFlashSaleData();
   }, [address, fetchRestaurantData]);
-  useEffect(() => {
-    dispatch(fetchAllCartItems());
-  }, []);
   useFocusEffect(
     useCallback(() => {
       dispatch(fetchCartCount());
+      dispatch(fetchAllCartItems());
     }, [dispatch])
   );
   const goToSearchScreen = () => {

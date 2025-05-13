@@ -10,6 +10,9 @@ import {
   Modal,
   SafeAreaView,
   TextInput,
+  PermissionsAndroid,
+  Platform,
+  Linking,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -19,8 +22,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import userApi from '../../api/userApi';
-import { uploadImageToCloudinary } from '../utils/cloudinaryUtils';
+import { uploadImageToCloudinary } from '../../utils/cloudinaryUtils';
 import styles from '../../assets/css/ProfileStyle';
+import requestMediaPermission from '../../utils/requestMediaPermission';
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -188,14 +192,40 @@ const ProfileScreen = () => {
     ]);
   };
 
-  const openImagePicker = () => {
+  const openImagePicker = async () => {
     if (!isEditing) return;
 
-    launchImageLibrary({ mediaType: 'photo' }, (response) => {
-      if (response.assets?.[0]?.uri) {
-        setImageUri(response.assets[0].uri);
+    const hasPermission = await requestMediaPermission();
+
+    if (!hasPermission) {
+      handlePermissionDenied();
+      return;
+    }
+
+    // Tiếp tục mở thư viện ảnh
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      includeBase64: false,
+    };
+
+    try {
+      const response = await launchImageLibrary(options);
+      if (response.didCancel) {
+        console.log('Người dùng đã hủy chọn ảnh');
+      } else if (response.error) {
+        console.error('Lỗi khi chọn ảnh:', response.error);
+        Alert.alert('Lỗi', 'Không thể chọn ảnh. Vui lòng thử lại');
+      } else if (response.assets && response.assets.length > 0) {
+        const selectedImage = response.assets[0];
+        setImageUri(selectedImage.uri);
       }
-    });
+    } catch (error) {
+      console.error('Lỗi khi chọn ảnh:', error);
+      Alert.alert('Lỗi', 'Không thể chọn ảnh. Vui lòng thử lại');
+    }
   };
 
   // Effects

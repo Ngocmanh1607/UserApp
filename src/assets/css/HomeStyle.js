@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   flashSaleSection: {
     backgroundColor: '#FFF8F8',
-    paddingVertical: 16,
+    paddingVertical: 8,
     marginVertical: 8,
     borderRadius: 16,
   },

@@ -1,13 +1,9 @@
-// OrderScreen.js
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
   FlatList,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  Keyboard,
   Alert,
 } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';

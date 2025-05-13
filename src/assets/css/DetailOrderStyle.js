@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -326,30 +326,81 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
   },
-
-  feedbackButton: {
-    position: 'absolute',
-    bottom: 10,
-    right: 0,
-    backgroundColor: '#ff3b30',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    borderRadius: 10,
-    marginHorizontal: 15,
-    marginVertical: 20,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+  // Existing Feedback Container
+  feedbackSection: {
+    padding: 16,
+    backgroundColor: '#fff',
+    marginVertical: 8,
   },
-  feedbackButtonText: {
-    color: '#fff',
+  feedbackSectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    marginLeft: 8,
+    color: '#1f2937',
+    marginBottom: 12,
+  },
+  feedbackCard: {
+    backgroundColor: '#f8fafc',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  responseCard: {
+    backgroundColor: '#f0f9ff',
+    borderColor: '#bae6fd',
+  },
+  feedbackHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  feedbackAuthor: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#334155',
+  },
+  feedbackDate: {
+    fontSize: 12,
+    color: '#64748b',
+  },
+  feedbackContent: {
+    fontSize: 14,
+    color: '#334155',
+    lineHeight: 20,
+  },
+  feedbackStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    gap: 4,
+  },
+  statusText: {
+    fontSize: 12,
+    marginLeft: 4,
+  },
+  reportButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff1f2',
+    padding: 8,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  reportButtonText: {
+    color: '#FF3B30',
+    marginLeft: 4,
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  reportedButton: {
+    backgroundColor: '#ecfdf5',
+    opacity: 0.8,
+  },
+  reportedButtonText: {
+    color: '#059669',
   },
 });
 
