@@ -97,7 +97,7 @@ const OrderDetailScreen = () => {
     }
   };
   const renderFeedbackSection = () => {
-    if (!existingFeedback) return null;
+    if (!existingFeedback || existingFeedback.length === 0) return null;
 
     const userFeedback = existingFeedback.filter(
       (item) => !item.restaurant_res
@@ -111,32 +111,33 @@ const OrderDetailScreen = () => {
         <Text style={styles.feedbackSectionTitle}>Phản hồi đơn hàng</Text>
 
         {/* User Feedback */}
-        <View style={styles.feedbackCard}>
-          <View style={styles.feedbackHeader}>
-            <Text style={styles.feedbackAuthor}>Phản hồi của bạn</Text>
-            <Text style={styles.feedbackDate}>
-              {formatDate(userFeedback.createdAt)}
-            </Text>
+        {userFeedback && (
+          <View style={styles.feedbackCard}>
+            <View style={styles.feedbackHeader}>
+              <Text style={styles.feedbackAuthor}>Phản hồi của bạn</Text>
+              <Text style={styles.feedbackDate}>
+                {formatDate(userFeedback.createdAt)}
+              </Text>
+            </View>
+            <Text style={styles.feedbackContent}>{userFeedback.content}</Text>
+            <View style={styles.feedbackStatus}>
+              <MaterialIcons
+                name={restaurantResponse ? 'check-circle' : 'hourglass-empty'}
+                size={16}
+                color={restaurantResponse ? '#059669' : '#f59e0b'}
+              />
+              <Text
+                style={[
+                  styles.statusText,
+                  {
+                    color: userFeedback.is_checked ? '#059669' : '#f59e0b',
+                  },
+                ]}>
+                {restaurantResponse ? 'Đã xem xét' : 'Đang chờ phản hồi'}
+              </Text>
+            </View>
           </View>
-          <Text style={styles.feedbackContent}>{userFeedback.content}</Text>
-          <View style={styles.feedbackStatus}>
-            <MaterialIcons
-              name={restaurantResponse ? 'check-circle' : 'hourglass-empty'}
-              size={16}
-              color={restaurantResponse ? '#059669' : '#f59e0b'}
-            />
-            <Text
-              style={[
-                styles.statusText,
-                {
-                  color: userFeedback.is_checked ? '#059669' : '#f59e0b',
-                },
-              ]}>
-              {restaurantResponse ? 'Đã xem xét' : 'Đang chờ phản hồi'}
-            </Text>
-          </View>
-        </View>
-
+        )}
         {/* Restaurant Response */}
         {restaurantResponse && (
           <View style={[styles.feedbackCard, styles.responseCard]}>
