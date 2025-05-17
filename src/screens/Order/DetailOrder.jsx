@@ -202,7 +202,7 @@ const OrderDetailScreen = () => {
                 source={{
                   uri: order.Driver.Profile.image,
                 }}
-                defaultSource={require('../../assets/Images/driver.png')}
+                defaultSource={require('../../assets/Images/Shipper.png')}
                 style={styles.driverImage}
               />
               <View style={styles.driverInfo}>

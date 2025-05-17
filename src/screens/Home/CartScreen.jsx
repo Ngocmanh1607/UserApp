@@ -288,7 +288,7 @@ const CartScreen = () => {
         address.longitude,
         restaurantId,
         foodData,
-        discountCost
+        coupons
       );
       setIsLoading(false);
     }

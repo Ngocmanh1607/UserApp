@@ -146,7 +146,7 @@ const orderApi = {
     userLongitude,
     restaurant_id,
     listCartItem,
-    coupon = 0
+    coupon
   ) => {
     try {
       const userId = await AsyncStorage.getItem('userId');
@@ -161,7 +161,7 @@ const orderApi = {
           userLongitude: userLongitude,
           restaurant_id: restaurant_id,
           listCartItem: listCartItem,
-          discountCost: coupon,
+          coupon_ids: coupon,
         },
         {
           headers: {
