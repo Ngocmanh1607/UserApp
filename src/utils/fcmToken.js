@@ -1,52 +1,62 @@
 import messaging from '@react-native-firebase/messaging';
-import { Alert, Linking } from 'react-native';
+import { Alert, Linking, Platform } from 'react-native';
 
 const fetchFcmToken = async () => {
   try {
-    // Yêu cầu quyền thông báo
-    const authStatus = await messaging().requestPermission();
-    const permissionGranted =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    // Kiểm tra quyền hiện tại
+    const currentPermission = await messaging().hasPermission();
+    const needsPermission =
+      currentPermission === messaging.AuthorizationStatus.NOT_DETERMINED;
 
-    if (!permissionGranted) {
-      console.log('Người dùng từ chối quyền thông báo.');
+    // Chỉ yêu cầu quyền nếu chưa được xác định
+    if (needsPermission) {
+      const authStatus = await messaging().requestPermission();
+      const permissionGranted =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-      // Hiển thị cảnh báo yêu cầu quyền
-      Alert.alert(
-        'Cấp quyền thông báo',
-        'Ứng dụng này cần quyền thông báo để hoạt động đầy đủ. Vui lòng bật quyền trong cài đặt.',
-        [
-          {
-            text: 'Đi đến Cài đặt',
-            onPress: () => Linking.openSettings(), // Điều hướng đến cài đặt
-          },
-          { text: 'Hủy', style: 'cancel' },
-        ]
-      );
-
-      return null;
+      if (!permissionGranted) {
+        console.log('Người dùng từ chối quyền thông báo.');
+        Alert.alert(
+          'Cấp quyền thông báo',
+          'Ứng dụng cần quyền thông báo để gửi thông tin đơn hàng. Vui lòng bật quyền trong cài đặt.',
+          [
+            {
+              text: 'Đi đến Cài đặt',
+              onPress: () => Linking.openSettings(),
+            },
+            { text: 'Để sau', style: 'cancel' },
+          ]
+        );
+        return null;
+      }
     }
-    console.log('Người dùng đã cấp quyền thông báo.');
-    // Lấy APNs Token trước khi lấy FCM Token
-    const apnsToken = await messaging().getAPNSToken();
-    if (!apnsToken) {
-      console.error('APNs token chưa được thiết lập.');
-      return;
+
+    // Xử lý riêng cho iOS
+    if (Platform.OS === 'ios') {
+      const apnsToken = await messaging().getAPNSToken();
+      if (!apnsToken) {
+        console.warn('APNs token chưa sẵn sàng');
+        // Không return null ở đây, vẫn thử lấy FCM token
+      }
     }
-    console.log('APNs Token:', apnsToken);
-    // Lấy FCM token
+
+    // Lấy và kiểm tra FCM token
     const token = await messaging().getToken();
-    if (token) {
-      console.log('Mã FCM:', token);
-      return token;
-    } else {
-      console.log('Không thể lấy mã FCM');
-      return null;
+    if (!token) {
+      throw new Error('Không thể lấy FCM token');
     }
+
+    console.log('FCM Token:', token);
+    return token;
   } catch (error) {
-    console.error('Lỗi khi lấy mã FCM:', error);
-    throw new Error('Lỗi khi lấy mã FCM');
+    console.error('Lỗi khi lấy FCM token:', error);
+    // Thông báo lỗi cho người dùng nếu cần
+    Alert.alert(
+      'Thông báo',
+      'Không thể kết nối đến dịch vụ thông báo. Vui lòng thử lại sau.'
+    );
+    return null;
   }
 };
 
