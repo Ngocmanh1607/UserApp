@@ -124,7 +124,7 @@ const HomeScreen = () => {
       activeOpacity={0.7}>
       <View style={styles.searchbox}>
         <Icon name="search" size={24} color="#F00" />
-        <Text style={styles.searchPlaceholder}>Tìm kiếm nhà hàng...</Text>
+        <Text style={styles.searchPlaceholder}>Tìm kiếm món ăn...</Text>
       </View>
     </TouchableOpacity>
   );

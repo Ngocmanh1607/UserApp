@@ -21,8 +21,6 @@ const OrderScreen = () => {
     useCallback(() => {
       const fetchOrder = async () => {
         const response = await orderApi.getOrder();
-        console.log(response);
-
         if (response.success) {
           setOrders(response.data);
           setFilteredOrders(response.data);
@@ -66,32 +64,29 @@ const OrderScreen = () => {
       .toLowerCase();
   };
   const renderOrderItem = ({ item }) => <CardOrder order={item} />;
-  const renderHeader = () => (
-    <View style={styles.searchbox}>
-      <TouchableOpacity>
-        <AntDesign
-          name="search1"
-          size={24}
-          color="red"
-          style={{ marginRight: 10 }}
-        />
-      </TouchableOpacity>
-      <TextInput
-        style={styles.input}
-        placeholder="Tìm kiếm theo tên nhà hàng"
-        placeholderTextColor="#333"
-        value={search}
-        onChangeText={setSearch}
-      />
-    </View>
-  );
   return (
     <View style={styles.container}>
+      <View style={styles.searchbox}>
+        <TouchableOpacity>
+          <AntDesign
+            name="search1"
+            size={24}
+            color="red"
+            style={{ marginRight: 10 }}
+          />
+        </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          placeholder="Tìm kiếm theo tên nhà hàng"
+          placeholderTextColor="#333"
+          value={search}
+          onChangeText={setSearch}
+        />
+      </View>
       <FlatList
         data={filteredOrders}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderOrderItem}
-        ListHeaderComponent={renderHeader}
         ListEmptyComponent={
           <Text style={styles.noOrdersText}>Không tìm thấy đơn hàng nào.</Text>
         }

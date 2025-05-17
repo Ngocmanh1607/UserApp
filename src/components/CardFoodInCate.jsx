@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     color: '#FF4B3A',
-    fontWeight: '800',
+    fontWeight: '600',
   },
   addButton: {
     backgroundColor: '#FF4B3A',

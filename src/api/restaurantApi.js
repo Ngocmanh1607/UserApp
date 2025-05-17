@@ -41,10 +41,12 @@ const restaurantApi = {
   // API tìm kiếm nhà hàng
   async searchRestaurants(searchQuery) {
     try {
-      const response = await apiClient.get('/restaurants/search', {
-        params: { q: searchQuery },
+      const response = await apiClient.get(`/products/search/${searchQuery}`, {
+        headers: {
+          'x-api-key': apiKey,
+        },
       });
-      return response.data;
+      return response.data.metadata;
     } catch (error) {
       throw error;
     }

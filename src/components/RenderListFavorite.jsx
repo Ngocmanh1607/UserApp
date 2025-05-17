@@ -15,6 +15,9 @@ const RenderListFavorite = () => {
     };
     fetchLisFavorite();
   }, []);
+  if (!listFavorite || listFavorite.length === 0) {
+    return null;
+  }
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
@@ -26,6 +29,13 @@ const RenderListFavorite = () => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <CardResFavo restaurant={item} />}
         showsHorizontalScrollIndicator={false}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+              Bạn chưa có nhà hàng yêu thích nào
+            </Text>
+          </View>
+        )}
       />
     </View>
   );
@@ -51,5 +61,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333333',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: '#666666',
+    textAlign: 'center',
   },
 });
