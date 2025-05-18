@@ -76,9 +76,30 @@ const RestaurantScreen = ({ route }) => {
     const { x } = event.nativeEvent.layout;
     itemLayouts.current[index] = { x };
   };
-
+  const getCurrentTime = () => {
+    const now = new Date();
+    return `${now.getHours()}:${now.getMinutes()}`;
+  };
   // state lấy dữ liêu từ api
   useEffect(() => {
+    if (!isOpen) {
+      Alert.alert(
+        'Nhà hàng đã đóng cửa',
+        schedule
+          ? `Nhà hàng sẽ mở cửa lại vào ${formatTime(schedule.open)}${
+              getCurrentTime() > schedule.close ? ' ngày mai' : ''
+            }`
+          : 'Nhà hàng hiện đang đóng cửa',
+        [
+          {
+            text: 'Quay lại',
+            onPress: () => navigation.goBack(),
+            style: 'default',
+          },
+        ]
+      );
+      return;
+    }
     const fetchRestaurantData = async () => {
       setLoading(true);
       const cate = [];
@@ -175,7 +196,7 @@ const RestaurantScreen = ({ route }) => {
 
     fetchRestaurantData();
     dispatch(fetchCartCount(restaurantId));
-  }, [restaurantId]);
+  }, [restaurantId, isOpen, schedule]);
   //check Favorite
   useEffect(() => {
     const fetchFavorite = async () => {

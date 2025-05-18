@@ -60,9 +60,9 @@ const CardFood2 = React.memo(({ food, restaurant }) => {
           ) : (
             <Text style={styles.price}>{formatPrice(food.price)}</Text>
           )}
-          <TouchableOpacity style={styles.addButton}>
+          {/* <TouchableOpacity style={styles.addButton}>
             <MaterialIcons name="add" size={16} color="white" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
     </TouchableOpacity>
