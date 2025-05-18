@@ -80,7 +80,6 @@ const RestaurantScreen = ({ route }) => {
     const now = new Date();
     return `${now.getHours()}:${now.getMinutes()}`;
   };
-  // state lấy dữ liêu từ api
   useEffect(() => {
     if (!isOpen) {
       Alert.alert(
@@ -98,11 +97,15 @@ const RestaurantScreen = ({ route }) => {
           },
         ]
       );
-      return;
     }
+  }, [isOpen, schedule, navigation]);
+  // state lấy dữ liêu từ api
+  useEffect(() => {
     const fetchRestaurantData = async () => {
       setLoading(true);
       const cate = [];
+      console.log('Call api');
+
       try {
         const data = await restaurantApi.getFoodsCateInRes(restaurantId);
         if (data.success) {
@@ -149,7 +152,6 @@ const RestaurantScreen = ({ route }) => {
               id: category.category_id,
               name: category.category_name,
             });
-            console.log(category);
 
             sections.push({
               title: category.category_name,
@@ -196,7 +198,7 @@ const RestaurantScreen = ({ route }) => {
 
     fetchRestaurantData();
     dispatch(fetchCartCount(restaurantId));
-  }, [restaurantId, isOpen, schedule]);
+  }, [restaurantId]);
   //check Favorite
   useEffect(() => {
     const fetchFavorite = async () => {

@@ -3,24 +3,50 @@ import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import getRatingReview from '../utils/getRatingReview';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
+import { useSelector } from 'react-redux';
+import restaurantApi from '../api/restaurantApi';
 const CardResFavo = ({ restaurant }) => {
+  const address = useSelector((state) => state.currentLocation);
+
   const [res, setRes] = useState(restaurant);
   const navigation = useNavigation();
-  const handlePress = () => {
+  const handlePress = async () => {
     navigation.navigate('RestaurantDetail', { restaurant: res });
   };
+
   useEffect(() => {
-    const fetchReview = async () => {
+    let isMounted = true;
+
+    const fetchData = async () => {
       try {
-        const ratingReview = await getRatingReview(res.id);
-        setRes({ ...restaurant, rating: ratingReview });
+        const [restaurantInfo, distance, ratingReview] = await Promise.all([
+          restaurantApi.getInfoRestaurants(restaurant.id),
+          restaurantApi.getDistance(
+            address.latitude,
+            address.longitude,
+            restaurant.id
+          ),
+          getRatingReview(restaurant.id),
+        ]);
+
+        if (isMounted) {
+          setRes({
+            ...restaurantInfo.data,
+            rating: ratingReview,
+            distance: parseFloat(distance.data),
+          });
+        }
       } catch (error) {
-        console.log(error.message);
+        console.error('Error fetching restaurant data:', error);
       }
     };
-    fetchReview();
-  }, []);
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [restaurant.id, address]);
   return (
     <TouchableOpacity style={styles.card} onPress={handlePress}>
       <View>
@@ -98,6 +124,6 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   descriptionContainer: {
-    width: '85%',
+    width: '80%',
   },
 });

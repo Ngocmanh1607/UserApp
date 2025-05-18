@@ -39,6 +39,7 @@ const CartScreen = () => {
   const dispatch = useDispatch();
 
   const noteInputRef = useRef(null);
+  const scrollRef = useRef(null);
 
   const { restaurantId } = route.params;
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('ZALOPAY');
@@ -452,7 +453,10 @@ const CartScreen = () => {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
         <ScrollView
           style={styles.flatListContainer}
-          showsVerticalScrollIndicator={false}>
+          ref={scrollRef}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag">
           {renderHeader()}
 
           {/* Cart Items */}
@@ -482,11 +486,12 @@ const CartScreen = () => {
                   style={styles.noteInput}
                   value={note}
                   onChangeText={setNote}
-                  blurOnSubmit={false}
-                  autoCapitalize="none"
-                  keyboardType="default"
-                  returnKeyType="none"
-                  autoCorrect={false}
+                  multiline={true}
+                  numberOfLines={2}
+                  blurOnSubmit={true}
+                  onFocus={() => {
+                    scrollRef.current?.scrollTo({ y: 100, animated: true });
+                  }}
                 />
               </View>
             </View>

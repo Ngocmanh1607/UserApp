@@ -366,9 +366,11 @@ const styles = StyleSheet.create({
   },
   noteInput: {
     flex: 1,
-    height: 46,
+    marginLeft: 10,
     fontSize: 15,
     color: '#2c3e50',
+    paddingVertical: 5,
+    textAlignVertical: 'top',
   },
 
   // Coupon styles
