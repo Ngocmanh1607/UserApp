@@ -402,6 +402,51 @@ const styles = StyleSheet.create({
   reportedButtonText: {
     color: '#059669',
   },
+  feedbackButtonContainer: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    zIndex: 10,
+  },
+  feedbackButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF3B30',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  feedbackButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    marginLeft: 8,
+    fontWeight: '500',
+  },
+
+  resetOrderButton: {
+    backgroundColor: '#FF3B30', // màu cam nhạt cho hành động
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  resetOrderText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
 
 export default styles;

@@ -10,18 +10,24 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { formatPrice, formatDate } from '../../utils/format';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from '../../assets/css/DetailOrderStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   getCurrentDaySchedule,
   checkIsOpen,
 } from '../../utils/restaurantHelpers';
+import Snackbar from 'react-native-snackbar';
 import { Modal } from 'react-native-paper';
 import { orderApi } from '../../api/orderApi';
+import { cart } from '../../api/cartOrder';
+import { useDispatch } from 'react-redux';
+import { fetchCartCount } from '../../store/cartSlice';
 const OrderDetailScreen = () => {
   const route = useRoute();
   const order = route.params?.order || {};
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [existingFeedback, setExistingFeedback] = useState();
   const [isModalVisible, setModalVisible] = useState(false);
   const [feedback, setFeedback] = useState('');
@@ -34,7 +40,7 @@ const OrderDetailScreen = () => {
     const fetchFeedback = async () => {
       try {
         const response = await orderApi.getFeedbackByOrderId(order.id);
-        if (response && response.data) {
+        if (response && response.data && response.data.length > 0) {
           setExistingFeedback(response.data);
           const userFeedback = response.data.filter(
             (item) => !item.restaurant_res
@@ -94,6 +100,40 @@ const OrderDetailScreen = () => {
       setFeedback('');
     } catch (error) {
       Alert.alert('Lỗi', 'Không thể gửi phản hồi. Vui lòng thử lại sau.');
+    }
+  };
+  const handleResetOrder = async () => {
+    const listFoods = order.listCartItem;
+    console.log(listFoods);
+    const restaurantId = order.restaurant_id;
+    try {
+      // Gọi tất cả API addItem song song
+      const responses = await Promise.all(
+        listFoods.map((food) => cart.addItem(food.restaurant_id, food.id, food))
+      );
+
+      // Kiểm tra nếu tất cả đều thành công
+      const allSuccess = responses.every((res) => res.success);
+
+      if (allSuccess) {
+        Snackbar.show({
+          text: 'Tất cả món ăn đã được thêm lại vào giỏ hàng!',
+          duration: Snackbar.LENGTH_SHORT,
+        });
+      } else {
+        const failed = responses.filter((r) => !r.success);
+        Alert.alert(
+          'Một số món không thêm được',
+          `${failed.length} món bị lỗi.`
+        );
+      }
+
+      // Gọi lại API để cập nhật số lượng giỏ hàng
+      dispatch(fetchCartCount(restaurantId));
+      navigation.navigate('CartScreen', { restaurantId: restaurantId });
+    } catch (error) {
+      console.error('Lỗi khi gọi API addItem:', error.message);
+      Alert.alert('Lỗi hệ thống', 'Không thể thêm món ăn vào giỏ.');
     }
   };
   const renderFeedbackSection = () => {
@@ -360,6 +400,11 @@ const OrderDetailScreen = () => {
             <Text style={styles.totalLabel}>Tổng cộng</Text>
             <Text style={styles.orderTotal}>{formatPrice(order.price)}</Text>
           </View>
+          <TouchableOpacity
+            style={styles.resetOrderButton}
+            onPress={handleResetOrder}>
+            <Text style={styles.resetOrderText}>Đặt lại đơn</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
       {/* Feedback Modal */}
@@ -403,12 +448,14 @@ const OrderDetailScreen = () => {
         </View>
       </Modal>
       {order.order_status === 'ORDER_CONFIRMED' && !existingFeedback && (
-        <TouchableOpacity
-          style={styles.feedbackButton}
-          onPress={handleFeedback}>
-          <MaterialIcons name="feedback" size={24} color="#fff" />
-          <Text style={styles.feedbackButtonText}>Phản hồi</Text>
-        </TouchableOpacity>
+        <View style={styles.feedbackButtonContainer}>
+          <TouchableOpacity
+            style={styles.feedbackButton}
+            onPress={handleFeedback}>
+            <MaterialIcons name="feedback" size={24} color="#fff" />
+            <Text style={styles.feedbackButtonText}>Phản hồi</Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
