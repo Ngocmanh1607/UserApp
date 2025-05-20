@@ -45,7 +45,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: {
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 12,
     elevation: 4,
     shadowColor: '#e74c3c',
     shadowOffset: {
@@ -130,9 +131,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#f0f0f0',
   },
-  footer: {
-    paddingBottom: 50,
-  },
+  footer: {},
   dropdown: {
     margin: 8,
     height: 48,
@@ -300,7 +299,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#e6e6e6',
-    marginBottom: 8,
   },
   totalLabel: {
     fontWeight: '700',

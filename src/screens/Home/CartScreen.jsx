@@ -40,6 +40,7 @@ const CartScreen = () => {
 
   const noteInputRef = useRef(null);
   const scrollRef = useRef(null);
+  const noteContainerRef = useRef(null);
 
   const { restaurantId } = route.params;
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('ZALOPAY');
@@ -471,7 +472,7 @@ const CartScreen = () => {
 
           <View style={styles.footer}>
             {/* Note Input - Separate from FlatList */}
-            <View style={styles.noteContainer}>
+            <View style={styles.noteContainer} ref={noteContainerRef}>
               <View style={styles.noteInputWrapper}>
                 <Ionicons
                   name="create-outline"
@@ -490,7 +491,16 @@ const CartScreen = () => {
                   numberOfLines={2}
                   blurOnSubmit={true}
                   onFocus={() => {
-                    scrollRef.current?.scrollTo({ y: 100, animated: true });
+                    setTimeout(() => {
+                      noteContainerRef.current?.measure(
+                        (x, y, width, height, pageX, pageY) => {
+                          scrollRef.current?.scrollTo({
+                            y: pageY - 20,
+                            animated: true,
+                          });
+                        }
+                      );
+                    }, 100);
                   }}
                 />
               </View>
