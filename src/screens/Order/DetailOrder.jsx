@@ -40,6 +40,8 @@ const OrderDetailScreen = () => {
     const fetchFeedback = async () => {
       try {
         const response = await orderApi.getFeedbackByOrderId(order.id);
+        console.log(response.data);
+
         if (response && response.data && response.data.length > 0) {
           setExistingFeedback(response.data);
           const userFeedback = response.data.filter(
