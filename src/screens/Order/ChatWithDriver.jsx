@@ -17,32 +17,99 @@ import io from 'socket.io-client';
 import { useRoute } from '@react-navigation/native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // Thay URL server của bạn
 const socket = io('https://sbr09801-3000.asse.devtunnels.ms');
 
-// Hàm kiểm tra quyền truy cập thư viện ảnh
+// Hàm kiểm tra quyền truy cập thư viện ảnh (ĐÃ SỬA)
 const requestGalleryPermission = async () => {
   if (Platform.OS === 'android') {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-      {
-        title: 'Quyền truy cập thư viện ảnh',
-        message: 'Ứng dụng cần quyền truy cập thư viện ảnh để gửi ảnh.',
-        buttonNeutral: 'Hỏi lại sau',
-        buttonNegative: 'Hủy',
-        buttonPositive: 'Đồng ý',
+    const androidVersion = Platform.Version;
+
+    try {
+      let granted;
+
+      if (androidVersion >= 33) {
+        // Android 13+ (API 33+) - Sử dụng READ_MEDIA_IMAGES
+        granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+          {
+            title: 'Quyền truy cập thư viện ảnh',
+            message: 'Ứng dụng cần quyền truy cập thư viện ảnh để gửi ảnh.',
+            buttonNeutral: 'Hỏi lại sau',
+            buttonNegative: 'Hủy',
+            buttonPositive: 'Đồng ý',
+          }
+        );
+      } else {
+        // Android < 13 - Sử dụng READ_EXTERNAL_STORAGE
+        granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          {
+            title: 'Quyền truy cập thư viện ảnh',
+            message: 'Ứng dụng cần quyền truy cập thư viện ảnh để gửi ảnh.',
+            buttonNeutral: 'Hỏi lại sau',
+            buttonNegative: 'Hủy',
+            buttonPositive: 'Đồng ý',
+          }
+        );
       }
-    );
-    return granted === PermissionsAndroid.RESULTS.GRANTED;
+
+      console.log('Android Version:', androidVersion);
+      console.log('Permission result:', granted);
+
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn('Permission request error:', err);
+      return false;
+    }
   }
   return true; // iOS tự động cấp quyền
 };
+
+// Hàm kiểm tra permission đã được cấp chưa
+const checkGalleryPermission = async () => {
+  if (Platform.OS === 'android') {
+    const androidVersion = Platform.Version;
+
+    try {
+      let permission;
+
+      if (androidVersion >= 33) {
+        permission = PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES;
+      } else {
+        permission = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+      }
+
+      const hasPermission = await PermissionsAndroid.check(permission);
+      console.log('Has permission:', hasPermission);
+      return hasPermission;
+    } catch (err) {
+      console.warn('Permission check error:', err);
+      return false;
+    }
+  }
+  return true;
+};
+
 const formatTime = (dateString) => {
   const date = new Date(dateString);
   const hours = date.getHours().toString().padStart(2, '0');
   const minutes = date.getMinutes().toString().padStart(2, '0');
-  return `${hours}:${minutes}`;
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+
+  const now = new Date();
+  const isToday = now.toDateString() === date.toDateString();
+
+  if (isToday) {
+    return `${hours}:${minutes}`;
+  } else {
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  }
 };
+
 // Hàm kiểm tra quyền truy cập camera
 const requestCameraPermission = async () => {
   if (Platform.OS === 'android') {
@@ -91,7 +158,7 @@ const MessageScreen = () => {
       });
       setMessages((prevMessages) => [
         ...prevMessages,
-        { senderId, message, role, type, role },
+        { senderId, message, role, type, date },
       ]);
     });
     return () => {
@@ -108,33 +175,54 @@ const MessageScreen = () => {
     }
   }, [messages]);
 
-  // Hàm chọn ảnh từ thư viện
+  // Hàm chọn ảnh từ thư viện (ĐÃ SỬA)
   const pickImage = async () => {
-    const hasPermission = await requestGalleryPermission();
-    if (!hasPermission) {
-      Alert.alert(
-        'Quyền bị từ chối',
-        'Bạn cần cấp quyền để sử dụng tính năng này.'
-      );
-      return;
-    }
-    launchImageLibrary(
-      {
-        mediaType: 'photo',
-        quality: 0.8,
-        includeBase64: true,
-      },
-      (response) => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.errorCode) {
-          console.log('ImagePicker Error: ', response.errorMessage);
-        } else {
-          const base64Image = `data:${response.assets[0].type};base64,${response.assets[0].base64}`;
-          sendImage(base64Image);
+    try {
+      // Kiểm tra permission trước
+      const hasPermission = await checkGalleryPermission();
+
+      if (!hasPermission) {
+        // Request permission nếu chưa có
+        const granted = await requestGalleryPermission();
+
+        if (!granted) {
+          Alert.alert(
+            'Quyền bị từ chối',
+            'Bạn cần cấp quyền để sử dụng tính năng này. Vui lòng vào Settings > Apps > [Tên App] > Permissions để cấp quyền.'
+          );
+          return;
         }
       }
-    );
+
+      console.log('Opening image library...');
+
+      launchImageLibrary(
+        {
+          mediaType: 'photo',
+          quality: 0.8,
+          includeBase64: true,
+        },
+        (response) => {
+          console.log('ImagePicker response:', response);
+
+          if (response.didCancel) {
+            console.log('User cancelled image picker');
+          } else if (response.errorCode) {
+            console.log('ImagePicker Error: ', response.errorMessage);
+            Alert.alert(
+              'Lỗi',
+              'Không thể mở thư viện ảnh: ' + response.errorMessage
+            );
+          } else if (response.assets && response.assets.length > 0) {
+            const base64Image = `data:${response.assets[0].type};base64,${response.assets[0].base64}`;
+            sendImage(base64Image);
+          }
+        }
+      );
+    } catch (error) {
+      console.error('Error in pickImage:', error);
+      Alert.alert('Lỗi', 'Có lỗi xảy ra khi mở thư viện ảnh');
+    }
   };
 
   // Hàm chụp ảnh từ camera
@@ -218,6 +306,7 @@ const MessageScreen = () => {
       setMessage('');
     }
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -295,7 +384,7 @@ const MessageScreen = () => {
             ]}
             onPress={sendMessage}
             disabled={!message.trim()}>
-            <Text style={styles.sendButtonText}>→</Text>
+            <Text style={styles.sendButtonText}>Gửi</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -411,6 +500,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
     maxHeight: 100,
     fontSize: 16,
+    color: '#333',
   },
   attachButtonsContainer: {
     flexDirection: 'row',
@@ -437,7 +527,7 @@ const styles = StyleSheet.create({
   },
   sendButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 22,
+    fontWeight: '500',
+    fontSize: 16,
   },
 });
