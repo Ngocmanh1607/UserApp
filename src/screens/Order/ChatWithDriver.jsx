@@ -136,6 +136,11 @@ const MessageScreen = () => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
+  const MESSAGES_PER_PAGE = 20;
+
   useEffect(() => {
     const fetchUserId = async () => {
       const id = await AsyncStorage.getItem('userId');
@@ -144,6 +149,19 @@ const MessageScreen = () => {
     fetchUserId();
     if (userId) {
       socket.emit('registerUser', userId);
+      // Listen for more messages response
+      socket.on('moreMessages', ({ messages, hasMore }) => {
+        setMessages((prevMessages) => [...messages, ...prevMessages]);
+        setHasMore(hasMore);
+        setIsLoadingMore(false);
+      });
+
+      // Listen for load more errors
+      socket.on('loadMoreError', ({ message }) => {
+        console.error('Load more error:', message);
+        setIsLoadingMore(false);
+        Alert.alert('Error', 'Failed to load older messages');
+      });
     }
 
     // Lắng nghe tin nhắn từ server
@@ -153,7 +171,6 @@ const MessageScreen = () => {
         message,
         role,
         type,
-        role,
         date,
       });
       setMessages((prevMessages) => [
@@ -163,6 +180,8 @@ const MessageScreen = () => {
     });
     return () => {
       socket.off('receiveMessage');
+      socket.off('moreMessages');
+      socket.off('loadMoreError');
     };
   }, [userId]);
 
@@ -307,12 +326,40 @@ const MessageScreen = () => {
     }
   };
 
+  const loadMoreMessages = () => {
+    if (!isLoadingMore && hasMore) {
+      setIsLoadingMore(true);
+      const offset = page * MESSAGES_PER_PAGE;
+
+      socket.emit('loadMoreMessages', {
+        senderId: customerId,
+        receiverId: driverId,
+        offset,
+        limit: MESSAGES_PER_PAGE,
+      });
+
+      setPage((prev) => prev + 1);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
         style={styles.chatContainer}
         ref={scrollViewRef}
-        contentContainerStyle={styles.chatContentContainer}>
+        contentContainerStyle={styles.chatContentContainer}
+        onScroll={({ nativeEvent }) => {
+          // Check if scrolled to top
+          if (nativeEvent.contentOffset.y === 0 && hasMore) {
+            loadMoreMessages();
+          }
+        }}
+        scrollEventThrottle={400}>
+        {isLoadingMore && (
+          <View style={styles.loadingMoreContainer}>
+            <Text style={styles.loadingMoreText}>Loading more messages...</Text>
+          </View>
+        )}
         {messages.map((msg, index) => (
           <View key={index}>
             <View
@@ -529,5 +576,13 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '500',
     fontSize: 16,
+  },
+  loadingMoreContainer: {
+    padding: 10,
+    alignItems: 'center',
+  },
+  loadingMoreText: {
+    color: '#666',
+    fontSize: 14,
   },
 });
