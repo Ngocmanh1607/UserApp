@@ -19,9 +19,8 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Thay URL server của bạn
-const socket = io('https://sbr09801-3000.asse.devtunnels.ms');
+const socket = io('https://vpvt75qh-3000.asse.devtunnels.ms');
 
-// Hàm kiểm tra quyền truy cập thư viện ảnh (ĐÃ SỬA)
 const requestGalleryPermission = async () => {
   if (Platform.OS === 'android') {
     const androidVersion = Platform.Version;
@@ -143,28 +142,73 @@ const MessageScreen = () => {
 
   useEffect(() => {
     const fetchUserId = async () => {
-      const id = await AsyncStorage.getItem('userId');
-      setUserId(id);
+      try {
+        const id = await AsyncStorage.getItem('userId');
+        setUserId(id);
+      } catch (error) {
+        console.error('Error fetching userId:', error);
+      }
     };
     fetchUserId();
-    if (userId) {
-      socket.emit('registerUser', userId);
-      // Listen for more messages response
-      socket.on('moreMessages', ({ messages, hasMore }) => {
-        setMessages((prevMessages) => [...messages, ...prevMessages]);
-        setHasMore(hasMore);
-        setIsLoadingMore(false);
-      });
+  }, []);
+  const handleReceiveMessage = ({ senderId, message, role, type, date }) => {
+    console.log('Message received:', {
+      senderId,
+      message,
+      role,
+      type,
+      date,
+    });
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { senderId, message, role, type, date },
+    ]);
+  };
 
-      // Listen for load more errors
-      socket.on('loadMoreError', ({ message }) => {
-        console.error('Load more error:', message);
-        setIsLoadingMore(false);
-        Alert.alert('Error', 'Failed to load older messages');
-      });
-    }
+  useEffect(() => {
+    if (!userId) return;
+    // Register user when userId is available
+    socket.emit('registerUser', userId);
+    socket.emit('joinChat', {
+      senderId: customerId,
+      receiverId: driverId,
+      role: 'user',
+      role_receiver: 'driver',
+    });
 
-    // Lắng nghe tin nhắn từ server
+    // Listen for more messages response
+    const handleMoreMessages = ({ messages: newMessages, hasMore }) => {
+      setMessages((prevMessages) => [...newMessages, ...prevMessages]);
+      setHasMore(hasMore);
+      setIsLoadingMore(false);
+    };
+    socket.on('chatHistory', (chatHistory) => {
+      if (chatHistory) {
+        const filterMessageProperties = (messages) => {
+          return messages.map((msg) => ({
+            senderId: msg.senderId,
+            message: msg.message.trim(),
+            role: msg.role,
+            type: msg.type,
+            date: msg.date,
+          }));
+        };
+        const listMessages = filterMessageProperties(chatHistory.messages);
+        console.log(listMessages);
+
+        setMessages(listMessages);
+      } else {
+        console.log('No chat history found');
+        setMessages([]);
+      }
+    });
+    // Listen for load more errors
+    const handleLoadMoreError = ({ message }) => {
+      console.error('Load more error:', message);
+      setIsLoadingMore(false);
+      Alert.alert('Error', 'Failed to load older messages');
+    };
+
     socket.on('receiveMessage', ({ senderId, message, role, type, date }) => {
       console.log('Message received:', {
         senderId,
@@ -178,10 +222,13 @@ const MessageScreen = () => {
         { senderId, message, role, type, date },
       ]);
     });
+    socket.on('moreMessages', handleMoreMessages);
+    socket.on('loadMoreError', handleLoadMoreError);
+
     return () => {
-      socket.off('receiveMessage');
-      socket.off('moreMessages');
-      socket.off('loadMoreError');
+      socket.off('receiveMessage', handleReceiveMessage);
+      socket.off('moreMessages', handleMoreMessages);
+      socket.off('loadMoreError', handleLoadMoreError);
     };
   }, [userId]);
 
@@ -277,6 +324,7 @@ const MessageScreen = () => {
   const sendImage = (base64Image) => {
     const currentDate = new Date();
     const timestamp = currentDate.toISOString();
+
     socket.emit('sendMessage', {
       senderId: customerId,
       receiverId: driverId,
@@ -284,18 +332,19 @@ const MessageScreen = () => {
       role: 'user',
       type: 'image',
       date: timestamp,
+      role_receiver: 'driver',
     });
 
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      {
-        senderId: customerId,
-        message: base64Image,
-        role: 'user',
-        type: 'image',
-        date: timestamp,
-      },
-    ]);
+    // setMessages((prevMessages) => [
+    //   ...prevMessages,
+    //   {
+    //     senderId: customerId,
+    //     message: base64Image,
+    //     role: 'user',
+    //     type: 'image',
+    //     date: timestamp,
+    //   },
+    // ]);
   };
 
   // Hàm gửi tin nhắn văn bản
@@ -310,18 +359,19 @@ const MessageScreen = () => {
         role: 'user',
         type: 'text',
         date: timestamp,
+        role_receiver: 'driver',
       });
 
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          senderId: customerId,
-          message: message.trim(),
-          role: 'user',
-          type: 'text',
-          date: timestamp,
-        },
-      ]);
+      // setMessages((prevMessages) => [
+      //   ...prevMessages,
+      //   {
+      //     senderId: customerId,
+      //     message: message.trim(),
+      //     role: 'user',
+      //     type: 'text',
+      //     date: timestamp,
+      //   },
+      // ]);
       setMessage('');
     }
   };
@@ -365,7 +415,7 @@ const MessageScreen = () => {
             <View
               style={[
                 styles.messageBubble,
-                msg.senderId === customerId && msg.role === 'user'
+                msg.role === 'user'
                   ? styles.userMessage
                   : styles.contactMessage,
               ]}>
@@ -373,7 +423,7 @@ const MessageScreen = () => {
                 <Text
                   style={[
                     styles.messageText,
-                    msg.senderId === customerId && msg.role === 'user'
+                    msg.role === 'user'
                       ? styles.userMessageText
                       : styles.contactMessageText,
                   ]}>
@@ -390,7 +440,7 @@ const MessageScreen = () => {
             <Text
               style={[
                 styles.timestamp,
-                msg.senderId === customerId && msg.role === 'user'
+                msg.role === 'user'
                   ? styles.userTimestamp
                   : styles.contactTimestamp,
               ]}>

@@ -30,7 +30,7 @@ const OrderStatusScreen = () => {
   const [shipperLocation, setShipperLocation] = useState(null);
   const [router, setRouter] = useState(null);
   useEffect(() => {
-    const socket = io('https://sbr09801-3000.asse.devtunnels.ms');
+    const socket = io('https://vpvt75qh-3000.asse.devtunnels.ms');
     socket.emit('joinOrder', orderId);
 
     socket.on('orderStatusUpdate', ({ orderId, status, detailDriver }) => {

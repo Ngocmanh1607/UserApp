@@ -82,21 +82,27 @@ const RestaurantScreen = ({ route }) => {
   };
   useEffect(() => {
     if (!isOpen) {
-      Alert.alert(
-        'Nhà hàng đã đóng cửa',
-        schedule
-          ? `Nhà hàng sẽ mở cửa lại vào ${formatTime(schedule.open)}${
-              getCurrentTime() > schedule.close ? ' ngày mai' : ''
-            }`
-          : 'Nhà hàng hiện đang đóng cửa',
-        [
-          {
-            text: 'Quay lại',
-            onPress: () => navigation.goBack(),
-            style: 'default',
-          },
-        ]
-      );
+      const unsubscribe = navigation.addListener('focus', () => {
+        Alert.alert(
+          'Nhà hàng đã đóng cửa',
+          schedule
+            ? `Nhà hàng sẽ mở cửa lại vào ${formatTime(schedule.open)}${
+                getCurrentTime() > schedule.close ? ' ngày mai' : ''
+              }`
+            : 'Nhà hàng hiện đang đóng cửa',
+          [
+            {
+              text: 'Quay lại',
+              onPress: () => {
+                navigation.goBack();
+              },
+              style: 'default',
+            },
+          ]
+        );
+      });
+
+      return unsubscribe;
     }
   }, [isOpen, schedule, navigation]);
   // state lấy dữ liêu từ api
@@ -213,21 +219,6 @@ const RestaurantScreen = ({ route }) => {
       setLoading(true);
       await userApi.handleFavorite(restaurantId, navigation);
     } catch (error) {
-      if (data.message === 'invalid signature') {
-        Alert.alert('Lỗi', 'Hết phiên làm việc.Vui lòng đăng nhập lại', [
-          {
-            text: 'OK',
-            onPress: () => {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Auth' }],
-              });
-            },
-          },
-        ]);
-        return;
-      }
-      Alert.alert('Lỗi', data.message);
     } finally {
       Snackbar.show({
         text: isFavorite
